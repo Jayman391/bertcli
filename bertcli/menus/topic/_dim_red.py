@@ -1,6 +1,6 @@
 from bertcli.menus._menu import Menu
 
-class DimensionalityReduction(Menu):
+class DimensionalityReductionMenu(Menu):
     def __init__(self):
         is_root = False
         is_leaf = True

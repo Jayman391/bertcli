@@ -1,6 +1,6 @@
 from bertcli.menus._menu import Menu
 
-class Cluster(Menu):
+class ClusterMenu(Menu):
     def __init__(self):
         is_root = False
         is_leaf = True

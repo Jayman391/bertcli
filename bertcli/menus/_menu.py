@@ -1,6 +1,5 @@
 from abc import ABC
 
-
 class Menu(ABC):
     def __init__(self, options: list, is_leaf: bool, is_root: bool = False):
         self._options = options

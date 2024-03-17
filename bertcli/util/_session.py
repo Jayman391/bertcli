@@ -1,4 +1,3 @@
-
 class Session:
 
   def __init__(self, data=None, config_topic_model=None, config_optimization=None) -> None:
