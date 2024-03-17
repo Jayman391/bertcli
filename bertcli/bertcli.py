@@ -1,5 +1,5 @@
 import argparse
-from bertcli.loading._dataloader import handle_globals
+from bertcli.loading._dataloader import initialize_session
 
 
 class BERTCLI:
@@ -18,7 +18,7 @@ class BERTCLI:
 
     """
 
-    def __init__(self, global_data_path: str = None, global_config_path: str = None):
+    def __init__(self, global_data_path: str = None, global_config_path: str = None, global_optmization_path: str = None):
         """
         Initialize the CLI class.
 
@@ -32,8 +32,8 @@ class BERTCLI:
 
         print("\nWelcome to the BERTopic CLI!")
 
-        self.global_data, self.global_config = handle_globals(
-            global_data_path, global_config_path
+        self.global_session = initialize_session(
+            global_data_path, global_config_path, global_optmization_path
         )
 
 

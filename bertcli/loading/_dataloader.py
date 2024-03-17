@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-
+from bertcli.util._session import Session
 
 def _load_data(data_path: str):
     """
@@ -68,48 +68,46 @@ def _no_args_passed():
       config: Loaded configuration.
     """
 
-    global_data = []
+    data = []
 
-    global_data_bool = input(
-        "Would you like to use a global dataset for this session? (y/n): "
-    )
+    data_bool = input("Would you like to use a dataset for this session? (y/n): ")
 
-    if global_data_bool.lower() == "y":
-        data_path = input("Please enter the path to the data file: ∂")
+    if data_bool.lower() == "y":
+        data_path = input("Please enter the path to the data file: ")
 
-        global_data = _load_data(data_path)
+        data = _load_data(data_path)
 
-    global_config = {}
+    config = {}
 
-    global_config_bool = input("Do you want to load global configurations? (y/n): ")
+    config_bool = input("Do you want to load topic model configurations? (y/n): ")
 
-    if global_config_bool.lower() == "y":
+    if config_bool.lower() == "y":
         config_path = input("Please enter the path to the configuration file:")
 
-        global_config = _load_config(config_path)
+        config = _load_config(config_path)
 
-    return global_data, global_config
+    return data, config
 
 
-def handle_globals(data_path: str = None, config_path: str = None):
+def initialize_session(data_path: str = None, config_path: str = None, optimization_path: str = None):
+    
+    data = []
+    config = {}
+    opt = {}
+
     if data_path is None and config_path is None:
-        global_data, global_config = _no_args_passed()
+        data, config = _no_args_passed()
 
-    if data_path is not None and config_path is None:
-        global_data = _load_data(data_path)
-        print(f"Loaded global data from {data_path}")
-        global_config = {}
+    if data_path is not None:
+        data = _load_data(data_path)
+        print(f"Loaded data from {data_path}")
 
-    if data_path is not None and config_path is not None:
-        global_data = _load_data(data_path)
-        print(f"Loaded global data from {data_path}")
-        global_config = _load_config(config_path)
-        print(f"Loaded global config from {config_path}")
+    if config_path is not None:
+        config = _load_config(config_path)
+        print(f"Loaded config from {config_path}")
 
-    if data_path is None and config_path is not None:
-        global_data = []
+    if optimization_path is not None:
+        opt = _load_config(optimization_path)
+        print(f"Loaded optimization from {optimization_path}")
 
-        global_config = _load_config(config_path)
-        print(f"Loaded global config from {config_path}")
-
-    return global_data, global_config
+    return Session(data, config, opt)
