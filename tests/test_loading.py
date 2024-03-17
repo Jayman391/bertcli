@@ -1,7 +1,7 @@
 import pytest 
 from bertcli.bertcli import BERTCLI
 
-@pytest.mark.parametrize("filepath", ["test_data/data.csv", "test_data/data.json"])
+@pytest.mark.parametrize("filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"])
 def test_load_data(filepath):
     BERTcli = BERTCLI(filepath)
     assert BERTcli.global_data is not None
@@ -25,7 +25,7 @@ def test_load_data(filepath):
         assert BERTcli.global_data['text'][3] == "Yes. Other vaccines that were a new at the time of release? Smallpox vaccine, polio vaccines, measles vaccine, etc.\n \n"
 
 def test_load_config():
-    BERTcli = BERTCLI("test_data/data.csv", "test_data/config.json")
+    BERTcli = BERTCLI("tests/test_data/data.csv", "tests/test_data/config.json")
     assert BERTcli.global_data is not None
     assert BERTcli.global_config is not None
     assert BERTcli.global_config['language'] == "english"
@@ -78,8 +78,8 @@ def test_load_config():
     assert BERTcli.global_config["verbose"] == True
     assert BERTcli.global_config["seed" ] == 42
 
-@pytest.mark.parametrize("data_filepath", ["test_data/data.csv", "test_data/data.json", None])
-@pytest.mark.parametrize("config_filepath", ["test_data/config.json", None])
+@pytest.mark.parametrize("data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json", None])
+@pytest.mark.parametrize("config_filepath", ["tests/test_data/config.json", None])
 def test_handle_globals(data_filepath, config_filepath):
     cli = BERTCLI(data_filepath, config_filepath)
     assert cli.global_data is not None
@@ -87,8 +87,8 @@ def test_handle_globals(data_filepath, config_filepath):
 
 def test_invalid_filetype():
     with pytest.raises(Exception):
-        cli = BERTCLI("test_data/data.txt")
+        cli = BERTCLI("tests/test_data/data.txt")
 
 def test_invalid_config_file():
     with pytest.raises(Exception):
-        cli = BERTCLI("test_data/data.csv", "test_data/config.txt")
+        cli = BERTCLI("tests/test_data/data.csv", "tests/test_data/config.txt")
