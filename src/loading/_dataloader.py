@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-from src.bertcli.util._session import Session
+from src.util._session import Session
 
 class DataLoader:
 

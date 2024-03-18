@@ -1,7 +1,4 @@
-import sys
-sys.path.insert(0, '../src')
-
-from src.bertcli.loading._dataloader import DataLoader
+from src.loading._dataloader import DataLoader
 
 class BERTCLI:
     """

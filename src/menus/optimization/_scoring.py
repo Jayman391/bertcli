@@ -1,9 +1,4 @@
-import sys
-import os
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, project_root)
-
-from src.bertcli.menus._menu import Menu
+from src.menus._menu import Menu
 
 class ScoringMenu(Menu):
   def __init__(self):

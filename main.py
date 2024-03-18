@@ -1,6 +1,6 @@
 import argparse
 
-from src.bertcli._bertcli import BERTCLI
+from src._bertcli import BERTCLI
 
 def main():
     
