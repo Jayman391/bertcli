@@ -2,7 +2,7 @@
 python -m pytest tests -v -s
 
 ## list of stdin inputs to test ##
-1: press no both times for the inputs
+1: press no all three times for the inputs
 
 ############ clear __pycache__ and .pytest_cache ############
 find . -name '__pycache__' -exec rm -rf {} \;

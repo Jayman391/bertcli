@@ -10,12 +10,15 @@ def main():
       "--data", type=str, required=False, help="Path to the global data file"
   )
   parser.add_argument(
-      "--config", type=str, required=False, help="Path to the global config file"
+      "--tmconfig", type=str, required=False, help="Path to the global topic model config file"
   )
-
+  parser.add_argument(
+      "--optconfig", type=str, required=False, help="Path to the global optimization config file"
+  )
+  
   args = parser.parse_args()
 
-  cli = BERTCLI(global_data_path=args.data, global_config_path=args.config)
+  cli = BERTCLI(global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig)
 
 if __name__ == "__main__":
     

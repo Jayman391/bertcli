@@ -1,26 +1,24 @@
-import sys
-import os
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, project_root)
+from menus._menu import Menu
+from menus._landing import Landing
+from menus.topic._topic import TopicMenu
+from menus.topic._embeddings import EmbeddingsMenu
+from menus.topic._dim_red import DimensionalityReductionMenu
+from menus.topic._cluster import ClusterMenu
+from menus.topic._fine_tune import FineTuneMenu
+from menus.topic._plotting import TopicPlottingMenu
+from menus.optimization._optimization import OptimizationMenu
+from menus.optimization._section import SectionMenu
+from menus.optimization._plotting import OptimizationPlottingMenu
+from menus.optimization._scoring import ScoringMenu
+from menus.optimization._method_bayesian import BayesianMenu
+from menus.optimization._method_grid import GridSearchMenu
 
-from src.menus._menu import Menu
-from src.menus._landing import Landing
-from src.menus.topic._topic import TopicMenu
-from src.menus.topic._embeddings import EmbeddingsMenu
-from src.menus.topic._dim_red import DimensionalityReductionMenu
-from src.menus.topic._cluster import ClusterMenu
-from src.menus.topic._fine_tune import FineTuneMenu
-from src.menus.topic._plotting import TopicPlottingMenu
-from src.menus.optimization._optimization import OptimizationMenu
-from src.menus.optimization._section import SectionMenu
-from src.menus.optimization._plotting import OptimizationPlottingMenu
-from src.menus.optimization._scoring import ScoringMenu
-from src.menus.optimization._method_bayesian import BayesianMenu
-from src.menus.optimization._method_grid import GridSearchMenu
+
 def test_constructor():
     menu = Menu(["Option 1", "Option 2", "Option 3"], False)
     assert menu.options == ["Option 1", "Option 2", "Option 3", "Back", "Exit"]
     assert menu.is_leaf == False
+
 
 def test_setters():
     menu = Menu(["Option 1", "Option 2", "Option 3"], False)
@@ -29,24 +27,34 @@ def test_setters():
     menu.is_leaf = True
     assert menu.is_leaf == True
 
+
 def test_display():
     menu = Menu(["Option 1", "Option 2", "Option 3"], False)
     display = menu.display()
-    assert display == ["1. Option 1", "2. Option 2", "3. Option 3", "4. Back", "5. Exit"]
+    assert display == [
+        "1. Option 1",
+        "2. Option 2",
+        "3. Option 3",
+        "4. Back",
+        "5. Exit",
+    ]
 
-def test_get_choice_no_leaf():
+
+def test_get_choice_numeric_no_leaf():
     menu = Menu(["Option 1", "Option 2", "Option 3"], False)
-    choice = menu.get_choice(1)
+    choice = menu.get_choice_numeric(1)
     assert choice == 0
 
-def test_get_choice_leaf():
+
+def test_get_choice_numeric_leaf():
     menu = Menu(["Option 1", "Option 2", "Option 3"], True)
-    choice = menu.get_choice(1)
+    choice = menu.get_choice_numeric(1)
     assert choice == "Option 1"
-    choice = menu.get_choice(3)
+    choice = menu.get_choice_numeric(3)
     assert choice == "Option 3"
-    choice = menu.get_choice(4)
+    choice = menu.get_choice_numeric(4)
     assert choice == "Back"
+
 
 def test_landing():
     landing = Landing()
@@ -56,7 +64,7 @@ def test_landing():
         "Load Global Data",
         "Load Global Topic Model Configuration",
         "Load Global Optimization Configuration",
-        "Exit"
+        "Exit",
     ]
     assert landing.is_leaf == False
     assert landing.is_root == True
@@ -67,12 +75,13 @@ def test_landing():
         "3. Load Global Data",
         "4. Load Global Topic Model Configuration",
         "5. Load Global Optimization Configuration",
-        "6. Exit"
+        "6. Exit",
     ]
-    choice = landing.get_choice(1)
+    choice = landing.get_choice_numeric(1)
     assert choice == 0
-    choice = landing.get_choice(6)
+    choice = landing.get_choice_numeric(6)
     assert choice == 5
+
 
 def test_topic():
     topic = TopicMenu()
@@ -87,7 +96,7 @@ def test_topic():
         "Saving",
         "Run Topic Model",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert topic.is_leaf == False
     assert topic.is_root == False
@@ -103,13 +112,14 @@ def test_topic():
         "8. Saving",
         "9. Run Topic Model",
         "10. Back",
-        "11. Exit"
+        "11. Exit",
     ]
-    choice = topic.get_choice(1)
+    choice = topic.get_choice_numeric(1)
     assert choice == 0
-    choice = topic.get_choice(10)
+    choice = topic.get_choice_numeric(10)
     assert choice == 9
-    
+
+
 def test_cluster():
     cluster = ClusterMenu()
     assert cluster.options == [
@@ -122,7 +132,7 @@ def test_cluster():
         "affinity propagation",
         "mean shift",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert cluster.is_leaf == True
     assert cluster.is_root == False
@@ -137,25 +147,26 @@ def test_cluster():
         "7. affinity propagation",
         "8. mean shift",
         "9. Back",
-        "10. Exit"
+        "10. Exit",
     ]
-    choice = cluster.get_choice(1)
+    choice = cluster.get_choice_numeric(1)
     assert choice == "hdbscan"
-    choice = cluster.get_choice(10)
+    choice = cluster.get_choice_numeric(10)
     assert choice == "Exit"
+
 
 def test_embeddings():
     embeddings = EmbeddingsMenu()
     assert embeddings.options == [
         "all-MiniLM-L6-v2",
         "all-MiniLM-L12-v2",
-        "Muennighoff/SGPT-125M-weightedmean-msmarco-specb-bitfit",
-        "Muennighoff/SGPT-125M-weightedmean-nli-bitfit",
         "multi-qa-MiniLM-L6-cos-v1",
         "all-mpnet-base-v2",
+        "Muennighoff/SGPT-125M-weightedmean-msmarco-specb-bitfit",
+        "Muennighoff/SGPT-125M-weightedmean-nli-bitfit",
         "Muennighoff/SGPT-1.3B-weightedmean-msmarco-specb-bitfit",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert embeddings.is_leaf == True
     assert embeddings.is_root == False
@@ -163,18 +174,19 @@ def test_embeddings():
     assert display == [
         "1. all-MiniLM-L6-v2",
         "2. all-MiniLM-L12-v2",
-        "3. Muennighoff/SGPT-125M-weightedmean-msmarco-specb-bitfit",
-        "4. Muennighoff/SGPT-125M-weightedmean-nli-bitfit",
-        "5. multi-qa-MiniLM-L6-cos-v1",
-        "6. all-mpnet-base-v2",
+        "3. multi-qa-MiniLM-L6-cos-v1",
+        "4. all-mpnet-base-v2",
+        "5. Muennighoff/SGPT-125M-weightedmean-msmarco-specb-bitfit",
+        "6. Muennighoff/SGPT-125M-weightedmean-nli-bitfit",
         "7. Muennighoff/SGPT-1.3B-weightedmean-msmarco-specb-bitfit",
         "8. Back",
-        "9. Exit"
+        "9. Exit",
     ]
-    choice = embeddings.get_choice(1)
+    choice = embeddings.get_choice_numeric(1)
     assert choice == "all-MiniLM-L6-v2"
-    choice = embeddings.get_choice(9)
+    choice = embeddings.get_choice_numeric(9)
     assert choice == "Exit"
+
 
 def test_dim_red():
     dim_red = DimensionalityReductionMenu()
@@ -185,7 +197,7 @@ def test_dim_red():
         "Truncated SVD",
         "Factor Analysis",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert dim_red.is_leaf == True
     assert dim_red.is_root == False
@@ -197,12 +209,13 @@ def test_dim_red():
         "4. Truncated SVD",
         "5. Factor Analysis",
         "6. Back",
-        "7. Exit"
+        "7. Exit",
     ]
-    choice = dim_red.get_choice(1)
+    choice = dim_red.get_choice_numeric(1)
     assert choice == "UMAP"
-    choice = dim_red.get_choice(7)
+    choice = dim_red.get_choice_numeric(7)
     assert choice == "Exit"
+
 
 def test_fine_tune():
     finetune = FineTuneMenu()
@@ -217,7 +230,7 @@ def test_fine_tune():
         "Enable Maximal Marginal Relevance",
         "Enable Part of Speech filtering",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert finetune.is_leaf == True
     assert finetune.is_root == False
@@ -233,12 +246,13 @@ def test_fine_tune():
         "8. Enable Maximal Marginal Relevance",
         "9. Enable Part of Speech filtering",
         "10. Back",
-        "11. Exit"
+        "11. Exit",
     ]
-    choice = finetune.get_choice(1)
+    choice = finetune.get_choice_numeric(1)
     assert choice == "Enable 2-grams"
-    choice = finetune.get_choice(11)
+    choice = finetune.get_choice_numeric(11)
     assert choice == "Exit"
+
 
 def test_optimization():
     optimization = OptimizationMenu()
@@ -251,7 +265,7 @@ def test_optimization():
         "Configure Plotting",
         "Run Optimization",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert optimization.is_leaf == False
     assert optimization.is_root == False
@@ -265,11 +279,11 @@ def test_optimization():
         "6. Configure Plotting",
         "7. Run Optimization",
         "8. Back",
-        "9. Exit"
+        "9. Exit",
     ]
-    choice = optimization.get_choice(1)
+    choice = optimization.get_choice_numeric(1)
     assert choice == 0
-    choice = optimization.get_choice(9)
+    choice = optimization.get_choice_numeric(9)
     assert choice == 8
 
 
@@ -280,7 +294,7 @@ def test_section():
         "Dimensionality Reduction",
         "Clustering",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert section.is_leaf == True
     assert section.is_root == False
@@ -290,12 +304,13 @@ def test_section():
         "2. Dimensionality Reduction",
         "3. Clustering",
         "4. Back",
-        "5. Exit"
+        "5. Exit",
     ]
-    choice = section.get_choice(1)
+    choice = section.get_choice_numeric(1)
     assert choice == "LLM"
-    choice = section.get_choice(5)
+    choice = section.get_choice_numeric(5)
     assert choice == "Exit"
+
 
 def test_topic_plotting():
     topic_plotting = TopicPlottingMenu()
@@ -312,7 +327,7 @@ def test_topic_plotting():
         "Visualize Topics over Time",
         "Visualize Topics per Class",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert topic_plotting.is_leaf == True
     assert topic_plotting.is_root == False
@@ -330,12 +345,13 @@ def test_topic_plotting():
         "10. Visualize Topics over Time",
         "11. Visualize Topics per Class",
         "12. Back",
-        "13. Exit"
+        "13. Exit",
     ]
-    choice = topic_plotting.get_choice(1)
+    choice = topic_plotting.get_choice_numeric(1)
     assert choice == "Visualize Topics"
-    choice = topic_plotting.get_choice(13)
+    choice = topic_plotting.get_choice_numeric(13)
     assert choice == "Exit"
+
 
 def test_optimization_plotting():
     optimization_plotting = OptimizationPlottingMenu()
@@ -344,7 +360,7 @@ def test_optimization_plotting():
         "Plot Evaluations",
         "Plot Objective",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert optimization_plotting.is_leaf == True
     assert optimization_plotting.is_root == False
@@ -354,22 +370,23 @@ def test_optimization_plotting():
         "2. Plot Evaluations",
         "3. Plot Objective",
         "4. Back",
-        "5. Exit"
+        "5. Exit",
     ]
-    choice = optimization_plotting.get_choice(1)
+    choice = optimization_plotting.get_choice_numeric(1)
     assert choice == "Plot Convergence"
-    choice = optimization_plotting.get_choice(5)
+    choice = optimization_plotting.get_choice_numeric(5)
     assert choice == "Exit"
+
 
 def test_scoring():
     scoring = ScoringMenu()
     assert scoring.options == [
-        'silhouette_score',
-        'calinski_harabasz_score',
-        'davies_bouldin_score',
-        'composite (all)',
+        "silhouette_score",
+        "calinski_harabasz_score",
+        "davies_bouldin_score",
+        "composite (all)",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert scoring.is_leaf == True
     assert scoring.is_root == False
@@ -380,21 +397,22 @@ def test_scoring():
         "3. davies_bouldin_score",
         "4. composite (all)",
         "5. Back",
-        "6. Exit"
+        "6. Exit",
     ]
-    choice = scoring.get_choice(1)
+    choice = scoring.get_choice_numeric(1)
     assert choice == "silhouette_score"
-    choice = scoring.get_choice(6)
+    choice = scoring.get_choice_numeric(6)
     assert choice == "Exit"
+
 
 def test_bayesian():
     bayesian = BayesianMenu()
     assert bayesian.options == [
-        'Random Forest',
-        'Gradient Boosting',
-        'Gaussian Process',
+        "Random Forest",
+        "Gradient Boosting",
+        "Gaussian Process",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert bayesian.is_leaf == True
     assert bayesian.is_root == False
@@ -404,23 +422,24 @@ def test_bayesian():
         "2. Gradient Boosting",
         "3. Gaussian Process",
         "4. Back",
-        "5. Exit"
+        "5. Exit",
     ]
-    choice = bayesian.get_choice(1)
+    choice = bayesian.get_choice_numeric(1)
     assert choice == "Random Forest"
-    choice = bayesian.get_choice(5)
+    choice = bayesian.get_choice_numeric(5)
     assert choice == "Exit"
+
 
 def test_grid_search():
     grid_search = GridSearchMenu()
     assert grid_search.options == [
-        'Enable Successive Halving',
-        'Enable Random Search',
-        'Greedy',
-        'Random Walk',
-        'Genetic Algorithm',
+        "Enable Successive Halving",
+        "Enable Random Search",
+        "Greedy",
+        "Random Walk",
+        "Genetic Algorithm",
         "Back",
-        "Exit"
+        "Exit",
     ]
     assert grid_search.is_leaf == True
     assert grid_search.is_root == False
@@ -432,9 +451,9 @@ def test_grid_search():
         "4. Random Walk",
         "5. Genetic Algorithm",
         "6. Back",
-        "7. Exit"
+        "7. Exit",
     ]
-    choice = grid_search.get_choice(1)
+    choice = grid_search.get_choice_numeric(1)
     assert choice == "Enable Successive Halving"
-    choice = grid_search.get_choice(7)
+    choice = grid_search.get_choice_numeric(7)
     assert choice == "Exit"

@@ -1,5 +1,6 @@
 from src.menus._menu import Menu
 
+
 class TopicPlottingMenu(Menu):
     def __init__(self):
         is_root = False
@@ -10,12 +11,12 @@ class TopicPlottingMenu(Menu):
             "Visualize Document Hierarchy",
             "Visualize Topic Hierarchy",
             "Visualize Topic Tree",
-            "Visualize Topic Terms",	
-            "Visualize Topic Similarity",	
+            "Visualize Topic Terms",
+            "Visualize Topic Similarity",
             "Visualize Term Score Decline",
-            "Visualize Topic Probability Distribution",	
-            "Visualize Topics over Time",	
-            "Visualize Topics per Class"
+            "Visualize Topic Probability Distribution",
+            "Visualize Topics over Time",
+            "Visualize Topics per Class",
         ]
 
         super().__init__(options, is_leaf, is_root)

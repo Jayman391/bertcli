@@ -1,5 +1,6 @@
 from src.menus._menu import Menu
 
+
 class ClusterMenu(Menu):
     def __init__(self):
         is_root = False

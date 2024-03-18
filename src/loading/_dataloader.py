@@ -2,8 +2,8 @@ import json
 import pandas as pd
 from src.util._session import Session
 
-class DataLoader:
 
+class DataLoader:
     def __init__(self):
         pass
 
@@ -35,7 +35,6 @@ class DataLoader:
 
         return data
 
-
     def _load_config(self, config_path: str):
         """
         Load configuration from a file.
@@ -60,7 +59,6 @@ class DataLoader:
 
         return config
 
-
     def _no_args_passed(self):
         """
         Handle case when no arguments are passed.
@@ -82,25 +80,38 @@ class DataLoader:
 
             data = self._load_data(data_path)
 
-        config = {}
+        tm_config = {}
 
         config_bool = input("Do you want to load topic model configurations? (y/n): ")
 
         if config_bool.lower() == "y":
             config_path = input("Please enter the path to the configuration file:")
 
-            config = self._load_config(config_path)
+            tm_config = self._load_config(config_path)
 
-        return data, config
+        opt_config = {}
 
-    def initialize_session(self, data_path: str = None, config_path: str = None, optimization_path: str = None):
-        
+        opt_bool = input("Do you want to load optimization configurations? (y/n): ")
+
+        if opt_bool.lower() == "y":
+            opt_path = input("Please enter the path to the optimization file:")
+
+            opt_config = self._load_config(opt_path)
+
+        return data, tm_config, opt_config
+
+    def initialize_session(
+        self,
+        data_path: str = None,
+        config_path: str = None,
+        optimization_path: str = None,
+    ):
         data = []
         config = {}
         opt = {}
 
         if data_path is None and config_path is None:
-            data, config = self._no_args_passed()
+            data, config, opt = self._no_args_passed()
 
         if data_path is not None:
             data = self._load_data(data_path)

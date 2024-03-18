@@ -1,5 +1,6 @@
 from src.menus._menu import Menu
 
+
 class TopicMenu(Menu):
     def __init__(self):
         is_root = False
@@ -13,7 +14,7 @@ class TopicMenu(Menu):
             "Fine Tuning",
             "Plotting",
             "Saving",
-            "Run Topic Model"
+            "Run Topic Model",
         ]
 
         super().__init__(options, is_leaf, is_root)

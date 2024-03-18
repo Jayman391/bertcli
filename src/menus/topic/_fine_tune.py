@@ -1,5 +1,6 @@
 from src.menus._menu import Menu
 
+
 class FineTuneMenu(Menu):
     def __init__(self):
         is_root = False
