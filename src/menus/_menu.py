@@ -1,6 +1,5 @@
 from abc import ABC
 
-
 class Menu(ABC):
     def __init__(self, options: list, is_leaf: bool, is_root: bool = False):
         self._options = options
@@ -44,11 +43,11 @@ class Menu(ABC):
         return display
 
     def get_choice(self, choice):
-        if isinstance(choice, str):
-            if choice.isdigit():
-                choice = int(choice)
-            else:
-                raise ValueError("Choice must be a number")
+        if not str(choice).isdigit():
+     
+            raise ValueError("Choice must be a number")
+        
+        choice = int(choice)
 
         if self.is_leaf:
             return self.options[choice - 1]

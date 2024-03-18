@@ -1,6 +1,6 @@
-from bertcli.menus._menu import Menu
+from src.menus._menu import Menu
 
-class FineTune(Menu):
+class FineTuneMenu(Menu):
     def __init__(self):
         is_root = False
         is_leaf = True
