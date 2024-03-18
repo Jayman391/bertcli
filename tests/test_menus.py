@@ -1,18 +1,22 @@
-import pytest
-from bertcli.menus._menu import Menu
-from bertcli.menus._landing import Landing
-from bertcli.menus.topic._topic import TopicMenu
-from bertcli.menus.topic._embeddings import EmbeddingsMenu
-from bertcli.menus.topic._dim_red import DimensionalityReductionMenu
-from bertcli.menus.topic._cluster import ClusterMenu
-from bertcli.menus.topic._fine_tune import FineTuneMenu
-from bertcli.menus.topic._plotting import TopicPlottingMenu
-from bertcli.menus.optimization._optimization import OptimizationMenu
-from bertcli.menus.optimization._section import SectionMenu
-from bertcli.menus.optimization._plotting import OptimizationPlottingMenu
-from bertcli.menus.optimization._scoring import ScoringMenu
-from bertcli.menus.optimization._method_bayesian import BayesianMenu
-from bertcli.menus.optimization._method_grid import GridSearchMenu
+import sys
+import os
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, project_root)
+
+from src.bertcli.menus._menu import Menu
+from src.bertcli.menus._landing import Landing
+from src.bertcli.menus.topic._topic import TopicMenu
+from src.bertcli.menus.topic._embeddings import EmbeddingsMenu
+from src.bertcli.menus.topic._dim_red import DimensionalityReductionMenu
+from src.bertcli.menus.topic._cluster import ClusterMenu
+from src.bertcli.menus.topic._fine_tune import FineTuneMenu
+from src.bertcli.menus.topic._plotting import TopicPlottingMenu
+from src.bertcli.menus.optimization._optimization import OptimizationMenu
+from src.bertcli.menus.optimization._section import SectionMenu
+from src.bertcli.menus.optimization._plotting import OptimizationPlottingMenu
+from src.bertcli.menus.optimization._scoring import ScoringMenu
+from src.bertcli.menus.optimization._method_bayesian import BayesianMenu
+from src.bertcli.menus.optimization._method_grid import GridSearchMenu
 def test_constructor():
     menu = Menu(["Option 1", "Option 2", "Option 3"], False)
     assert menu.options == ["Option 1", "Option 2", "Option 3", "Back", "Exit"]

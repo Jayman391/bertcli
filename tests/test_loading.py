@@ -1,5 +1,11 @@
 import pytest 
-from bertcli.bertcli import BERTCLI
+
+import sys
+import os
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, project_root)
+
+from main import BERTCLI
 
 @pytest.mark.parametrize("filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"])
 def test_load_data(filepath):

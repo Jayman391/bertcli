@@ -1,4 +1,9 @@
-from bertcli.menus._menu import Menu
+import sys
+import os
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, project_root)
+
+from src.bertcli.menus._menu import Menu
 
 class EmbeddingsMenu(Menu):
     def __init__(self):

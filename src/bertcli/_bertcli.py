@@ -1,6 +1,7 @@
-import argparse
-from bertcli.loading._dataloader import initialize_session
+import sys
+sys.path.insert(0, '../src')
 
+from src.bertcli.loading._dataloader import DataLoader
 
 class BERTCLI:
     """
@@ -32,21 +33,6 @@ class BERTCLI:
 
         print("\nWelcome to the BERTopic CLI!")
 
-        self.global_session = initialize_session(
+        self.global_session = DataLoader().initialize_session(
             global_data_path, global_config_path, global_optmization_path
         )
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="BERTopic CLI")
-
-    parser.add_argument(
-        "--data", type=str, required=False, help="Path to the global data file"
-    )
-    parser.add_argument(
-        "--config", type=str, required=False, help="Path to the global config file"
-    )
-
-    args = parser.parse_args()
-
-    cli = BERTCLI(data_path=args.data, config_path=args.config)
