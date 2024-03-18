@@ -8,7 +8,7 @@ class Landing(Menu):
             "Run a Topic Model",
             "Run multiple Topic Models",
             "Load Global Data",
-            "Load Global Configuration",
+            "Load Global Topic Model Configuration",
             "Run an Optimization routine for a Topic Model (GPU reccomended)",
             "Run an Optimization routine for multiple Topic Models (GPU reccomended)",
             "Load Global Optimization Configuration",
