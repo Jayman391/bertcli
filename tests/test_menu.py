@@ -1,5 +1,5 @@
 import pytest
-from src.menus._menu import Menu
+from menus._menu import Menu
 
 
 def test_constructor():

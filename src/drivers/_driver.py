@@ -35,11 +35,15 @@ class Driver(ABC):
             data_path, config_path, optimization_path
         )
 
+        return self.session
+
     def log(self, type: str, message: str):
         if type not in self.session.logs.keys():
             self.session.logs[type] = []
 
         self.session.logs[type].append(message)
+
+        return {type:message}
 
     def run_menu(self):
         pass

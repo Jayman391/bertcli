@@ -8,15 +8,6 @@ class DataLoader:
         pass
 
     def _load_data(self, data_path: str):
-        """
-        Load data from a file.
-
-        Args:
-        data_path (str): Path to the data file.
-
-        Returns:
-        data: Loaded data.
-        """
 
         data = None
 
@@ -36,15 +27,6 @@ class DataLoader:
         return data
 
     def _load_config(self, config_path: str):
-        """
-        Load configuration from a file.
-
-        Args:
-        config_path (str): Path to the configuration file.
-
-        Returns:
-        config: Loaded configuration.
-        """
 
         flag = True
 
@@ -60,16 +42,6 @@ class DataLoader:
         return config
 
     def _no_args_passed(self):
-        """
-        Handle case when no arguments are passed.
-
-        Args:
-        None
-
-        Returns:
-        data: Loaded data.
-        config: Loaded configuration.
-        """
 
         data = []
 
