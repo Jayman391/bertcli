@@ -52,11 +52,9 @@ def test_landing():
     landing = Landing()
     assert landing.options == [
         "Run a Topic Model",
-        "Run multiple Topic Models",
+        "Run an Optimization routine for a Topic Model (GPU reccomended)",
         "Load Global Data",
         "Load Global Topic Model Configuration",
-        "Run an Optimization routine for a Topic Model (GPU reccomended)",
-        "Run an Optimization routine for multiple Topic Models (GPU reccomended)",
         "Load Global Optimization Configuration",
         "Exit"
     ]
@@ -65,18 +63,16 @@ def test_landing():
     display = landing.display()
     assert display == [
         "1. Run a Topic Model",
-        "2. Run multiple Topic Models",
+        "2. Run an Optimization routine for a Topic Model (GPU reccomended)",
         "3. Load Global Data",
         "4. Load Global Topic Model Configuration",
-        "5. Run an Optimization routine for a Topic Model (GPU reccomended)",
-        "6. Run an Optimization routine for multiple Topic Models (GPU reccomended)",
-        "7. Load Global Optimization Configuration",
-        "8. Exit"
+        "5. Load Global Optimization Configuration",
+        "6. Exit"
     ]
     choice = landing.get_choice(1)
     assert choice == 0
-    choice = landing.get_choice(8)
-    assert choice == 7
+    choice = landing.get_choice(6)
+    assert choice == 5
 
 def test_topic():
     topic = TopicMenu()
