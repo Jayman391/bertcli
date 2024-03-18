@@ -1,5 +1,9 @@
 ######## run tests ########
 python -m pytest tests -v -s
 
-############ clear __pycache__ ############
+## list of stdin inputs to test ##
+1: press no both times for the inputs
+
+############ clear __pycache__ and .pytest_cache ############
 find . -name '__pycache__' -exec rm -rf {} \;
+find . -name '.pytest_cache' -exec rm -rf {} \;
