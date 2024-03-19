@@ -30,6 +30,7 @@ def test_map_options_to_menus():
         "Option 1": sub_menu_1,
         "Option 2": sub_menu_2,
         "Option 3": sub_menu_3,
+        "Back": None,
     }
 
 

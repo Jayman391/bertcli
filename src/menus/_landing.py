@@ -10,12 +10,14 @@ class Landing(Menu):
             "Run a Topic Model",
             "Run an Optimization routine for a Topic Model (GPU reccomended)",
             "Run a Classification Model on a Topic Model",
-            ]
+        ]
+        
         menus = [
-            TopicMenu(session),
+            TopicMenu(session, self),
             None,
             None,
         ]
+
         if session.data is None:
             options.append("Load Global Data")
             menus.append(None)
@@ -25,6 +27,7 @@ class Landing(Menu):
         if session.config_optimization is None:
             options.append("Load Global Optimization Configuration")
             menus.append(None)
+            
         super().__init__(session, options, is_leaf, is_root)
         self._map_options_to_menus(options, menus)
 

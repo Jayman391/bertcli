@@ -49,9 +49,18 @@ class Driver(ABC):
     def run_menu(self, menu : Menu):
         menu.display()
         choice = menu.prompt_numeric("Choose an option: ")
+        if choice < 1 or choice > len(menu.options):
+            print("Invalid choice")
+            choice = menu.prompt_numeric("Choose an option: ")
         response = menu.handle_choice(choice)
 
         return response
+    
+    def process_response(self, response):
+        if isinstance(response, Menu):
+            return self.run_menu(response)
+        else:
+            return response
 
     def run_model(self):
         pass

@@ -14,13 +14,13 @@ def main():
   parser = argparse.ArgumentParser(description="BERTopic CLI")
 
   parser.add_argument(
-      "--data", type=str, required=False, help="Path to the global data file"
+      "data", type=str, nargs="?", help="Path to the global data file"
   )
   parser.add_argument(
-      "--tmconfig", type=str, required=False, help="Path to the global topic model config file"
+      "tmconfig", type=str, nargs="?", help="Path to the global topic model config file"
   )
   parser.add_argument(
-      "--optconfig", type=str, required=False, help="Path to the global optimization config file"
+      "optconfig", type=str, nargs="?", help="Path to the global optimization config file"
   )
   
   args = parser.parse_args()

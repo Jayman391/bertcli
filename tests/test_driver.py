@@ -7,7 +7,7 @@ def test_initialize_session():
     driver = Driver()
     session = driver.initialize_session(
         data_path="tests/test_data/data.csv",
-        config_path="tests/test_data/config.json",
+        config_path="tests/test_data/config-tm.json",
         optimization_path=None,)
     assert session is not None
 

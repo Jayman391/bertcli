@@ -1,13 +1,13 @@
 from abc import ABC
 from util._session import Session
 
-
 class Menu(ABC):
-    def __init__(self, session:Session, options: list, is_leaf: bool, is_root: bool = False):
+    def __init__(self, session:Session, options: list, is_leaf: bool, 
+                 is_root: bool = False, parent = None):
         self._options = options
         self._is_leaf = is_leaf
         self.is_root = is_root
-        self._parent: Menu = None
+        self._parent: Menu = parent
         self._session: Session = session
 
         if not is_root:
@@ -98,7 +98,7 @@ class Menu(ABC):
         if choice == len(self.options):
             self.exit()
         elif choice == len(self.options) - 1:
-            self.back()
+            return self.back()
         else:
             if self.is_leaf:
                 return self.options[choice - 1]
@@ -109,8 +109,13 @@ class Menu(ABC):
         if self.is_root:
             if len(options[:-1]) != len(menus):
                 raise ValueError("options and menus must be the same length")
-        elif len(options[:-2]) != len(menus):
-            raise ValueError("options and menus must be the same length")
+            
+            self._menus = dict(zip(options[:-1], menus))
+        else: 
+            if len(options[:-2]) != len(menus):
+                raise ValueError("options and menus must be the same length")
 
-        self._menus = dict(zip(options[:-2], menus))
+            self._menus = dict(zip(options[:-2], menus))
+            self._menus[options[-2]] = self.parent
+
         return self._menus

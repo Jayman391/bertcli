@@ -1,13 +1,16 @@
 from src.menus._menu import Menu
 from util._session import Session
+from menus.topic._embeddings import EmbeddingsMenu
+from menus.topic._dim_red import DimensionalityReductionMenu
+from menus.topic._cluster import ClusterMenu
+from menus.topic._fine_tune import FineTuneMenu
+from menus.topic._plotting import TopicPlottingMenu
 
 class TopicMenu(Menu):
-    def __init__(self, session: Session):
+    def __init__(self, session: Session, parent: Menu = None):
         is_root = False
         is_leaf = False
         options = [
-            "Load Data",
-            "Load Configuration",
             "Select LLM to generate Embeddings",
             "Select Dimensionality Reduction Technique",
             "Select Clustering Technique",
@@ -15,6 +18,22 @@ class TopicMenu(Menu):
             "Plotting",
             "Saving",
             "Run Topic Model",
+            "Load Session Data",
+            "Load Session Topic Model Configuration",
+        ]
+        
+        menus = [
+            EmbeddingsMenu(session, self),
+            DimensionalityReductionMenu(session, self),
+            ClusterMenu(session, self),
+            FineTuneMenu(session, self),
+            TopicPlottingMenu(session, self),
+            None,
+            None,
+            None,
+            None,
         ]
 
         super().__init__(session, options, is_leaf, is_root)
+
+        self._map_options_to_menus(options, menus)
