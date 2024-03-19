@@ -2,10 +2,8 @@ import argparse
 
 import sys
 import os
-
 # Get the current working directory
 cwd = os.getcwd()
-
 # Add the src directory to sys.path
 sys.path.append(os.path.join(cwd, 'src'))
 

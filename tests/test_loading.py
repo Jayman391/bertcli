@@ -101,15 +101,15 @@ def test_load_config():
     assert BERTcli.global_session.config_topic_model["seed"] == 42
 
 
-@pytest.mark.parametrize(
-    "data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json", None]
-)
+@pytest.mark.parametrize("data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json", None])
 @pytest.mark.parametrize("config_filepath", ["tests/test_data/config.json", None])
-def test_handle_globals(data_filepath, config_filepath):
-    cli = NLLPCLI(data_filepath, config_filepath)
+@pytest.mark.parametrize("opt_filepath", ["tests/test_data/config-opt.json"])
+def test_handle_globals(data_filepath, config_filepath, opt_filepath):
+    cli = NLLPCLI(data_filepath, config_filepath, opt_filepath)
+        
     assert cli.global_session.data is not None
     assert cli.global_session.config_topic_model is not None
-
+    assert cli.global_session.config_optimization is not None
 
 def test_invalid_filetype():
     with pytest.raises(Exception):

@@ -82,7 +82,7 @@ class DataLoader:
         config = {}
         opt = {}
 
-        if data_path is None and config_path is None:
+        if data_path is None and config_path is None and optimization_path is None:
             data, config, opt = self._no_args_passed()
 
         if data_path is not None:
