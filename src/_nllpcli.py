@@ -3,7 +3,7 @@ from src.drivers._tm_driver import TopicModelDriver
 from src.menus._menu import Menu
 from src.menus._landing import Landing
 from src.menus.topic._topic import TopicMenu
-
+from src.menus.optimization._optimization import OptimizationMenu
 class NLLPCLI:
     def __init__(
         self,
@@ -42,6 +42,8 @@ class NLLPCLI:
 
         if isinstance(response, TopicMenu):
             self._run_topic()
+        else:
+            pass
     
     def _run_topic(self):
         self.topic_driver = TopicModelDriver(session=self.global_session)
@@ -53,13 +55,18 @@ class NLLPCLI:
 
         menu = self.topic_menu
         while True:
-            choice = self.topic_driver.run_menu(menu)
+            self._process_choices(menu)
+            
+    def _process_choices(self, menu: Menu):
+        choice = self.topic_driver.run_menu(menu)
 
-            response = self.topic_driver.process_response(choice)
+        response = self.topic_driver.process_response(choice)
 
+        if isinstance(response, TopicMenu):
+            self._run_topic()
+        else:
             if isinstance(response, Menu):
                 menu = response
             else:
-                self.topic_driver.log("info", f"User chose {response}")
-
+                self.topic_driver.log("data", {choice: response})
 
