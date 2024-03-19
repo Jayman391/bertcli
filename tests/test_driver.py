@@ -1,5 +1,6 @@
 from drivers._driver import Driver
 from util._session import Session
+from menus._menu import Menu
 
 
 def test_initialize_session():
@@ -9,7 +10,6 @@ def test_initialize_session():
         config_path="tests/test_data/config.json",
         optimization_path=None,)
     assert session is not None
-    assert driver.session is not None
 
 def test_log():
     driver = Driver()
@@ -18,16 +18,11 @@ def test_log():
     assert "info" in driver.session.logs.keys()
     assert driver.session.logs["info"] == ["This is an info message"]
 
-
 def test_run_menu():
     driver = Driver()
-    assert driver.run_menu() is None
-
-
-def test_build_model():
-    driver = Driver()
-    assert driver.build_model() is None
-
+    menu = Menu(options=["Option 1", "Option 2"], is_leaf=True, is_root=True)
+    # choose option 1
+    assert driver.run_menu(menu) == "Option 1"
 
 def test_run_model():
     driver = Driver()

@@ -1,5 +1,6 @@
 from src.loading._dataloader import DataLoader
-
+from src.drivers._global_driver import GlobalDriver
+from src.menus._landing import Landing
 
 class BERTCLI:
     def __init__(
@@ -10,10 +11,13 @@ class BERTCLI:
     ):
         print("\nWelcome to the BERTopic CLI!")
 
-        self.global_session = None
+        driver = GlobalDriver()
 
-        loader = DataLoader()
-
-        self.global_session = loader.initialize_session(
-            global_data_path, global_config_path, global_optmization_path
+        self.global_session = driver.initialize_session(
+            data_path=global_data_path,
+            config_path=global_config_path,
+            optimization_path=global_optmization_path,
         )
+
+    def run(self):
+        pass

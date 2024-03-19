@@ -68,21 +68,13 @@ class Menu(ABC):
 
     def prompt_numeric(self, prompt: str):
         choice = input(prompt)
-        return self.get_choice_numeric(choice)
+        try:
+            return int(choice)
+        except ValueError:
+            return self.prompt_numeric(prompt)
 
     def prompt_string(self, prompt: str):
         return input(prompt)
-
-    def get_choice_numeric(self, choice):
-        if not str(choice).isdigit():
-            raise ValueError("Choice must be a number")
-
-        choice = int(choice)
-
-        if self.is_leaf:
-            return self.options[choice - 1]
-        else:
-            return choice - 1
 
     def back(self):
         return self.parent

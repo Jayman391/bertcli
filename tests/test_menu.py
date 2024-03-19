@@ -43,22 +43,6 @@ def test_display():
     ]
 
 
-def test_get_choice_numeric_no_leaf():
-    menu = Menu(["Option 1", "Option 2", "Option 3"], False)
-    choice = menu.get_choice_numeric(1)
-    assert choice == 0
-
-
-def test_get_choice_numeric_leaf():
-    menu = Menu(["Option 1", "Option 2", "Option 3"], True)
-    choice = menu.get_choice_numeric(1)
-    assert choice == "Option 1"
-    choice = menu.get_choice_numeric(3)
-    assert choice == "Option 3"
-    choice = menu.get_choice_numeric(4)
-    assert choice == "Back"
-
-
 def test_back():
     menu = Menu(["Option 1", "Option 2", "Option 3"], False)
     menu.parent = Menu(["Parent Option 1", "Parent Option 2"], False)

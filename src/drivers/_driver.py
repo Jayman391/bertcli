@@ -1,11 +1,12 @@
 from abc import ABC
 from src.menus._menu import Menu
 from src.loading._dataloader import DataLoader
+from util._session import Session
 
 
 class Driver(ABC):
     def __init__(self):
-        self._session = None
+        self._session:Session = None
         self._session_data = {}
 
     @property
@@ -45,11 +46,12 @@ class Driver(ABC):
 
         return {type:message}
 
-    def run_menu(self):
-        pass
+    def run_menu(self, menu : Menu):
+        menu.display()
+        choice = menu.prompt_numeric("Choose an option: ")
+        response = menu.handle_choice(choice)
 
-    def build_model(self):
-        pass
+        return response
 
     def run_model(self):
         pass

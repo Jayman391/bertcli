@@ -1,5 +1,5 @@
 from src.menus._menu import Menu
-
+from src.menus.topic._topic import TopicMenu
 
 class Landing(Menu):
     def __init__(self):
@@ -12,5 +12,13 @@ class Landing(Menu):
             "Load Global Topic Model Configuration",
             "Load Global Optimization Configuration",
         ]
-
         super().__init__(options, is_leaf, is_root)
+
+        menus = [
+            TopicMenu(),
+            None,
+            None,
+            None,
+            None
+        ]
+        self._map_options_to_menus(options, menus)
