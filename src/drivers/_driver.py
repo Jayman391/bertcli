@@ -5,8 +5,8 @@ from util._session import Session
 
 
 class Driver(ABC):
-    def __init__(self):
-        self._session:Session = None
+    def __init__(self, session:Session = None):
+        self._session:Session = session
         self._session_data = {}
 
     @property

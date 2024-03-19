@@ -1,6 +1,15 @@
 import argparse
 
-from src._bertcli import BERTCLI
+import sys
+import os
+
+# Get the current working directory
+cwd = os.getcwd()
+
+# Add the src directory to sys.path
+sys.path.append(os.path.join(cwd, 'src'))
+
+from _nllpcli import NLLPCLI
 
 def main():
     
@@ -18,7 +27,7 @@ def main():
   
   args = parser.parse_args()
 
-  cli = BERTCLI(global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig)
+  cli = NLLPCLI(global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig)
 
 if __name__ == "__main__":
     

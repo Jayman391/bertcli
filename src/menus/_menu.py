@@ -1,12 +1,14 @@
 from abc import ABC
+from util._session import Session
 
 
 class Menu(ABC):
-    def __init__(self, options: list, is_leaf: bool, is_root: bool = False):
+    def __init__(self, session:Session, options: list, is_leaf: bool, is_root: bool = False):
         self._options = options
         self._is_leaf = is_leaf
         self.is_root = is_root
         self._parent: Menu = None
+        self._session: Session = session
 
         if not is_root:
             self.options.append("Back")
@@ -55,6 +57,16 @@ class Menu(ABC):
             raise TypeError("must pass a Menu object")
         self._menus[option] = menu
 
+    @property
+    def session(self):
+        return self._session
+    
+    @session.setter
+    def session(self, session):
+        if not isinstance(session, Session):
+            raise TypeError("session must be a Session object")
+        self._session = session
+
     def display(self):
         display = []
         for i, option in enumerate(self.options):
@@ -94,7 +106,11 @@ class Menu(ABC):
                 return self.menus[self.options[choice - 1]]
 
     def _map_options_to_menus(self, options: list, menus: list):
-        if len(options[:-2]) != len(menus):
+        if self.is_root:
+            if len(options[:-1]) != len(menus):
+                raise ValueError("options and menus must be the same length")
+        elif len(options[:-2]) != len(menus):
             raise ValueError("options and menus must be the same length")
+
         self._menus = dict(zip(options[:-2], menus))
         return self._menus

@@ -20,7 +20,8 @@ def test_log():
 
 def test_run_menu():
     driver = Driver()
-    menu = Menu(options=["Option 1", "Option 2"], is_leaf=True, is_root=True)
+    session = Session()
+    menu = Menu(session, options=["Option 1", "Option 2"], is_leaf=True, is_root=True)
     # choose option 1
     assert driver.run_menu(menu) == "Option 1"
 

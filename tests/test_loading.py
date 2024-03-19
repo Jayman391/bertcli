@@ -1,13 +1,13 @@
 import pytest
 
-from _bertcli import BERTCLI
+from _nllpcli import NLLPCLI
 
 
 @pytest.mark.parametrize(
     "filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"]
 )
 def test_load_data(filepath):
-    BERTcli = BERTCLI(filepath)
+    BERTcli = NLLPCLI(filepath)
     assert BERTcli.global_session.data is not None
     assert BERTcli.global_session.config_topic_model == {}
     """ 
@@ -54,7 +54,7 @@ def test_load_data(filepath):
 
 
 def test_load_config():
-    BERTcli = BERTCLI("tests/test_data/data.csv", "tests/test_data/config.json")
+    BERTcli = NLLPCLI("tests/test_data/data.csv", "tests/test_data/config.json")
     assert BERTcli.global_session.data is not None
     assert BERTcli.global_session.config_topic_model is not None
     assert BERTcli.global_session.config_topic_model["language"] == "english"
@@ -106,16 +106,16 @@ def test_load_config():
 )
 @pytest.mark.parametrize("config_filepath", ["tests/test_data/config.json", None])
 def test_handle_globals(data_filepath, config_filepath):
-    cli = BERTCLI(data_filepath, config_filepath)
+    cli = NLLPCLI(data_filepath, config_filepath)
     assert cli.global_session.data is not None
     assert cli.global_session.config_topic_model is not None
 
 
 def test_invalid_filetype():
     with pytest.raises(Exception):
-        cli = BERTCLI("tests/test_data/data.txt")
+        cli = NLLPCLI("tests/test_data/data.txt")
 
 
 def test_invalid_config_file():
     with pytest.raises(Exception):
-        cli = BERTCLI("tests/test_data/data.csv", "tests/test_data/config.txt")
+        cli = NLLPCLI("tests/test_data/data.csv", "tests/test_data/config.txt")
