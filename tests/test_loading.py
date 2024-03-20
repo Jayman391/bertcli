@@ -102,7 +102,7 @@ def test_load_config():
 
 @pytest.mark.parametrize("data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json", None])
 @pytest.mark.parametrize("config_filepath", ["tests/test_data/config-tm.json", None])
-@pytest.mark.parametrize("opt_filepath", ["tests/test_data/config-opt.json", None])
+@pytest.mark.parametrize("opt_filepath", ["tests/test_data/config-opt.json"])
 def test_handle_globals(data_filepath, config_filepath, opt_filepath):
     cli = NLLPCLI(data_filepath, config_filepath, opt_filepath, True)
         

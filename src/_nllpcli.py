@@ -34,11 +34,12 @@ class NLLPCLI:
         self.landing = Landing(session=self.driver.session)
         self.driver.log("info", "Initialized Landing Menu")
 
+        if self.debug:
+            self.landing.handle_choice(1)
+            return 
+
         response = self.driver.run_menu(self.landing)
         self.driver.log("info", f"User chose {response}")
-
-        if self.debug:
-            return 
 
         if isinstance(response, TopicMenu):
             self._run_topic()
