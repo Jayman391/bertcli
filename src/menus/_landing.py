@@ -1,5 +1,6 @@
 from src.menus._menu import Menu
 from src.menus.topic._topic import TopicMenu
+from src.menus._configmenu import ConfigMenu
 from util._session import Session
 from src.loading._dataloader import DataLoader
 
@@ -11,7 +12,7 @@ class Landing(Menu):
             "Run a Topic Model",
             "Run an Optimization routine for a Topic Model (GPU reccomended)",
             "Run a Classification Model",
-            "Load Global Configuration",
+            "Load Global Configuration Files",
         ]
     
         self.dataloader = DataLoader()
@@ -22,11 +23,11 @@ class Landing(Menu):
             TopicMenu(session),
             None,
             None,
-            None,
+            ConfigMenu(session),
         ]
 
         self.name = "Landing"
 
-        self._map_options_to_menus(options, menus)
+        self.map_options_to_menus(options, menus)
         
 

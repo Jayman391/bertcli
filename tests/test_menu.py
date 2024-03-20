@@ -25,7 +25,7 @@ def test_map_options_to_menus():
     sub_menu_2 = Menu(session, ["Sub Option 3", "Sub Option 4"], True)
     sub_menu_3 = Menu(session, ["Sub Option 5", "Sub Option 6"], True)
     sub_menu_list = [sub_menu_1, sub_menu_2, sub_menu_3]
-    menu._map_options_to_menus(menu.options, sub_menu_list)
+    menu.map_options_to_menus(menu.options, sub_menu_list)
     assert menu.menus == {
         "Option 1": sub_menu_1,
         "Option 2": sub_menu_2,
@@ -71,7 +71,7 @@ def test_handle_choice_non_leaf():
     sub_menu_2 = Menu(session, ["Sub Option 3", "Sub Option 4"], True)
     sub_menu_3 = Menu(session, ["Sub Option 5", "Sub Option 6"], True)
     sub_menu_list = [sub_menu_1, sub_menu_2, sub_menu_3]
-    menu._map_options_to_menus(menu.options, sub_menu_list)
+    menu.map_options_to_menus(menu.options, sub_menu_list)
 
     choice = menu.handle_choice(1)
     assert choice == sub_menu_1

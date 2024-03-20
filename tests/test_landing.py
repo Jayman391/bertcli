@@ -12,32 +12,14 @@ def test_init_data():
     assert landing.options == [
         "Run a Topic Model",
         "Run an Optimization routine for a Topic Model (GPU reccomended)",
-        "Run a Classification Model on a Topic Model",
-        "Exit"
+        "Run a Classification Model",
+        "Load Global Configuration Files",
     ]
     assert isinstance(list(landing.menus.values())[0], TopicMenu)
     with pytest.raises(SystemExit):
-            landing.handle_choice(4)
+            landing.handle_choice=(5)
     
     # Check if the is_root and is_leaf attributes are set correctly
     assert landing.is_root == True
     assert landing.is_leaf == False
 
-def test_init_no_data():
-    # Check if the options and menus are updated based on session data and configurations
-    session.data = []
-    session.config_topic_model = {}
-    session.config_optimization = {}
-    landing = Landing(session)
-    assert landing.options == [
-        "Run a Topic Model",
-        "Run an Optimization routine for a Topic Model (GPU reccomended)",
-        "Run a Classification Model on a Topic Model",
-        "Load Global Data",
-        "Load Global Topic Model Configuration",
-        "Load Global Optimization Configuration",
-        "Exit"
-    ]
-    assert type(list(landing.menus.values())[0]) == TopicMenu
-    with pytest.raises(SystemExit):
-                landing.handle_choice(7)

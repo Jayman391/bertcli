@@ -6,7 +6,7 @@ def test_session_initialization():
     assert session.data == []
     assert session.config_topic_model == {}
     assert session.config_optimization == {}
-    assert session.logs == {"topic_model": [], "optimization": [], "errors": []}
+    assert session.logs == {"errors": [], "info": [], "data": []}
     assert session.plot_dir is None
     assert session.topic_model_factory.data is None
 
@@ -17,7 +17,7 @@ def test_session_initialization_with_data():
     assert session.data == data
     assert session.config_topic_model == {}
     assert session.config_optimization == {}
-    assert session.logs == {"topic_model": [], "optimization": [], "errors": []}
+    assert session.logs == {"errors": [], "info": [], "data": []}
     assert session.plot_dir is None
     assert session.topic_model_factory.data is None
 
@@ -31,24 +31,28 @@ def test_session_initialization_with_configs():
     assert session.data == []
     assert session.config_topic_model == config_topic_model
     assert session.config_optimization == config_optimization
-    assert session.logs == {"topic_model": [], "optimization": [], "errors": []}
+    assert session.logs == {"errors": [], "info": [], "data": []}
     assert session.plot_dir is None
     assert session.topic_model_factory.data is None
 
 
 def test_session_logs():
     session = Session()
-    assert session.logs == {"topic_model": [], "optimization": [], "errors": []}
+    assert session.logs == {"errors": [], "info": [], "data": []}
 
-    session.logs["topic_model"].append("Log 1")
-    session.logs["topic_model"].append("Log 2")
-    session.logs["optimization"].append("Log 3")
     session.logs["errors"].append("Error 1")
+    session.logs["errors"].append("Error 2")
+
+    session.logs["info"].append("Info 1")
+    session.logs["info"].append("Info 2")
+
+    session.logs["data"].append("Data 1")
+    session.logs["data"].append("Data 2")
 
     assert session.logs == {
-        "topic_model": ["Log 1", "Log 2"],
-        "optimization": ["Log 3"],
-        "errors": ["Error 1"],
+        "errors": ["Error 1", "Error 2"],
+        "info": ["Info 1", "Info 2"],
+        "data": ["Data 1", "Data 2"],
     }
 
 

@@ -1,5 +1,6 @@
 from abc import ABC
 from util._session import Session
+from loading._dataloader import DataLoader
 
 class Menu(ABC):
     def __init__(self, session:Session, options: list, is_leaf: bool, 
@@ -69,7 +70,6 @@ class Menu(ABC):
         self._session = session
 
     def set_parent(self, parent):
-        print(f"Setting parent to {parent}")
         self.parent = parent
 
     def display(self):
@@ -102,16 +102,20 @@ class Menu(ABC):
         if choice == len(self.options):
             self.exit()
         else:
-            if not self.is_root:
+            if self.is_leaf:
+                return self.options[choice - 1]
+            elif self.is_root:
+                    return self.menus[self.options[choice - 1]]
+            else:
                 if choice == len(self.options) - 1:
                     self.session.logs["info"].append(f"User went back to {self.parent}")
                     return self.back()
-            if self.is_leaf:
-                return self.options[choice - 1]
-            else:
-                return self.menus[self.options[choice - 1]]
+                else:
+                    return self.menus[self.options[choice - 1]]
+            
+            
 
-    def _map_options_to_menus(self, options: list, menus: list):
+    def map_options_to_menus(self, options: list, menus: list):
         if self.is_root:
             if len(options[:-1]) != len(menus):
                 raise ValueError("options and menus must be the same length")

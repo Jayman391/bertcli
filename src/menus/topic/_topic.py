@@ -5,6 +5,7 @@ from menus.topic._dim_red import DimensionalityReductionMenu
 from menus.topic._cluster import ClusterMenu
 from menus.topic._fine_tune import FineTuneMenu
 from menus.topic._plotting import TopicPlottingMenu
+from menus._configmenu import ConfigMenu
 
 class TopicMenu(Menu):
     def __init__(self, session: Session):
@@ -18,8 +19,7 @@ class TopicMenu(Menu):
             "Plotting",
             "Saving",
             "Run Topic Model",
-            "Load Session Data",
-            "Load Session Topic Model Configuration",
+            "Load Session Configuration",
         ]
         
         menus = [
@@ -30,12 +30,11 @@ class TopicMenu(Menu):
             TopicPlottingMenu(session),
             None,
             None,
-            None,
-            None,
+            ConfigMenu(session),
         ]
 
         super().__init__(session, options, is_leaf, is_root)
 
         self.name = "Topic"
 
-        self._map_options_to_menus(options, menus)
+        self.map_options_to_menus(options, menus)
