@@ -25,6 +25,8 @@ class Landing(Menu):
             None,
         ]
 
+        self.name = "Landing"
+
         self._map_options_to_menus(options, menus)
         
 

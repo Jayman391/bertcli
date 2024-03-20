@@ -14,3 +14,5 @@ class DimensionalityReductionMenu(Menu):
         ]
 
         super().__init__(session,options, is_leaf, is_root)
+
+        self.name = "Dimensionality Reduction"

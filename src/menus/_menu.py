@@ -17,6 +17,19 @@ class Menu(ABC):
 
         self._menus = []
 
+        self._name : str = ""
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, name: str):
+        self._name = name
+
     @property
     def options(self):
         return self._options

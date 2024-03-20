@@ -36,4 +36,6 @@ class TopicMenu(Menu):
 
         super().__init__(session, options, is_leaf, is_root)
 
+        self.name = "Topic"
+
         self._map_options_to_menus(options, menus)
