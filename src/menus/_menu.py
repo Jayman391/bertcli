@@ -84,9 +84,13 @@ class Menu(ABC):
 
     def prompt_numeric(self, prompt: str):
         choice = input(prompt)
+        flag = False
         try:
             return int(choice)
         except ValueError:
+            flag = True
+        if flag:
+            print("Invalid choice. Please choose a number.")
             return self.prompt_numeric(prompt)
 
     def prompt_string(self, prompt: str):

@@ -50,7 +50,7 @@ class Driver(ABC):
         menu.display()
         choice = menu.prompt_numeric("Choose an option: ")
         if choice < 1 or choice > len(menu.options):
-            print("Invalid choice")
+            print("Invalid choice. Please choose a valid number.")
             choice = menu.prompt_numeric("Choose an option: ")
         response = menu.handle_choice(choice)
 
