@@ -3,7 +3,7 @@ from src.builders._tm_factory import TopicModelFactory
 
 class Session:
     def __init__(
-        self, data=None, config_topic_model=None, config_optimization=None
+        self, data=[], config_topic_model={}, config_optimization={}
     ) -> None:
         self.data = data
         self.config_topic_model = config_topic_model

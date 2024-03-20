@@ -18,7 +18,7 @@ class Landing(Menu):
             None,
         ]
 
-        if session.data == []:
+        if len(session.data) == 0:
             options.append("Load Global Data")
             menus.append(None)
         if session.config_topic_model == {}:

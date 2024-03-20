@@ -3,9 +3,9 @@ from util._session import Session
 
 def test_session_initialization():
     session = Session()
-    assert session.data is None
-    assert session.config_topic_model is None
-    assert session.config_optimization is None
+    assert session.data == []
+    assert session.config_topic_model == {}
+    assert session.config_optimization == {}
     assert session.logs == {"topic_model": [], "optimization": [], "errors": []}
     assert session.plot_dir is None
     assert session.topic_model_factory.data is None
@@ -15,8 +15,8 @@ def test_session_initialization_with_data():
     data = [1, 2, 3]
     session = Session(data=data)
     assert session.data == data
-    assert session.config_topic_model is None
-    assert session.config_optimization is None
+    assert session.config_topic_model == {}
+    assert session.config_optimization == {}
     assert session.logs == {"topic_model": [], "optimization": [], "errors": []}
     assert session.plot_dir is None
     assert session.topic_model_factory.data is None
@@ -28,7 +28,7 @@ def test_session_initialization_with_configs():
     session = Session(
         config_topic_model=config_topic_model, config_optimization=config_optimization
     )
-    assert session.data is None
+    assert session.data == []
     assert session.config_topic_model == config_topic_model
     assert session.config_optimization == config_optimization
     assert session.logs == {"topic_model": [], "optimization": [], "errors": []}

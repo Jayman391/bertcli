@@ -62,7 +62,7 @@ class DataLoader:
             config_bool = self._prompt_yes_no("Do you want to load topic model configurations? (y/n): ")
 
             if config_bool.lower() == "y":
-                config_path = self.input("Please enter the path to the configuration file:")
+                config_path = input("Please enter the path to the configuration file:")
 
                 tm_config = self._load_config(config_path)
 
