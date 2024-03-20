@@ -44,33 +44,44 @@ class DataLoader:
     def _no_args_passed(self):
 
         data = []
-
-        data_bool = input("Would you like to use a dataset for this session? (y/n): ")
-
-        if data_bool.lower() == "y":
-            data_path = input("Please enter the path to the data file: ")
-
-            data = self._load_data(data_path)
-
         tm_config = {}
-
-        config_bool = input("Do you want to load topic model configurations? (y/n): ")
-
-        if config_bool.lower() == "y":
-            config_path = input("Please enter the path to the configuration file:")
-
-            tm_config = self._load_config(config_path)
-
         opt_config = {}
 
-        opt_bool = input("Do you want to load optimization configurations? (y/n): ")
+        c = self._prompt_yes_no("\nWould you like to configure this session? (y/n): ")
 
-        if opt_bool.lower() == "y":
-            opt_path = input("Please enter the path to the optimization file:")
+        if c.lower() == "y":
 
-            opt_config = self._load_config(opt_path)
+            data_bool = self._prompt_yes_no("Would you like to use a dataset for this session? (y/n): ")
+
+            if data_bool.lower() == "y":
+                data_path = input("Please enter the path to the data file: ")
+
+                data = self._load_data(data_path)
+
+
+            config_bool = self._prompt_yes_no("Do you want to load topic model configurations? (y/n): ")
+
+            if config_bool.lower() == "y":
+                config_path = self.input("Please enter the path to the configuration file:")
+
+                tm_config = self._load_config(config_path)
+
+
+            opt_bool = self._prompt_yes_no("Do you want to load optimization configurations? (y/n): ")
+
+            if opt_bool.lower() == "y":
+                opt_path = input("Please enter the path to the optimization file:")
+
+                opt_config = self._load_config(opt_path)
 
         return data, tm_config, opt_config
+    
+    def _prompt_yes_no(self, message: str):
+        response = input(message).lower() 
+        if not response in ["y", "n"]:
+            print("Invalid response")
+            return self._prompt_yes_no(message)
+        return response
 
     def initialize_session(
         self,

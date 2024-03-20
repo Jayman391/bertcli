@@ -72,7 +72,6 @@ class Menu(ABC):
         for i, option in enumerate(self.options):
             display.append(f"{i+1}. {option}")
 
-        print("\n")
         for line in display:
             print(line)
 
