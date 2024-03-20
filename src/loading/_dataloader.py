@@ -47,41 +47,58 @@ class DataLoader:
         tm_config = {}
         opt_config = {}
 
-        c = self._prompt_yes_no("\nWould you like to configure this session? (y/n): ")
+        if self.prompt_yes_no("\nWould you like to configure this session? (y/n): ").lower() == "y":
 
-        if c.lower() == "y":
+            data = self.prompt_load_data()
 
-            data_bool = self._prompt_yes_no("Would you like to use a dataset for this session? (y/n): ")
+            tm_config = self.prompt_load_tm_config()
 
-            if data_bool.lower() == "y":
-                data_path = input("Please enter the path to the data file: ")
-
-                data = self._load_data(data_path)
-
-
-            config_bool = self._prompt_yes_no("Do you want to load topic model configurations? (y/n): ")
-
-            if config_bool.lower() == "y":
-                config_path = input("Please enter the path to the configuration file:")
-
-                tm_config = self._load_config(config_path)
-
-
-            opt_bool = self._prompt_yes_no("Do you want to load optimization configurations? (y/n): ")
-
-            if opt_bool.lower() == "y":
-                opt_path = input("Please enter the path to the optimization file:")
-
-                opt_config = self._load_config(opt_path)
+            opt_config = self.prompt_load_opt_config()
 
         return data, tm_config, opt_config
     
-    def _prompt_yes_no(self, message: str):
+    def prompt_yes_no(self, message: str):
         response = input(message).lower() 
         if not response in ["y", "n"]:
             print("Invalid response")
-            return self._prompt_yes_no(message)
+            return self.prompt_yes_no(message)
         return response
+
+    def prompt_load_data(self):
+        data_bool = self.prompt_yes_no("Would you like to use a dataset for this session? (y/n): ")
+
+        data = []
+
+        if data_bool.lower() == "y":
+            data_path = input("Please enter the path to the data file: ")
+
+            data = self._load_data(data_path)
+
+        return data
+        
+    def prompt_load_tm_config(self):
+        config_bool = self.prompt_yes_no("Do you want to load topic model configurations? (y/n): ")
+
+        config = {}
+
+        if config_bool.lower() == "y":
+            config_path = input("Please enter the path to the configuration file:")
+
+            config = self._load_config(config_path)
+
+        return config
+
+    def prompt_load_opt_config(self):
+        opt_bool = self.prompt_yes_no("Do you want to load optimization configurations? (y/n): ")
+
+        config = {}
+
+        if opt_bool.lower() == "y":
+            opt_path = input("Please enter the path to the optimization file:")
+
+            config = self._load_config(opt_path)
+
+        return config
 
     def initialize_session(
         self,

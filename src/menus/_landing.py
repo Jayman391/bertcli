@@ -1,6 +1,7 @@
 from src.menus._menu import Menu
 from src.menus.topic._topic import TopicMenu
 from util._session import Session
+from src.loading._dataloader import DataLoader
 
 class Landing(Menu):
     def __init__(self, session:Session):
@@ -9,25 +10,21 @@ class Landing(Menu):
         options = [
             "Run a Topic Model",
             "Run an Optimization routine for a Topic Model (GPU reccomended)",
-            "Run a Classification Model on a Topic Model",
+            "Run a Classification Model",
+            "Load Global Configuration",
         ]
-        
+    
+        self.dataloader = DataLoader()
+
+        super().__init__(session, options, is_leaf, is_root)
+
         menus = [
-            TopicMenu(session, self),
+            TopicMenu(session),
+            None,
             None,
             None,
         ]
 
-        if len(session.data) == 0:
-            options.append("Load Global Data")
-            menus.append(None)
-        if session.config_topic_model == {}:
-            options.append("Load Global Topic Model Configuration")
-            menus.append(None)
-        if session.config_optimization == {}:
-            options.append("Load Global Optimization Configuration")
-            menus.append(None)
-            
-        super().__init__(session, options, is_leaf, is_root)
         self._map_options_to_menus(options, menus)
+        
 

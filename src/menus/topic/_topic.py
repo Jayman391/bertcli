@@ -7,7 +7,7 @@ from menus.topic._fine_tune import FineTuneMenu
 from menus.topic._plotting import TopicPlottingMenu
 
 class TopicMenu(Menu):
-    def __init__(self, session: Session, parent: Menu = None):
+    def __init__(self, session: Session):
         is_root = False
         is_leaf = False
         options = [
@@ -23,11 +23,11 @@ class TopicMenu(Menu):
         ]
         
         menus = [
-            EmbeddingsMenu(session, self),
-            DimensionalityReductionMenu(session, self),
-            ClusterMenu(session, self),
-            FineTuneMenu(session, self),
-            TopicPlottingMenu(session, self),
+            EmbeddingsMenu(session),
+            DimensionalityReductionMenu(session),
+            ClusterMenu(session),
+            FineTuneMenu(session),
+            TopicPlottingMenu(session),
             None,
             None,
             None,

@@ -1,5 +1,6 @@
+from src.util._session import Session
+from src.drivers._driver import Driver
 from src.drivers._global_driver import GlobalDriver
-from src.drivers._tm_driver import TopicModelDriver
 from src.menus._menu import Menu
 from src.menus._landing import Landing
 from src.menus.topic._topic import TopicMenu
@@ -37,37 +38,23 @@ class NLLPCLI:
         if self.debug:
             self.landing.handle_choice(1)
             return 
+        
+        for _, value in self.landing.menus.items():
+            if value is not None and isinstance(value, Menu):
+                value.set_parent(self.landing)
 
-        response = self.driver.run_menu(self.landing)
-        self.driver.log("info", f"User chose {response}")
-
-        if isinstance(response, TopicMenu):
-            self._run_topic()
-        else:
-            pass
-    
-    def _run_topic(self):
-        self.topic_driver = TopicModelDriver(session=self.global_session)
-        self.topic_driver.log("info", "Initialized Topic Model Driver")
-
-        self.topic_menu = TopicMenu(self.topic_driver.session, self.landing)
-        self.topic_driver.log("info", "Initialized Topic Menu")
-        self.topic_menu.parent = self.landing
-
-        menu = self.topic_menu
-        while True:
-            self._process_choices(menu)
+        self._process_responses(self.landing, self.driver)
             
-    def _process_choices(self, menu: Menu):
-        choice = self.topic_driver.run_menu(menu)
+    def _process_responses(self, menu: Menu, driver:Driver):
+      
+        response = driver.process_response(menu)
 
-        response = self.topic_driver.process_response(choice)
+        driver.log("data", {menu: response})
+        print(driver.session.logs["data"])
 
-        if isinstance(response, TopicMenu):
-            self._run_topic()
+        if isinstance(response, Menu):
+            if not isinstance(response, (Landing, TopicMenu, OptimizationMenu)):
+                response.set_parent(menu)
+            self._process_responses(response, driver)
         else:
-            if isinstance(response, Menu):
-                menu = response
-            else:
-                self.topic_driver.log("data", {choice: response})
-
+            self._process_responses(menu.parent, driver)

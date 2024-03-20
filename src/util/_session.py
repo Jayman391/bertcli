@@ -8,7 +8,7 @@ class Session:
         self.data = data
         self.config_topic_model = config_topic_model
         self.config_optimization = config_optimization
-        self.logs = {"topic_model": [], "optimization": [], "errors": []}
+        self.logs = {"errors": [], "info": [], "data": []}
         self.plot_dir = None
 
         self.topic_model_factory = TopicModelFactory()

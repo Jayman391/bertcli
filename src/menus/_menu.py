@@ -7,10 +7,10 @@ class Menu(ABC):
         self._options = options
         self._is_leaf = is_leaf
         self.is_root = is_root
-        self._parent: Menu = parent
         self._session: Session = session
 
         if not is_root:
+            self.parent: Menu = parent
             self.options.append("Back")
 
         self.options.append("Exit")
@@ -38,16 +38,6 @@ class Menu(ABC):
         self._is_leaf = is_leaf
 
     @property
-    def parent(self):
-        return self._parent
-
-    @parent.setter
-    def parent(self, parent):
-        if not isinstance(parent, Menu):
-            raise TypeError("parent must be a Menu")
-        self._parent = parent
-
-    @property
     def menus(self):
         return self._menus
 
@@ -62,10 +52,12 @@ class Menu(ABC):
         return self._session
     
     @session.setter
-    def session(self, session):
-        if not isinstance(session, Session):
-            raise TypeError("session must be a Session object")
+    def session(self, session : Session):
         self._session = session
+
+    def set_parent(self, parent):
+        print(f"Setting parent to {parent}")
+        self.parent = parent
 
     def display(self):
         display = []
@@ -96,9 +88,11 @@ class Menu(ABC):
     def handle_choice(self, choice: int):
         if choice == len(self.options):
             self.exit()
-        elif choice == len(self.options) - 1:
-            return self.back()
         else:
+            if not self.is_root:
+                if choice == len(self.options) - 1:
+                    self.session.logs["info"].append(f"User went back to {self.parent}")
+                    return self.back()
             if self.is_leaf:
                 return self.options[choice - 1]
             else:
