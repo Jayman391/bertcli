@@ -18,13 +18,13 @@ class Landing(Menu):
             None,
         ]
 
-        if session.data is None:
+        if session.data == []:
             options.append("Load Global Data")
             menus.append(None)
-        if session.config_topic_model is None:
+        if session.config_topic_model == {}:
             options.append("Load Global Topic Model Configuration")
             menus.append(None)
-        if session.config_optimization is None:
+        if session.config_optimization == {}:
             options.append("Load Global Optimization Configuration")
             menus.append(None)
             

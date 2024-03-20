@@ -25,9 +25,9 @@ def test_init_data():
 
 def test_init_no_data():
     # Check if the options and menus are updated based on session data and configurations
-    session.data = None
-    session.config_topic_model = None
-    session.config_optimization = None
+    session.data = []
+    session.config_topic_model = {}
+    session.config_optimization = {}
     landing = Landing(session)
     assert landing.options == [
         "Run a Topic Model",
