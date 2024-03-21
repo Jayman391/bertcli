@@ -49,17 +49,27 @@ class Session:
             # get all "Embeddings" logs
             embeddings = [log for log in config if "Embeddings" in log.keys()]
             # get the most recent logged value
-            embeddings = embeddings[-1]
-            self.topic_model_factory.build_embedding_model(embeddings['Embeddings'])
+            if embeddings:
+                embeddings = embeddings[-1]
+                self.topic_model_factory.build_embedding_model(embeddings['Embeddings'])
+            else:
+                self.topic_model_factory.build_embedding_model()
 
             dim_red = [log for log in config if "Dimensionality Reduction" in log.keys()]
-            dim_red = dim_red[-1]
-            self.topic_model_factory.build_dim_red_model(dim_red['Dimensionality Reduction'])
+            if dim_red:    
+                dim_red = dim_red[-1]
+                self.topic_model_factory.build_dim_red_model(dim_red['Dimensionality Reduction'])
+            else:
+                self.topic_model_factory.build_dim_red_model()
 
+           
             clustering = [log for log in config if "Clustering" in log.keys()]
-            clustering = clustering[-1]
-            self.topic_model_factory.build_cluster_model(clustering['Clustering'])
-            
+            if clustering:
+                clustering = clustering[-1]
+                self.topic_model_factory.build_cluster_model(clustering['Clustering'])
+            else:
+                self.topic_model_factory.build_cluster_model()
+
             fine_tune = [log for log in config if "Fine Tuning" in log.keys()]
 
             vectorizer_config = {}

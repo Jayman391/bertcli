@@ -105,3 +105,7 @@ def test_log_build_sync_with_file():
     session = Session(config_topic_model=tm_config)
 
     assert session.build_topic_model(from_file=True, config=tm_config) is not None
+
+def test_build_no_file_or_data():
+    session = Session()
+    assert session.build_topic_model() is not None
