@@ -63,4 +63,5 @@ class Driver(ABC):
             return response
 
     def run_model(self):
+        model = self.session.build_topic_model()
         pass

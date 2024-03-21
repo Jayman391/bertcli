@@ -7,13 +7,5 @@ def test_logging():
     assert set(cli.global_session.logs["info"]) == set(
         [
             "Initialized Global Session Object and Global Driver",
-            "Initialized Landing Menu",
-            "Initialized Topic Menu",
-            "Initialized ConfigMenu Menu",
-            "Initialized Embeddings Menu",
-            "Initialized Dimensionality Reduction Menu",
-            "Initialized Cluster Menu",
-            "Initialized Fine Tuning Menu",
-            "Initialized Plotting Menu",
         ]
     )

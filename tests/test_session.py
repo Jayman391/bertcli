@@ -1,5 +1,5 @@
 from util._session import Session
-
+from loading._dataloader import DataLoader
 
 def test_session_initialization():
     session = Session()
@@ -82,3 +82,26 @@ def test_set_config():
     config = {"param3": "value3", "param4": "value4"}
     session.set_config_optimization(config)
     assert session.config_optimization == config
+
+def test_log_build_sync_no_file():
+    session = Session()
+    session.logs["data"].append({"Embeddings": "all-MiniLM-L12-v2"})
+    session.logs["data"].append({"Dimensionality Reduction": "umap"})
+    session.logs["data"].append({"Clustering": "hdbscan"})
+    session.logs["data"].append({"Fine Tuning": "Enable 2-grams"})
+    assert session.logs["data"] == [
+        {"Embeddings": "all-MiniLM-L12-v2"},
+        {"Dimensionality Reduction": "umap"},
+        {"Clustering": "hdbscan"},
+        {"Fine Tuning": "Enable 2-grams"},
+    ]
+    assert session.build_topic_model() is not None
+
+def test_log_build_sync_with_file():
+    loader = DataLoader()
+
+    tm_config = loader._load_config("tests/test_data/config-tm.json")
+
+    session = Session(config_topic_model=tm_config)
+
+    assert session.build_topic_model(from_file=True, config=tm_config) is not None

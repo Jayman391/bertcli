@@ -21,7 +21,6 @@ from bertopic import BERTopic
 from bertopic.representation import KeyBERTInspired
 from bertopic.vectorizers import ClassTfidfTransformer
 
-
 class TopicModelFactory:
     def __init__(self):
         self.data = None
@@ -37,17 +36,21 @@ class TopicModelFactory:
         self.ctfidf_model = None
         self.config = {}
 
-    def upload_data(self, data: pd.DataFrame):
+    def upload_data(self, data: pd.DataFrame = None):
+        if data is None:
+            data = pd.read_csv('tests/test_data/data.csv')
         self.data = data
         return self.data
 
-    def build_embedding_model(self, model: str):
+    def build_embedding_model(self, model: str = ""):
+        if model == "":
+            model = "all-MiniLM-L6-v2"
         self.embedding_model = SentenceTransformer(model)
         return self.embedding_model
 
-    def build_dim_red_model(self, model: str, config: dict = {}):
+    def build_dim_red_model(self, model: str = "", config: dict = {}):
         model = model.lower()
-        if model == "umap":
+        if model == "umap" or model == "":
             self.dimension_reduction_model = UMAP(**config)
 
         if model == "t-sne":
@@ -64,9 +67,9 @@ class TopicModelFactory:
 
         return self.dimension_reduction_model
 
-    def build_cluster_model(self, model: str, config: dict = {}):
+    def build_cluster_model(self, model: str = "", config: dict = {}):
         model = model.lower()
-        if model == "hdbscan":
+        if model == "hdbscan" or model == "":
             self.clustering_model = HDBSCAN(**config)
 
         if model == "kmeans":
@@ -100,12 +103,12 @@ class TopicModelFactory:
         self.ctfidf_model = ClassTfidfTransformer(**config)
         return self.ctfidf_model
 
-    def build_topic_model(self) -> BERTopic:
+    def build_topic_model(self, config : dict = {}) -> BERTopic:
         return BERTopic(
             embedding_model=self.embedding_model,
             umap_model=self.dimension_reduction_model,
             hdbscan_model=self.clustering_model,
             vectorizer_model=self.vectorizer_model,
             ctfidf_model=self.ctfidf_model,
-            **self.config
+            **config
         )

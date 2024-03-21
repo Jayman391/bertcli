@@ -20,7 +20,7 @@ class NLLPCLI:
         self.global_config_path = global_config_path
         self.global_optmization_path = global_optmization_path
 
-        print("\nWelcome to the BERTopic CLI!")
+        print("\nWelcome to the NLLP CLI!")
 
         self.driver = GlobalDriver()
 

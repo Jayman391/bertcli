@@ -26,7 +26,7 @@ class FineTuneMenu(Menu):
         if choice == len(self.options):
             self.exit()
         else:
-            if choice == 3 or choice == 5:
+            if choice == 3:
                 prompt = True
                 words = []
                 while prompt:
