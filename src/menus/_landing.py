@@ -4,8 +4,9 @@ from src.menus._configmenu import ConfigMenu
 from util._session import Session
 from src.loading._dataloader import DataLoader
 
+
 class Landing(Menu):
-    def __init__(self, session:Session):
+    def __init__(self, session: Session):
         is_root = True
         is_leaf = False
         options = [
@@ -14,7 +15,7 @@ class Landing(Menu):
             "Run a Classification Model",
             "Load Global Configuration Files",
         ]
-    
+
         self.dataloader = DataLoader()
 
         self.name = "Landing"
@@ -29,5 +30,3 @@ class Landing(Menu):
         ]
 
         self.map_options_to_menus(options, menus)
-        
-

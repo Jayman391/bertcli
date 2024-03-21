@@ -2,9 +2,17 @@ from abc import ABC
 from util._session import Session
 from loading._dataloader import DataLoader
 
+
 class Menu(ABC):
-    def __init__(self, session:Session, options: list, is_leaf: bool, 
-                 is_root: bool = False, parent = None, name: str = "Menu"):
+    def __init__(
+        self,
+        session: Session,
+        options: list,
+        is_leaf: bool,
+        is_root: bool = False,
+        parent=None,
+        name: str = "Menu",
+    ):
         self._options = options
         self._is_leaf = is_leaf
         self.is_root = is_root
@@ -18,7 +26,7 @@ class Menu(ABC):
 
         self._menus = []
 
-        self.name : str = name
+        self.name: str = name
 
         self.session.logs["info"].append(f"Initialized {self.name} Menu")
 
@@ -58,9 +66,9 @@ class Menu(ABC):
     @property
     def session(self):
         return self._session
-    
+
     @session.setter
-    def session(self, session : Session):
+    def session(self, session: Session):
         self._session = session
 
     def set_parent(self, parent):
@@ -103,22 +111,20 @@ class Menu(ABC):
             if self.is_leaf:
                 return self.options[choice - 1]
             elif self.is_root:
-                    return self.menus[self.options[choice - 1]]
+                return self.menus[self.options[choice - 1]]
             else:
                 if choice == len(self.options) - 1:
                     return self.back()
                 else:
                     return self.menus[self.options[choice - 1]]
-            
-            
 
     def map_options_to_menus(self, options: list, menus: list):
         if self.is_root:
             if len(options[:-1]) != len(menus):
                 raise ValueError("options and menus must be the same length")
-            
+
             self._menus = dict(zip(options[:-1], menus))
-        else: 
+        else:
             if len(options[:-2]) != len(menus):
                 raise ValueError("options and menus must be the same length")
 

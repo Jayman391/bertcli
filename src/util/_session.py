@@ -2,9 +2,7 @@ from src.builders._tm_factory import TopicModelFactory
 
 
 class Session:
-    def __init__(
-        self, data=[], config_topic_model={}, config_optimization={}
-    ) -> None:
+    def __init__(self, data=[], config_topic_model={}, config_optimization={}) -> None:
         self.data = data
         self.config_topic_model = config_topic_model
         self.config_optimization = config_optimization

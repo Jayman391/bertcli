@@ -5,6 +5,8 @@ from src.menus._menu import Menu
 from src.menus._landing import Landing
 from src.menus.topic._topic import TopicMenu
 from src.menus.optimization._optimization import OptimizationMenu
+
+
 class NLLPCLI:
     def __init__(
         self,
@@ -30,16 +32,14 @@ class NLLPCLI:
 
         self.driver.log("info", "Initialized Global Session Object and Global Driver")
 
-        self.run()
-
     def run(self):
-        try : 
+        try:
             self.landing = Landing(session=self.driver.session)
 
             if self.debug:
                 self.landing.handle_choice(1)
-                return 
-            
+                return
+
             for _, value in self.landing.menus.items():
                 if value is not None and isinstance(value, Menu):
                     value.set_parent(self.landing)
@@ -52,9 +52,8 @@ class NLLPCLI:
             if trace.lower() == "y":
                 print(e)
             self.run()
-            
-    def _process_responses(self, menu: Menu, driver:Driver):
-      
+
+    def _process_responses(self, menu: Menu, driver: Driver):
         response = driver.process_response(menu)
 
         driver.log("data", {str(menu): str(response)})

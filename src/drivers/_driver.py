@@ -5,8 +5,8 @@ from util._session import Session
 
 
 class Driver(ABC):
-    def __init__(self, session:Session = None):
-        self._session:Session = session
+    def __init__(self, session: Session = None):
+        self._session: Session = session
         self._session_data = {}
 
     @property
@@ -44,9 +44,9 @@ class Driver(ABC):
 
         self.session.logs[type].append(message)
 
-        return {type:message}
+        return {type: message}
 
-    def run_menu(self, menu : Menu):
+    def run_menu(self, menu: Menu):
         menu.display()
         choice = menu.prompt_numeric("Choose an option: ")
         if choice < 1 or choice > len(menu.options):
@@ -55,7 +55,7 @@ class Driver(ABC):
         response = menu.handle_choice(choice)
 
         return response
-    
+
     def process_response(self, response):
         if isinstance(response, Menu):
             return self.run_menu(response)

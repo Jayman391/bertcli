@@ -1,8 +1,9 @@
 from src.menus._menu import Menu
 from util._session import Session
 
+
 class FineTuneMenu(Menu):
-    def __init__(self, session:Session, parent: Menu = None):
+    def __init__(self, session: Session, parent: Menu = None):
         is_root = False
         is_leaf = True
         options = [
@@ -37,4 +38,3 @@ class FineTuneMenu(Menu):
                         return words
             else:
                 return self.options[choice - 1]
-                   

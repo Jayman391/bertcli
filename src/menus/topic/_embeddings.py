@@ -1,8 +1,9 @@
 from src.menus._menu import Menu
 from util._session import Session
 
+
 class EmbeddingsMenu(Menu):
-    def __init__(self, session:Session, parent: Menu = None):
+    def __init__(self, session: Session, parent: Menu = None):
         is_root = False
         is_leaf = True
         options = [
@@ -13,7 +14,7 @@ class EmbeddingsMenu(Menu):
             "Muennighoff/SGPT-125M-weightedmean-msmarco-specb-bitfit",
             "Muennighoff/SGPT-125M-weightedmean-nli-bitfit",
             "Muennighoff/SGPT-1.3B-weightedmean-msmarco-specb-bitfit",
-            "Add huggingface Model"
+            "Add huggingface Model",
         ]
 
         self.name = "Embeddings"
@@ -24,9 +25,8 @@ class EmbeddingsMenu(Menu):
         if choice == len(self.options):
             self.exit()
         else:
-          if choice == 8:
+            if choice == 8:
                 model = input("Please enter the name in format user/model : ")
                 return model
-          else:
-            return self.options[choice - 1]
-           
+            else:
+                return self.options[choice - 1]

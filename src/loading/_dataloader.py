@@ -6,16 +6,18 @@ from src.util._session import Session
 class DataLoader:
     def __init__(self):
         pass
-    
+
     def prompt_yes_no(self, message: str):
-        response = input(message).lower() 
+        response = input(message).lower()
         if not response in ["y", "n"]:
             print("Invalid response")
             return self.prompt_yes_no(message)
         return response
 
     def prompt_load_data(self):
-        data_bool = self.prompt_yes_no("Would you like to use a dataset for this session? (y/n): ")
+        data_bool = self.prompt_yes_no(
+            "Would you like to use a dataset for this session? (y/n): "
+        )
 
         data = []
 
@@ -25,9 +27,11 @@ class DataLoader:
             data = self._load_data(data_path)
 
         return data
-        
+
     def prompt_load_tm_config(self):
-        config_bool = self.prompt_yes_no("Do you want to load topic model configurations? (y/n): ")
+        config_bool = self.prompt_yes_no(
+            "Do you want to load topic model configurations? (y/n): "
+        )
 
         config = {}
 
@@ -39,7 +43,9 @@ class DataLoader:
         return config
 
     def prompt_load_opt_config(self):
-        opt_bool = self.prompt_yes_no("Do you want to load optimization configurations? (y/n): ")
+        opt_bool = self.prompt_yes_no(
+            "Do you want to load optimization configurations? (y/n): "
+        )
 
         config = {}
 
@@ -76,9 +82,8 @@ class DataLoader:
             print(f"Loaded optimization from {optimization_path}")
 
         return Session(data, config, opt)
-    
-    def _load_data(self, data_path: str):
 
+    def _load_data(self, data_path: str):
         data = None
 
         flag = True
@@ -97,7 +102,6 @@ class DataLoader:
         return data
 
     def _load_config(self, config_path: str):
-
         flag = True
 
         if config_path.endswith(".json"):
@@ -112,13 +116,16 @@ class DataLoader:
         return config
 
     def _no_args_passed(self):
-
         data = []
         tm_config = {}
         opt_config = {}
 
-        if self.prompt_yes_no("\nWould you like to configure this session? (y/n): ").lower() == "y":
-
+        if (
+            self.prompt_yes_no(
+                "\nWould you like to configure this session? (y/n): "
+            ).lower()
+            == "y"
+        ):
             data = self.prompt_load_data()
 
             tm_config = self.prompt_load_tm_config()

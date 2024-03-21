@@ -5,6 +5,7 @@ from _nllpcli import NLLPCLI
 
 loader = DataLoader()
 
+
 @pytest.mark.parametrize(
     "data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"]
 )
@@ -52,6 +53,7 @@ def test_load_data(data_filepath):
             == "Yes. Other vaccines that were a new at the time of release? Smallpox vaccine, polio vaccines, measles vaccine, etc.\n \n"
         )
 
+
 def test_load_config():
     config = loader._load_config("tests/test_data/config-tm.json")
     assert config is not None
@@ -65,10 +67,7 @@ def test_load_config():
     assert config["seed_topic_list"] == None
     assert config["zeroshot_topic_list"] == None
     assert config["zeroshot_min_similarity"] == 0.7
-    assert (
-        config["embedding_model"]
-        == "all-MiniLM-L12-v2"
-    )
+    assert config["embedding_model"] == "all-MiniLM-L12-v2"
     assert config["umap_model"] == {
         "n_neighbors": 15,
         "n_components": 5,
@@ -100,15 +99,18 @@ def test_load_config():
     assert config["seed"] == 42
 
 
-@pytest.mark.parametrize("data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"])
+@pytest.mark.parametrize(
+    "data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"]
+)
 @pytest.mark.parametrize("config_filepath", ["tests/test_data/config-tm.json"])
 @pytest.mark.parametrize("opt_filepath", ["tests/test_data/config-opt.json"])
 def test_handle_globals(data_filepath, config_filepath, opt_filepath):
     cli = NLLPCLI(data_filepath, config_filepath, opt_filepath, True)
-        
+
     assert cli.global_session.data is not None
     assert cli.global_session.config_topic_model is not None
     assert cli.global_session.config_optimization is not None
+
 
 def test_invalid_filetype():
     with pytest.raises(Exception):

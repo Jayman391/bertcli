@@ -27,6 +27,8 @@ def main():
 
   cli = NLLPCLI(global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig)
 
+  cli.run()
+
 if __name__ == "__main__":
     
   main()

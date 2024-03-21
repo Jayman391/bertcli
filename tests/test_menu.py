@@ -4,8 +4,9 @@ from util._session import Session
 
 session = Session()
 
+
 def test_constructor():
-    menu = Menu(session,["Option 1", "Option 2", "Option 3"], False)
+    menu = Menu(session, ["Option 1", "Option 2", "Option 3"], False)
     assert menu.options == ["Option 1", "Option 2", "Option 3", "Back", "Exit"]
     assert menu.is_leaf == False
 

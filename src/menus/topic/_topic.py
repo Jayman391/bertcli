@@ -7,6 +7,7 @@ from menus.topic._fine_tune import FineTuneMenu
 from menus.topic._plotting import TopicPlottingMenu
 from menus._configmenu import ConfigMenu
 
+
 class TopicMenu(Menu):
     def __init__(self, session: Session):
         is_root = False
@@ -21,7 +22,7 @@ class TopicMenu(Menu):
             "Run Topic Model",
             "Load Session Configuration",
         ]
-        
+
         menus = [
             EmbeddingsMenu(session),
             DimensionalityReductionMenu(session),
@@ -47,13 +48,25 @@ class TopicMenu(Menu):
                 self.session.logs["info"].append(f"User went back to {self.parent}")
                 return self.back()
             elif choice == 6:
-                self.session.logs["data"].append({"save_file":input("Please enter the path of the json file to save the configuration: ")})
+                self.session.logs["data"].append(
+                    {
+                        "save_file": input(
+                            "Please enter the path of the json file to save the configuration: "
+                        )
+                    }
+                )
                 return self
             elif choice == 7:
-                self.session.logs["data"].append({"Topic":"run_topic_model"})
+                self.session.logs["data"].append({"Topic": "run_topic_model"})
                 return self
             elif choice == 8:
-                self.session.logs["data"].append({"load_file":input("Please enter the path of the json file to load the configuration: ")})
+                self.session.logs["data"].append(
+                    {
+                        "load_file": input(
+                            "Please enter the path of the json file to load the configuration: "
+                        )
+                    }
+                )
                 return self
             else:
                 return self.menus[self.options[choice - 1]]
