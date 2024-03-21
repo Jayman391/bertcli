@@ -106,7 +106,6 @@ class Menu(ABC):
                     return self.menus[self.options[choice - 1]]
             else:
                 if choice == len(self.options) - 1:
-                    self.session.logs["info"].append(f"User went back to {self.parent}")
                     return self.back()
                 else:
                     return self.menus[self.options[choice - 1]]

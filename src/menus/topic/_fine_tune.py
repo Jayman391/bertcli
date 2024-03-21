@@ -21,3 +21,20 @@ class FineTuneMenu(Menu):
 
         super().__init__(session, options, is_leaf, is_root, name=self.name)
 
+    def handle_choice(self, choice: int):
+        if choice == len(self.options):
+            self.exit()
+        else:
+            if choice == 3 or choice == 5:
+                prompt = True
+                words = []
+                while prompt:
+                    prompt = input("Input a word, or leave blank to continue: ")
+                    if prompt.lower() != "":
+                        words.append(prompt)
+                    else:
+                        words.append(self.options[choice - 1])
+                        return words
+            else:
+                return self.options[choice - 1]
+                   

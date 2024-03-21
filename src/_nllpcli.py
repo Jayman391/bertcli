@@ -58,6 +58,7 @@ class NLLPCLI:
         response = driver.process_response(menu)
 
         driver.log("data", {str(menu): str(response)})
+        print(driver.session.logs)
 
         if isinstance(response, Menu):
             if not isinstance(response, (Landing, TopicMenu, OptimizationMenu)):

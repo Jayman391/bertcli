@@ -17,7 +17,7 @@ class TopicMenu(Menu):
             "Select Clustering Technique",
             "Fine Tuning",
             "Plotting",
-            "Saving",
+            "Save Session Configuration",
             "Run Topic Model",
             "Load Session Configuration",
         ]
@@ -38,3 +38,22 @@ class TopicMenu(Menu):
         super().__init__(session, options, is_leaf, is_root, name=self.name)
 
         self.map_options_to_menus(options, menus)
+
+    def handle_choice(self, choice: int):
+        if choice == len(self.options):
+            self.exit()
+        else:
+            if choice == len(self.options) - 1:
+                self.session.logs["info"].append(f"User went back to {self.parent}")
+                return self.back()
+            elif choice == 6:
+                self.session.logs["data"].append({"save_file":input("Please enter the path of the json file to save the configuration: ")})
+                return self
+            elif choice == 7:
+                self.session.logs["data"].append({"Topic":"run_topic_model"})
+                return self
+            elif choice == 8:
+                self.session.logs["data"].append({"load_file":input("Please enter the path of the json file to load the configuration: ")})
+                return self
+            else:
+                return self.menus[self.options[choice - 1]]
