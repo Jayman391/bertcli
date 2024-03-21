@@ -13,6 +13,7 @@ class DimensionalityReductionMenu(Menu):
             "Factor Analysis",
         ]
 
-        super().__init__(session,options, is_leaf, is_root)
-
         self.name = "Dimensionality Reduction"
+
+        super().__init__(session,options, is_leaf, is_root, name=self.name)
+

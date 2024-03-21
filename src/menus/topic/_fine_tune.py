@@ -17,6 +17,7 @@ class FineTuneMenu(Menu):
             "Enable Part of Speech filtering",
         ]
 
-        super().__init__(session, options, is_leaf, is_root)
-
         self.name = "Fine Tuning"
+
+        super().__init__(session, options, is_leaf, is_root, name=self.name)
+

@@ -20,9 +20,6 @@ class NLLPCLI:
 
         print("\nWelcome to the BERTopic CLI!")
 
-        self.run()
-
-    def run(self):
         self.driver = GlobalDriver()
 
         self.global_session = self.driver.initialize_session(
@@ -30,20 +27,31 @@ class NLLPCLI:
             config_path=self.global_config_path,
             optimization_path=self.global_optmization_path,
         )
+
         self.driver.log("info", "Initialized Global Session Object and Global Driver")
 
-        self.landing = Landing(session=self.driver.session)
-        self.driver.log("info", "Initialized Landing Menu")
+        self.run()
 
-        if self.debug:
-            self.landing.handle_choice(1)
-            return 
-        
-        for _, value in self.landing.menus.items():
-            if value is not None and isinstance(value, Menu):
-                value.set_parent(self.landing)
+    def run(self):
+        try : 
+            self.landing = Landing(session=self.driver.session)
 
-        self._process_responses(self.landing, self.driver)
+            if self.debug:
+                self.landing.handle_choice(1)
+                return 
+            
+            for _, value in self.landing.menus.items():
+                if value is not None and isinstance(value, Menu):
+                    value.set_parent(self.landing)
+
+            self._process_responses(self.landing, self.driver)
+        except Exception as e:
+            self.driver.log("error", str(e))
+            print("An error occurred. Please try again.")
+            trace = input("Would you like to see the error trace? (y/n): ")
+            if trace.lower() == "y":
+                print(e)
+            self.run()
             
     def _process_responses(self, menu: Menu, driver:Driver):
       

@@ -4,7 +4,7 @@ from loading._dataloader import DataLoader
 
 class Menu(ABC):
     def __init__(self, session:Session, options: list, is_leaf: bool, 
-                 is_root: bool = False, parent = None):
+                 is_root: bool = False, parent = None, name: str = "Menu"):
         self._options = options
         self._is_leaf = is_leaf
         self.is_root = is_root
@@ -18,18 +18,12 @@ class Menu(ABC):
 
         self._menus = []
 
-        self._name : str = ""
+        self.name : str = name
+
+        self.session.logs["info"].append(f"Initialized {self.name} Menu")
 
     def __str__(self):
         return self.name
-
-    @property
-    def name(self):
-        return self._name
-    
-    @name.setter
-    def name(self, name: str):
-        self._name = name
 
     @property
     def options(self):

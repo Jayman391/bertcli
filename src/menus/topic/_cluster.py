@@ -16,6 +16,7 @@ class ClusterMenu(Menu):
             "mean shift",
         ]
 
-        super().__init__(session, options, is_leaf, is_root)
-
         self.name = "Cluster"
+
+        super().__init__(session, options, is_leaf, is_root, name=self.name)
+

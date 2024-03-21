@@ -15,6 +15,7 @@ class EmbeddingsMenu(Menu):
             "Muennighoff/SGPT-1.3B-weightedmean-msmarco-specb-bitfit",
         ]
 
-        super().__init__(session, options, is_leaf, is_root)
-
         self.name = "Embeddings"
+
+        super().__init__(session, options, is_leaf, is_root, name=self.name)
+

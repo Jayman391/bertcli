@@ -19,6 +19,7 @@ class TopicPlottingMenu(Menu):
             "Visualize Topics per Class",
         ]
 
-        super().__init__(session, options, is_leaf, is_root)
-
         self.name = "Plotting"
+
+        super().__init__(session, options, is_leaf, is_root, name=self.name)
+

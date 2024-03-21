@@ -6,56 +6,6 @@ from src.util._session import Session
 class DataLoader:
     def __init__(self):
         pass
-
-    def _load_data(self, data_path: str):
-
-        data = None
-
-        flag = True
-
-        if data_path.endswith(".csv"):
-            data = pd.read_csv(data_path)
-            flag = False
-
-        elif data_path.endswith(".json"):
-            data = pd.read_json(data_path)
-            flag = False
-
-        if flag:
-            raise Exception("File type not supported")
-
-        return data
-
-    def _load_config(self, config_path: str):
-
-        flag = True
-
-        if config_path.endswith(".json"):
-            with open(config_path, "r") as file:
-                config = json.load(file)
-
-            flag = False
-
-        if flag:
-            raise Exception("File type not supported")
-
-        return config
-
-    def _no_args_passed(self):
-
-        data = []
-        tm_config = {}
-        opt_config = {}
-
-        if self.prompt_yes_no("\nWould you like to configure this session? (y/n): ").lower() == "y":
-
-            data = self.prompt_load_data()
-
-            tm_config = self.prompt_load_tm_config()
-
-            opt_config = self.prompt_load_opt_config()
-
-        return data, tm_config, opt_config
     
     def prompt_yes_no(self, message: str):
         response = input(message).lower() 
@@ -126,3 +76,53 @@ class DataLoader:
             print(f"Loaded optimization from {optimization_path}")
 
         return Session(data, config, opt)
+    
+    def _load_data(self, data_path: str):
+
+        data = None
+
+        flag = True
+
+        if data_path.endswith(".csv"):
+            data = pd.read_csv(data_path)
+            flag = False
+
+        elif data_path.endswith(".json"):
+            data = pd.read_json(data_path)
+            flag = False
+
+        if flag:
+            raise Exception("File type not supported")
+
+        return data
+
+    def _load_config(self, config_path: str):
+
+        flag = True
+
+        if config_path.endswith(".json"):
+            with open(config_path, "r") as file:
+                config = json.load(file)
+
+            flag = False
+
+        if flag:
+            raise Exception("File type not supported")
+
+        return config
+
+    def _no_args_passed(self):
+
+        data = []
+        tm_config = {}
+        opt_config = {}
+
+        if self.prompt_yes_no("\nWould you like to configure this session? (y/n): ").lower() == "y":
+
+            data = self.prompt_load_data()
+
+            tm_config = self.prompt_load_tm_config()
+
+            opt_config = self.prompt_load_opt_config()
+
+        return data, tm_config, opt_config

@@ -11,9 +11,9 @@ class ConfigMenu(Menu):
       "Input Optimization Config Path",
     ]
 
-    super().__init__(session, options, is_leaf, is_root)
+    self.name = "ConfigMenu"
 
-    self.name = "Configuration"
+    super().__init__(session, options, is_leaf, is_root, name=self.name)
 
     self.map_options_to_menus(options, [None, None, None])
 

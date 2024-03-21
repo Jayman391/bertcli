@@ -17,7 +17,9 @@ class Landing(Menu):
     
         self.dataloader = DataLoader()
 
-        super().__init__(session, options, is_leaf, is_root)
+        self.name = "Landing"
+
+        super().__init__(session, options, is_leaf, is_root, name=self.name)
 
         menus = [
             TopicMenu(session),
@@ -25,8 +27,6 @@ class Landing(Menu):
             None,
             ConfigMenu(session),
         ]
-
-        self.name = "Landing"
 
         self.map_options_to_menus(options, menus)
         
