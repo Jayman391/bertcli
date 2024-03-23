@@ -2,22 +2,88 @@ import json
 import pandas as pd
 from src.util._session import Session
 
-class DataLoader:
 
+class DataLoader:
     def __init__(self):
         pass
 
+    def prompt_yes_no(self, message: str):
+        response = input(message).lower()
+        if not response in ["y", "n"]:
+            print("Invalid response")
+            return self.prompt_yes_no(message)
+        return response
+
+    def prompt_load_data(self):
+        data_bool = self.prompt_yes_no(
+            "Would you like to use a dataset for this session? (y/n): "
+        )
+
+        data = []
+
+        if data_bool.lower() == "y":
+            data_path = input("Please enter the path to the data file: ")
+
+            data = self._load_data(data_path)
+
+        return data
+
+    def prompt_load_tm_config(self):
+        config_bool = self.prompt_yes_no(
+            "Do you want to load topic model configurations? (y/n): "
+        )
+
+        config = {}
+
+        if config_bool.lower() == "y":
+            config_path = input("Please enter the path to the configuration file:")
+
+            config = self._load_config(config_path)
+
+        return config
+
+    def prompt_load_opt_config(self):
+        opt_bool = self.prompt_yes_no(
+            "Do you want to load optimization configurations? (y/n): "
+        )
+
+        config = {}
+
+        if opt_bool.lower() == "y":
+            opt_path = input("Please enter the path to the optimization file:")
+
+            config = self._load_config(opt_path)
+
+        return config
+
+    def initialize_session(
+        self,
+        data_path: str = None,
+        config_path: str = None,
+        optimization_path: str = None,
+    ):
+        data = []
+        config = {}
+        opt = {}
+
+        if data_path is None and config_path is None and optimization_path is None:
+            data, config, opt = self._no_args_passed()
+
+        if data_path is not None:
+            data = self._load_data(data_path)
+            print(f"Loaded data from {data_path}")
+
+        if config_path is not None:
+            config = self._load_config(config_path)
+            print(f"Loaded config from {config_path}")
+
+        if optimization_path is not None:
+            opt = self._load_config(optimization_path)
+            print(f"Loaded optimization from {optimization_path}")
+
+        return Session(data, config, opt)
+
     def _load_data(self, data_path: str):
-        """
-        Load data from a file.
-
-        Args:
-        data_path (str): Path to the data file.
-
-        Returns:
-        data: Loaded data.
-        """
-
         data = None
 
         flag = True
@@ -33,20 +99,20 @@ class DataLoader:
         if flag:
             raise Exception("File type not supported")
 
+        """ 
+        JUST FOR TEST PURPOSES
+        data = data.sample(2000)
+        """
+
+        # extract the text column
+        data = data["text"].to_list()
+
+        # remove any null values and empty strings
+        data = [x for x in data if str(x) != "nan" and str(x) != ""]
+
         return data
 
-
     def _load_config(self, config_path: str):
-        """
-        Load configuration from a file.
-
-        Args:
-        config_path (str): Path to the configuration file.
-
-        Returns:
-        config: Loaded configuration.
-        """
-
         flag = True
 
         if config_path.endswith(".json"):
@@ -60,58 +126,21 @@ class DataLoader:
 
         return config
 
-
     def _no_args_passed(self):
-        """
-        Handle case when no arguments are passed.
-
-        Args:
-        None
-
-        Returns:
-        data: Loaded data.
-        config: Loaded configuration.
-        """
-
         data = []
+        tm_config = {}
+        opt_config = {}
 
-        data_bool = input("Would you like to use a dataset for this session? (y/n): ")
+        if (
+            self.prompt_yes_no(
+                "\nWould you like to configure this session? (y/n): "
+            ).lower()
+            == "y"
+        ):
+            data = self.prompt_load_data()
 
-        if data_bool.lower() == "y":
-            data_path = input("Please enter the path to the data file: ")
+            tm_config = self.prompt_load_tm_config()
 
-            data = self._load_data(data_path)
+            opt_config = self.prompt_load_opt_config()
 
-        config = {}
-
-        config_bool = input("Do you want to load topic model configurations? (y/n): ")
-
-        if config_bool.lower() == "y":
-            config_path = input("Please enter the path to the configuration file:")
-
-            config = self._load_config(config_path)
-
-        return data, config
-
-    def initialize_session(self, data_path: str = None, config_path: str = None, optimization_path: str = None):
-        
-        data = []
-        config = {}
-        opt = {}
-
-        if data_path is None and config_path is None:
-            data, config = self._no_args_passed()
-
-        if data_path is not None:
-            data = self._load_data(data_path)
-            print(f"Loaded data from {data_path}")
-
-        if config_path is not None:
-            config = self._load_config(config_path)
-            print(f"Loaded config from {config_path}")
-
-        if optimization_path is not None:
-            opt = self._load_config(optimization_path)
-            print(f"Loaded optimization from {optimization_path}")
-
-        return Session(data, config, opt)
+        return data, tm_config, opt_config
