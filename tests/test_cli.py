@@ -1,9 +1,9 @@
 import pytest
-from src._nllpcli import NLLPCLI
+from _lnlpcli import LNLPCLI
 
 
 def test_logging():
-    cli = NLLPCLI(debug=True)
+    cli = LNLPCLI(debug=True)
     assert set(cli.global_session.logs["info"]) == set(
         [
             "Initialized Global Session Object and Global Driver",

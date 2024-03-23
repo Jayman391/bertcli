@@ -17,6 +17,10 @@ from sklearn.cluster import (
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 
+# set TOKENIZERS_PARALLELISM to False to avoid issues with transformers
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "False"
+
 from bertopic import BERTopic
 from bertopic.representation import KeyBERTInspired
 from bertopic.vectorizers import ClassTfidfTransformer
@@ -51,7 +55,7 @@ class TopicModelFactory:
     def build_dim_red_model(self, model: str = "", config: dict = {}):
         model = model.lower()
         if model == "umap" or model == "":
-            self.dimension_reduction_model = UMAP(**config)
+            self.dimension_reduction_model = UMAP(verbose=True, **config)
 
         if model == "t-sne":
             self.dimension_reduction_model = TSNE(**config)

@@ -31,12 +31,12 @@ class Session:
         if from_file:
                 self.topic_model_factory.build_embedding_model(self.config_topic_model['embedding_model'])
                # Correct way to pass the sub-dictionary for UMAP model configuration
-                umap_model_name = next(iter(self.config_topic_model["umap_model"]))
+                umap_model_name = list(self.config_topic_model["umap_model"].keys())[0]
                 umap_model_config = self.config_topic_model["umap_model"][umap_model_name]
                 self.topic_model_factory.build_dim_red_model(umap_model_name, umap_model_config)
 
                 # Correct way to pass the sub-dictionary for HDBSCAN model configuration
-                hdbscan_model_name = next(iter(self.config_topic_model["hdbscan_model"]))
+                hdbscan_model_name = list(self.config_topic_model["hdbscan_model"].keys())[0]
                 hdbscan_model_config = self.config_topic_model["hdbscan_model"][hdbscan_model_name]
                 self.topic_model_factory.build_cluster_model(hdbscan_model_name, hdbscan_model_config)
 

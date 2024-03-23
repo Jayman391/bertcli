@@ -57,8 +57,7 @@ class TopicMenu(Menu):
                 )
                 return self
             elif choice == 7:
-                self.session.logs["data"].append({"Topic": "run_topic_model"})
-                return self
+                return self.session.build_topic_model()
             elif choice == 8:
                 self.session.logs["data"].append(
                     {

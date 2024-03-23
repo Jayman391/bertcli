@@ -1,13 +1,12 @@
-from src.util._session import Session
 from src.drivers._driver import Driver
 from src.drivers._global_driver import GlobalDriver
 from src.menus._menu import Menu
 from src.menus._landing import Landing
 from src.menus.topic._topic import TopicMenu
 from src.menus.optimization._optimization import OptimizationMenu
+from bertopic import BERTopic
 
-
-class NLLPCLI:
+class LNLPCLI:
     def __init__(
         self,
         global_data_path: str = None,
@@ -50,7 +49,7 @@ class NLLPCLI:
             print("An error occurred. Please try again.")
             trace = input("Would you like to see the error trace? (y/n): ")
             if trace.lower() == "y":
-                print(e)
+                print(e.with_traceback())
             self.run()
 
     def _process_responses(self, menu: Menu, driver: Driver):
@@ -63,5 +62,10 @@ class NLLPCLI:
             if not isinstance(response, (Landing, TopicMenu, OptimizationMenu)):
                 response.set_parent(menu)
             self._process_responses(response, driver)
+        elif isinstance(response, BERTopic):
+            if self.global_session.config_topic_model is not None:
+                driver.run_topic_model(from_file=True)
+            else:
+                driver.run_topic_model()
         else:
             self._process_responses(menu.parent, driver)

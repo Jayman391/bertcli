@@ -7,7 +7,7 @@ cwd = os.getcwd()
 # Add the src directory to sys.path
 sys.path.append(os.path.join(cwd, 'src'))
 
-from _nllpcli import NLLPCLI
+from src._lnlpcli import LNLPCLI
 
 def main():
     
@@ -25,7 +25,7 @@ def main():
   
   args = parser.parse_args()
 
-  cli = NLLPCLI(global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig)
+  cli = LNLPCLI(global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig)
 
   cli.run()
 
