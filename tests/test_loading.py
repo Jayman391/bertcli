@@ -68,16 +68,12 @@ def test_load_config():
     assert config["zeroshot_topic_list"] == None
     assert config["zeroshot_min_similarity"] == 0.7
     assert config["embedding_model"] == "all-MiniLM-L12-v2"
-    assert config["umap_model"] == {
-        "pca" : {
-        "n_components": 5
-        }
-    }
+    assert config["umap_model"] == {"pca": {"n_components": 5}}
     assert config["hdbscan_model"] == {
-        "hdbscan" : {
-        "min_cluster_size": 10,
-        "min_samples": 1,
-        "cluster_selection_epsilon": 0.5
+        "hdbscan": {
+            "min_cluster_size": 10,
+            "min_samples": 1,
+            "cluster_selection_epsilon": 0.5,
         }
     }
     assert config["vectorizer_model"] == {
@@ -100,7 +96,9 @@ def test_load_config():
     assert config["seed"] == 42
 
 
-@pytest.mark.parametrize("data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"])
+@pytest.mark.parametrize(
+    "data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"]
+)
 @pytest.mark.parametrize("config_filepath", ["tests/test_data/config-tm.json"])
 @pytest.mark.parametrize("opt_filepath", ["tests/test_data/config-opt.json"])
 def test_handle_globals(data_filepath, config_filepath, opt_filepath):

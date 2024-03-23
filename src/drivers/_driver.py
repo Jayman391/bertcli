@@ -8,6 +8,7 @@ from bertopic import BERTopic
 import os
 import math
 
+
 class Driver(ABC):
     def __init__(self, session: Session = None):
         self._session: Session = session
@@ -73,27 +74,38 @@ class Driver(ABC):
         # set -1 cluster to num_clusters+1
         num_topics = len(set(topics))
 
-        topics = [topic if topic != -1 and isinstance(topic, bool) == False else num_topics for topic in topics]
+        topics = [
+            topic if topic != -1 and isinstance(topic, bool) == False else num_topics
+            for topic in topics
+        ]
         # print number of boolean topics
         num_bool_topics = len([topic for topic in topics if isinstance(topic, bool)])
-        print(f"Number of boolean topics: {num_bool_topics}")
-        print(topics)
         self.session.logs["info"].append("Topics have been extracted")
         data = self.session.logs["data"]
-        plotting = [log for log in data if "Plotting" in log.keys()]    
-        print(plotting)        
-        dir = ''
+        plotting = [log for log in data if "Plotting" in log.keys()]
+        dir = ""
         self.session.logs["info"].append("Plotting Topics")
         if len(plotting) > 0:
             for log in plotting:
                 value = str(list(log.values())[0])
-                if str(value) == 'firefox' or value == 'chrome' or value == 'safari' or value == 'opera':
+                if (
+                    str(value) == "firefox"
+                    or value == "chrome"
+                    or value == "safari"
+                    or value == "opera"
+                ):
                     webbrowser.register(value, None, webbrowser.BackgroundBrowser)
-                if str(value) != 'firefox' and value != 'chrome' and value != 'safari' and value != 'opera' and not 'Enable' in value:
+                if (
+                    str(value) != "firefox"
+                    and value != "chrome"
+                    and value != "safari"
+                    and value != "opera"
+                    and not "Enable" in value
+                ):
                     dir = value
             for log in plotting:
                 value = str(list(log.values())[0])
-                if "Enable Topic Visualizations" in value:   
+                if "Enable Topic Visualizations" in value:
                     self._visualize_topics(model, topics, dir)
                     self.session.logs["info"].append("Visualizing Topics")
                 if "Enable Document Visualizations" in value:
@@ -108,27 +120,32 @@ class Driver(ABC):
                     self._visualize_terms(model, dir)
                     self.session.logs["info"].append("Visualizing All")
         else:
-            print("No plotting options selected. Visualizing all topics, documents, and terms.")
+            print(
+                "No plotting options selected. Visualizing all topics, documents, and terms."
+            )
             self._visualize_topics(model, dir)
             self._visualize_documents(model, dir)
             self._visualize_terms(model, dir)
             self.session.logs["info"].append("Visualizing All")
-                
 
-    def _visualize_topics(self, model:BERTopic, dir:str = ''):
+    def _visualize_topics(self, model: BERTopic, dir: str = ""):
         topic_viz = model.visualize_topics()
         hierarchical_topics = model.hierarchical_topics(docs=self.session.data)
-        hierarchical_viz = model.visualize_hierarchy(hierarchical_topics=hierarchical_topics)
-        heatmap = model.visualize_heatmap() 
+        hierarchical_viz = model.visualize_hierarchy(
+            hierarchical_topics=hierarchical_topics
+        )
+        heatmap = model.visualize_heatmap()
 
-        if dir != '':
+        if dir != "":
             topic_viz.write_html(f"{dir}/topic_viz.html")
             hierarchical_viz.write_html(f"{dir}/hierarchical_viz.html")
             heatmap.write_html(f"{dir}/heatmap.html")
             webbrowser.open_new("file://" + os.path.realpath(f"{dir}/topic_viz.html"))
-            webbrowser.open_new("file://" + os.path.realpath(f"{dir}/hierarchical_viz.html"))
+            webbrowser.open_new(
+                "file://" + os.path.realpath(f"{dir}/hierarchical_viz.html")
+            )
             webbrowser.open_new("file://" + os.path.realpath(f"{dir}/heatmap.html"))
-        
+
         else:
             topic_viz.write_html("topic_viz.html")
             hierarchical_viz.write_html("hierarchical_viz.html")
@@ -137,26 +154,35 @@ class Driver(ABC):
             webbrowser.open_new("file://" + os.path.realpath(f"hierarchical_viz.html"))
             webbrowser.open_new("file://" + os.path.realpath(f"heatmap.html"))
 
-    def _visualize_documents(self, model:BERTopic, dir:str = ''):
+    def _visualize_documents(self, model: BERTopic, dir: str = ""):
         doc_viz = model.visualize_documents(docs=self.session.data, sample=0.05)
         hierarchical_topics = model.hierarchical_topics(docs=self.session.data)
-        print(hierarchical_topics)
-        hierarchical_docs = model.visualize_hierarchical_documents(docs=self.session.data, hierarchical_topics=hierarchical_topics, 
-                                               embeddings=model._extract_embeddings(self.session.data),
-                                               nr_levels=math.ceil(math.sqrt(len(hierarchical_topics)//2)), level_scale='log')
+        hierarchical_docs = model.visualize_hierarchical_documents(
+            docs=self.session.data,
+            hierarchical_topics=hierarchical_topics,
+            embeddings=model._extract_embeddings(self.session.data),
+            nr_levels=math.ceil(math.sqrt(len(hierarchical_topics) // 2)),
+            level_scale="log",
+        )
 
         if dir:
             doc_viz.write_html(f"{dir}/document_viz.html")
             hierarchical_docs.write_html(f"{dir}/hierarchical_document_viz.html")
-            webbrowser.open_new("file://" + os.path.realpath(f"{dir}/document_viz.html"))
-            webbrowser.open_new("file://" + os.path.realpath(f"{dir}/hierarchical_document_viz.html"))
+            webbrowser.open_new(
+                "file://" + os.path.realpath(f"{dir}/document_viz.html")
+            )
+            webbrowser.open_new(
+                "file://" + os.path.realpath(f"{dir}/hierarchical_document_viz.html")
+            )
         else:
             doc_viz.write_html("document_viz.html")
             hierarchical_docs.write_html("hierarchical_document_viz.html")
             webbrowser.open_new("file://" + os.path.realpath("document_viz.html"))
-            webbrowser.open_new("file://" + os.path.realpath("hierarchical_document_viz.html"))
+            webbrowser.open_new(
+                "file://" + os.path.realpath("hierarchical_document_viz.html")
+            )
 
-    def _visualize_terms(self, model:BERTopic, dir:str = ''):
+    def _visualize_terms(self, model: BERTopic, dir: str = ""):
         terms = model.visualize_barchart(top_n_topics=50, n_words=10)
 
         if dir:

@@ -6,6 +6,7 @@ from src.menus.topic._topic import TopicMenu
 from src.menus.optimization._optimization import OptimizationMenu
 from bertopic import BERTopic
 
+
 class LNLPCLI:
     def __init__(
         self,
@@ -56,7 +57,6 @@ class LNLPCLI:
         response = driver.process_response(menu)
 
         driver.log("data", {str(menu): str(response)})
-        print(driver.session.logs)
 
         if isinstance(response, Menu):
             if not isinstance(response, (Landing, TopicMenu, OptimizationMenu)):

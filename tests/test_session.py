@@ -1,6 +1,7 @@
 from util._session import Session
 from loading._dataloader import DataLoader
 
+
 def test_session_initialization():
     session = Session()
     assert session.data == []
@@ -83,6 +84,7 @@ def test_set_config():
     session.set_config_optimization(config)
     assert session.config_optimization == config
 
+
 def test_log_build_sync_no_file():
     session = Session()
     session.logs["data"].append({"Embeddings": "all-MiniLM-L12-v2"})
@@ -97,6 +99,7 @@ def test_log_build_sync_no_file():
     ]
     assert session.build_topic_model() is not None
 
+
 def test_log_build_sync_with_file():
     loader = DataLoader()
 
@@ -105,6 +108,7 @@ def test_log_build_sync_with_file():
     session = Session(config_topic_model=tm_config)
 
     assert session.build_topic_model(from_file=True, config=tm_config) is not None
+
 
 def test_build_no_file_or_data():
     session = Session()

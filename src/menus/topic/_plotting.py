@@ -25,11 +25,10 @@ class TopicPlottingMenu(Menu):
             print(f"directory : {dir}")
             return dir
         elif choice == 6:
-            browsers = ['firefox', 'chrome', 'safari', 'opera']
+            browsers = ["firefox", "chrome", "safari", "opera"]
             for i, browser in enumerate(browsers):
                 print(f"{i + 1}. {browser}")
             choice = self.prompt_numeric("Choose a browser: ")
             return browsers[choice - 1]
         else:
             return self.options[choice - 1]
-           

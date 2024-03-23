@@ -46,4 +46,3 @@ def test_run_menu_branch():
     menu.map_options_to_menus(menu.options, menus)
     # choose 1
     assert driver.run_menu(menu) == sub_menu_1
-    

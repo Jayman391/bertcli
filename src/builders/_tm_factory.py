@@ -19,11 +19,13 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 # set TOKENIZERS_PARALLELISM to False to avoid issues with transformers
 import os
+
 os.environ["TOKENIZERS_PARALLELISM"] = "False"
 
 from bertopic import BERTopic
 from bertopic.representation import KeyBERTInspired
 from bertopic.vectorizers import ClassTfidfTransformer
+
 
 class TopicModelFactory:
     def __init__(self):
@@ -42,7 +44,7 @@ class TopicModelFactory:
 
     def upload_data(self, data: pd.DataFrame = None):
         if data is None:
-            data = pd.read_csv('tests/test_data/data.csv')
+            data = pd.read_csv("tests/test_data/data.csv")
         self.data = data
         return self.data
 
@@ -107,7 +109,7 @@ class TopicModelFactory:
         self.ctfidf_model = ClassTfidfTransformer(**config)
         return self.ctfidf_model
 
-    def build_topic_model(self, config : dict = {}) -> BERTopic:
+    def build_topic_model(self, config: dict = {}) -> BERTopic:
         return BERTopic(
             embedding_model=self.embedding_model,
             umap_model=self.dimension_reduction_model,
