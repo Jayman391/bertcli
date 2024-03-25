@@ -106,46 +106,31 @@ class Driver(ABC):
             for log in plotting:
                 value = str(list(log.values())[0])
                 if "Enable Topic Visualizations" in value:
-                    try:
-                        self._visualize_topics(model, dir)
-                    except Exception as e:
-                        print(e)
-                        self.session.logs["errors"].append(str(e))
+                    print("Visualizing Topics")
+                    self._visualize_topics(model, dir)
                     self.session.logs["info"].append("Visualizing Topics")
                 if "Enable Document Visualizations" in value:
-                    try:
-                        self._visualize_documents(model, dir)
-                    except Exception as e:
-                        print(e)
-                        self.session.logs["errors"].append(str(e))
+                    print("Visualizing Documents")
+                    self._visualize_documents(model, dir)
                     self.session.logs["info"].append("Visualizing Documents")
                 if "Enable Term Visualizations" in value:
-                    try:
-                        self._visualize_terms(model, dir)
-                    except Exception as e:
-                        print(e)
-                        self.session.logs["errors"].append(str(e)) 
+                    print("Visualizing Terms")
+                    self._visualize_terms(model, dir)
                     self.session.logs["info"].append("Visualizing Terms")
                 if "Enable All Visualizations" in value:
-                    try:
-                        self._visualize_topics(model, dir)
-                        self._visualize_documents(model, dir)
-                        self._visualize_terms(model, dir)
-                    except Exception as e:
-                        print(e)
-                        self.session.logs["errors"].append(str(e))
+                    print("Visualizing All")
+                    self._visualize_topics(model, dir)
+                    self._visualize_documents(model, dir)
+                    self._visualize_terms(model, dir)
                     self.session.logs["info"].append("Visualizing All")
         else:
             print(
                 "No plotting options selected. Visualizing all topics, documents, and terms."
             )
-            try:
-                self._visualize_topics(model, dir)
-                self._visualize_documents(model, dir)
-                self._visualize_terms(model, dir)
-            except Exception as e:
-                print(e)
-                self.session.logs["errors"].append(str(e))
+            self._visualize_topics(model, dir)
+            self._visualize_documents(model, dir)
+            self._visualize_terms(model, dir)
+        
             self.session.logs["info"].append("Visualizing All")
 
     def _visualize_topics(self, model: BERTopic, dir: str = ""):
@@ -160,7 +145,7 @@ class Driver(ABC):
 
         except Exception as e:
             print(e)
-            self.session.logs["errors"].append(str(e))
+            self.session.logs["errors"].append(str(e.with_traceback()))
 
         try:
             hierarchical_topics = model.hierarchical_topics(docs=self.session.data)
@@ -178,7 +163,7 @@ class Driver(ABC):
                 webbrowser.open_new("file://" + os.path.realpath("hierarchical_viz.html"))
         except Exception as e:
             print(e)
-            self.session.logs["errors"].append(str(e))
+            self.session.logs["errors"].append(str(e.with_traceback()))
         
         try:
             heatmap = model.visualize_heatmap()
@@ -197,7 +182,7 @@ class Driver(ABC):
                 webbrowser.open_new("file://" + os.path.realpath(f"heatmap.html"))
         except Exception as e:
             print(e)
-            self.session.logs["errors"].append(str(e))
+            self.session.logs["errors"].append(str(e.with_traceback()))
 
     def _visualize_documents(self, model: BERTopic, dir: str = ""):
         try:
@@ -213,7 +198,7 @@ class Driver(ABC):
                 webbrowser.open_new("file://" + os.path.realpath("document_viz.html"))
         except Exception as e:
             print(e)
-            self.session.logs["errors"].append(str(e))
+            self.session.logs["errors"].append(str(e.with_traceback()))
 
         try:
             hierarchical_topics = model.hierarchical_topics(docs=self.session.data)
@@ -237,7 +222,7 @@ class Driver(ABC):
                 )
         except Exception as e:
             print(e)
-            self.session.logs["errors"].append(str(e))
+            self.session.logs["errors"].append(str(e.with_traceback()))
         
     def _visualize_terms(self, model: BERTopic, dir: str = ""):
         try:
@@ -251,4 +236,4 @@ class Driver(ABC):
                 webbrowser.open_new("file://" + os.path.realpath("term_viz.html"))
         except Exception as e:
             print(e)
-            self.session.logs["errors"].append(str(e))
+            self.session.logs["errors"].append(str(e.with_traceback()))
