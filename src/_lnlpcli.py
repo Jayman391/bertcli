@@ -63,7 +63,7 @@ class LNLPCLI:
                 response.set_parent(menu)
             self._process_responses(response, driver)
         elif isinstance(response, BERTopic):
-            if self.global_session.config_topic_model is not None:
+            if self.global_session.config_topic_model != {}:
                 driver.run_topic_model(from_file=True)
             else:
                 driver.run_topic_model()

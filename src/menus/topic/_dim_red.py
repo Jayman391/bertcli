@@ -9,9 +9,8 @@ class DimensionalityReductionMenu(Menu):
         options = [
             "UMAP",
             "PCA",
-            "t-SNE",
             "Truncated SVD",
-            "Factor Analysis",
+            "Independent Component Analysis",
         ]
 
         self.name = "Dimensionality Reduction"

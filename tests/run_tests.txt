@@ -2,10 +2,10 @@
 python -m pytest tests -v -s
 
 ## list of stdin inputs to test ##
-1. testing if there are no global files: press no all three times for the input
-2. Option 1
-3. testing if there are no global files: press no all three times for the input
-
+1. n
+2. n
+3. 1
+4. 1
 ############ clear __pycache__ and .pytest_cache ############
 find . -name '__pycache__' -exec rm -rf {} \;
 find . -name '.pytest_cache' -exec rm -rf {} \;

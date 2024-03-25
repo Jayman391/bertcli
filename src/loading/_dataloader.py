@@ -100,7 +100,7 @@ class DataLoader:
             raise Exception("File type not supported")
 
         """ 
-        JUST FOR TEST PURPOSES
+        #JUST FOR TEST PURPOSES
         data = data.sample(2000)
         """
 
