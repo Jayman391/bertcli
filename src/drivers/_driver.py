@@ -5,9 +5,11 @@ from util._session import Session
 import webbrowser
 from webbrowser import open_new_tab
 from bertopic import BERTopic
+import pandas as pd
 import os
 import math
-
+import json
+import os
 
 class Driver(ABC):
     def __init__(self, session: Session = None):
@@ -66,24 +68,82 @@ class Driver(ABC):
             return self.run_menu(response)
         else:
             return response
-
+    
     def run_topic_model(self, from_file: bool = False):
         model = self.session.build_topic_model(from_file=from_file)
         self.session.logs["info"].append("Topic Model has been built")
+
+        topics, data = self._fit_model(model)
+
+        dir = ""
+        #remove all logs that containg Back in the values
+        data = [log for log in data if "Back" not in log.values()]
+        #gather data where Topic is a key
+        topic_choices = [log for log in data if "Topic" in log.keys()]
+
+        for log in topic_choices:
+            value = str(list(log.values())[0])
+            dummy = self._process_topic_choice(model, value, topics)
+            if dummy:
+                dir = dummy
+            
+        
+        self._visualize(model, dir, data)
+
+        self._write_logs(dir)
+
+    def _fit_model(self, model):
         topics, _ = model.fit_transform(self.session.data)
         # set -1 cluster to num_clusters+1
         num_topics = len(set(topics))
 
         topics = [
-            topic if topic != -1 and isinstance(topic, bool) == False else num_topics
+            int(topic) if topic != -1 and isinstance(topic, bool) == False else int(num_topics)
             for topic in topics
         ]
+        
         self.session.logs["info"].append("Topics have been extracted")
         data = self.session.logs["data"]
-        #remove all logs that containg Back in the values
-        data = [log for log in data if "Back" not in log.values()]
+    
+        return topics, data
+    
+    def _process_topic_choice(self, model:BERTopic, value: str, topics):
+        if value.startswith("save_dir"):
+                dir = value.split(" ")[1].strip()
+                # if dir does not exist, create it
+                if not os.path.isdir(dir):
+                    os.makedirs(dir)
+                model.save(dir, serialization="pytorch", save_embedding_model=True)
+                #map topics to the documents
+                  
+                topics = pd.DataFrame(topics).astype(int)
+                # name the columns
+                topics.columns = ["labels"]
+                embeddings = pd.DataFrame(model._extract_embeddings(self.session.data))
+                session_data = pd.DataFrame(self.session.data)
+                # name column text
+                session_data.columns = ["text"]
+                session_data = pd.concat([session_data, topics], axis=1)
+                #map embeddings to the documents
+                # if embeddings dim is more than 2, reduce to 2
+                if embeddings.shape[1] > 2:
+                    from umap import UMAP
+                    umap = UMAP(n_components=2, verbose=True)
+                    embeddings = pd.DataFrame(umap.fit_transform(embeddings))
+                    # columns names are x and y
+                    embeddings.columns = ["x", "y"]
+                session_data = pd.concat([session_data, embeddings], axis=1) 
+                
+                pd.DataFrame(session_data).to_csv(f"{dir}/labeled_corpus.csv", index=False)
+                tm_config = self.session.config_topic_model
+                #save the topic model configuration
+                with open(f"{dir}/tm_config.json", "w") as f:
+                    json.dump(tm_config, f)
+
+                return dir
+
+    def _visualize(self, model: BERTopic, dir: str = "", data: list = []):
         plotting = [log for log in data if "Plotting" in log.keys()]
-        dir = ""
         self.session.logs["info"].append("Plotting Topics")
         if len(plotting) > 0:
             for log in plotting:
@@ -237,3 +297,13 @@ class Driver(ABC):
         except Exception as e:
             print(e)
             self.session.logs["errors"].append(str(e.with_traceback()))
+
+
+    def _write_logs(self,dir):
+        info = self.session.logs["info"]
+        errors = self.session.logs["errors"]
+        data = self.session.logs["data"]
+        logs = {"info": info, "errors": errors, "data": data}
+        with open(f"{dir}/logs.json", "w") as f:
+            json.dump(logs, f)
+        

@@ -30,7 +30,6 @@ class Session:
 
     def build_topic_model(self, from_file: bool = False, config: dict = {}) -> BERTopic:
         if from_file:
-            print("Building topic model from file")
             self.topic_model_factory.build_embedding_model(
                 self.config_topic_model["embedding_model"]
             )
@@ -60,12 +59,10 @@ class Session:
             )
             return self.topic_model_factory.build_topic_model()
         else:
-            print("Building topic model from logs")
             # gather all data logs
             config = self.logs["data"]
             # get all "Embeddings" logs
             embeddings = [log for log in config if "Embeddings" in log.keys()]
-            print(embeddings)
             # get the most recent logged value
             if embeddings:
                 embeddings = embeddings[-1]
@@ -76,7 +73,6 @@ class Session:
             dim_red = [
                 log for log in config if "Dimensionality Reduction" in log.keys()
             ]
-            print(dim_red)
             if dim_red:
                 dim_red = dim_red[-1]
                 self.topic_model_factory.build_dim_red_model(
@@ -86,7 +82,6 @@ class Session:
                 self.topic_model_factory.build_dim_red_model()
 
             clustering = [log for log in config if "Clustering" in log.keys()]
-            print(clustering)
             if clustering:
                 clustering = clustering[-1]
                 self.topic_model_factory.build_cluster_model(clustering["Clustering"])
@@ -112,9 +107,6 @@ class Session:
                     ctfidf_config["bm25"] = True
                 if log.values() == "Reduce frequent words":
                     ctfidf_config["reduce_frequent_words"] = True
-
-            print(vectorizer_config)
-            print(ctfidf_config)
 
             self.topic_model_factory.build_vectorizer_model(vectorizer_config)
 

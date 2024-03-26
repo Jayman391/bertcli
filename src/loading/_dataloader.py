@@ -99,10 +99,6 @@ class DataLoader:
         if flag:
             raise Exception("File type not supported")
 
-        """ 
-        #JUST FOR TEST PURPOSES
-        data = data.sample(2000)
-        """
 
         # extract the text column
         data = data["text"].to_list()
