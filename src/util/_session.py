@@ -108,8 +108,8 @@ class Session:
                 if log.values() == "Reduce frequent words":
                     ctfidf_config["reduce_frequent_words"] = True
 
-            self.topic_model_factory.build_vectorizer_model(**vectorizer_config)
+            self.topic_model_factory.build_vectorizer_model(vectorizer_config)
 
-            self.topic_model_factory.build_ctfidf_model(**ctfidf_config)
+            self.topic_model_factory.build_ctfidf_model(ctfidf_config)
 
             return self.topic_model_factory.build_topic_model()

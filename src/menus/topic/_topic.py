@@ -18,9 +18,10 @@ class TopicMenu(Menu):
             "Select Clustering Technique",
             "Fine Tuning",
             "Plotting",
-            "Save Session Configuration",
+            "Save Topic Model Configuration",
+            "Load Topic Model Configuration",
+            "Save Session Data",
             "Run Topic Model",
-            "Load Session Configuration",
         ]
 
         menus = [
@@ -29,6 +30,7 @@ class TopicMenu(Menu):
             ClusterMenu(session),
             FineTuneMenu(session),
             TopicPlottingMenu(session),
+            None,
             None,
             None,
             ConfigMenu(session),
@@ -48,24 +50,31 @@ class TopicMenu(Menu):
                 self.session.logs["info"].append(f"User went back to {self.parent}")
                 return self.back()
             elif choice == 6:
+                save_file = input("Please enter the path of the json file to save the configuration: ")
                 self.session.logs["data"].append(
+                    
                     {
-                        "save_file": input(
-                            "Please enter the path of the json file to save the configuration: "
-                        )
+                        "Topic": "save_file " + save_file
                     }
                 )
                 return self
             elif choice == 7:
-                return self.session.build_topic_model()
-            elif choice == 8:
+                load_file = input("Please enter the path of the json file to load the configuration: ")
                 self.session.logs["data"].append(
                     {
-                        "load_file": input(
-                            "Please enter the path of the json file to load the configuration: "
-                        )
+                        "Topic": "load_file " + load_file
                     }
                 )
                 return self
+            elif choice == 8:
+                save_dir = input("Please enter the path of the directory to save this sessions data: ")
+                self.session.logs["data"].append(
+                    {
+                        "Topic": "save_dir " + save_dir
+                    }
+                )
+                return self
+            elif choice == 9:
+                return self.session.build_topic_model()
             else:
                 return self.menus[self.options[choice - 1]]

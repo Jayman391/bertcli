@@ -1,8 +1,7 @@
 import pandas as pd
 
 from umap import UMAP
-from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA, TruncatedSVD, FactorAnalysis
+from sklearn.decomposition import PCA, TruncatedSVD, FastICA
 
 from hdbscan import HDBSCAN
 from sklearn.cluster import (
@@ -59,17 +58,14 @@ class TopicModelFactory:
         if model == "umap" or model == "":
             self.dimension_reduction_model = UMAP(verbose=True, **config)
 
-        if model == "t-sne":
-            self.dimension_reduction_model = TSNE(**config)
-
         if model == "pca":
             self.dimension_reduction_model = PCA(**config)
 
         if model == "truncated svd":
             self.dimension_reduction_model = TruncatedSVD(**config)
 
-        if model == "factor analysis":
-            self.dimension_reduction_model = FactorAnalysis(**config)
+        if model == "independent component analysis":
+            self.dimension_reduction_model = FastICA(**config)
 
         return self.dimension_reduction_model
 
@@ -116,5 +112,6 @@ class TopicModelFactory:
             hdbscan_model=self.clustering_model,
             vectorizer_model=self.vectorizer_model,
             ctfidf_model=self.ctfidf_model,
+            verbose=True,
             **config
         )
