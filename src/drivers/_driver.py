@@ -10,6 +10,12 @@ import os
 import math
 import json
 import os
+import sys
+
+if sys.platform.startswith("linux"):
+    file = ""
+else:
+    file = "file://"
 
 class Driver(ABC):
     def __init__(self, session: Session = None):
@@ -75,7 +81,7 @@ class Driver(ABC):
 
         topics, data = self._fit_model(model)
 
-        dir = ""
+        directory = ""
         #remove all logs that containg Back in the values
         data = [log for log in data if "Back" not in log.values()]
         #gather data where Topic is a key
@@ -85,12 +91,12 @@ class Driver(ABC):
             value = str(list(log.values())[0])
             dummy = self._process_topic_choice(model, value, topics)
             if dummy:
-                dir = dummy
+                directory = dummy
             
         
-        self._visualize(model, dir, data)
+        self._visualize(model, directory, data)
 
-        self._write_logs(dir)
+        self._write_logs(directory)
 
     def _fit_model(self, model):
         topics, _ = model.fit_transform(self.session.data)
@@ -108,12 +114,12 @@ class Driver(ABC):
         return topics, data
     
     def _process_topic_choice(self, model:BERTopic, value: str, topics):
-        if value.startswith("save_dir"):
-                dir = value.split(" ")[1].strip()
-                # if dir does not exist, create it
-                if not os.path.isdir(dir):
-                    os.makedirs(dir)
-                model.save(dir, serialization="pytorch", save_embedding_model=True)
+        if value.startswith("save_directory"):
+                directory = value.split(" ")[1].strip()
+                # if directory does not exist, create it
+                if not os.path.isdir(directory):
+                    os.makedirs(directory)
+                model.save(directory, serialization="pytorch", save_embedding_model=True)
                 #map topics to the documents
                   
                 topics = pd.DataFrame(topics).astype(int)
@@ -134,15 +140,15 @@ class Driver(ABC):
                     embeddings.columns = ["x", "y"]
                 session_data = pd.concat([session_data, embeddings], axis=1) 
                 
-                pd.DataFrame(session_data).to_csv(f"{dir}/labeled_corpus.csv", index=False)
+                pd.DataFrame(session_data).to_csv(f"{directory}/labeled_corpus.csv", index=False)
                 tm_config = self.session.config_topic_model
                 #save the topic model configuration
-                with open(f"{dir}/tm_config.json", "w") as f:
+                with open(f"{directory}/tm_config.json", "w") as f:
                     json.dump(tm_config, f)
 
-                return dir
+                return directory
 
-    def _visualize(self, model: BERTopic, dir: str = "", data: list = []):
+    def _visualize(self, model: BERTopic, directory: str = "", data: list = []):
         plotting = [log for log in data if "Plotting" in log.keys()]
         self.session.logs["info"].append("Plotting Topics")
         if len(plotting) > 0:
@@ -162,46 +168,46 @@ class Driver(ABC):
                     and value != "opera"
                     and not "Enable" in value
                 ):
-                    dir = value
+                    directory = value
             for log in plotting:
                 value = str(list(log.values())[0])
                 if "Enable Topic Visualizations" in value:
                     print("Visualizing Topics")
-                    self._visualize_topics(model, dir)
+                    self._visualize_topics(model, directory)
                     self.session.logs["info"].append("Visualizing Topics")
                 if "Enable Document Visualizations" in value:
                     print("Visualizing Documents")
-                    self._visualize_documents(model, dir)
+                    self._visualize_documents(model, directory)
                     self.session.logs["info"].append("Visualizing Documents")
                 if "Enable Term Visualizations" in value:
                     print("Visualizing Terms")
-                    self._visualize_terms(model, dir)
+                    self._visualize_terms(model, directory)
                     self.session.logs["info"].append("Visualizing Terms")
                 if "Enable All Visualizations" in value:
                     print("Visualizing All")
-                    self._visualize_topics(model, dir)
-                    self._visualize_documents(model, dir)
-                    self._visualize_terms(model, dir)
+                    self._visualize_topics(model, directory)
+                    self._visualize_documents(model, directory)
+                    self._visualize_terms(model, directory)
                     self.session.logs["info"].append("Visualizing All")
         else:
             print(
                 "No plotting options selected. Visualizing all topics, documents, and terms."
             )
-            self._visualize_topics(model, dir)
-            self._visualize_documents(model, dir)
-            self._visualize_terms(model, dir)
+            self._visualize_topics(model, directory)
+            self._visualize_documents(model, directory)
+            self._visualize_terms(model, directory)
         
             self.session.logs["info"].append("Visualizing All")
 
-    def _visualize_topics(self, model: BERTopic, dir: str = ""):
+    def _visualize_topics(self, model: BERTopic, directory: str = ""):
         try:
             topic_viz = model.visualize_topics()
-            if dir != "":
-                topic_viz.write_html(f"{dir}/topic_viz.html")
-                webbrowser.open_new("file://" + os.path.realpath(f"{dir}/topic_viz.html"))
+            if directory != "":
+                topic_viz.write_html(f"{directory}/topic_viz.html")
+                webbrowser.open_new(file + os.path.realpath(f"{directory}/topic_viz.html"))
             else:
                 topic_viz.write_html("topic_viz.html")
-                webbrowser.open_new("file://" + os.path.realpath(f"topic_viz.html"))
+                webbrowser.open_new(file + os.path.realpath(f"topic_viz.html"))
 
         except Exception as e:
             print(e)
@@ -213,14 +219,14 @@ class Driver(ABC):
                 hierarchical_topics=hierarchical_topics
             )
 
-            if dir != "":
-                hierarchical_viz.write_html(f"{dir}/hierarchical_viz.html")
+            if directory != "":
+                hierarchical_viz.write_html(f"{directory}/hierarchical_viz.html")
                 webbrowser.open_new(
-                    "file://" + os.path.realpath(f"{dir}/hierarchical_viz.html")
+                    file + os.path.realpath(f"{directory}/hierarchical_viz.html")
                 )
             else:
                 hierarchical_viz.write_html("hierarchical_viz.html")
-                webbrowser.open_new("file://" + os.path.realpath("hierarchical_viz.html"))
+                webbrowser.open_new(file + os.path.realpath("hierarchical_viz.html"))
         except Exception as e:
             print(e)
             self.session.logs["errors"].append(str(e.with_traceback()))
@@ -228,34 +234,34 @@ class Driver(ABC):
         try:
             heatmap = model.visualize_heatmap()
 
-            if dir != "":
-                heatmap.write_html(f"{dir}/heatmap.html")
+            if directory != "":
+                heatmap.write_html(f"{directory}/heatmap.html")
                 webbrowser.open_new(
-                    "file://" + os.path.realpath(f"{dir}/hierarchical_viz.html")
+                    file + os.path.realpath(f"{directory}/hierarchical_viz.html")
                 )
-                webbrowser.open_new("file://" + os.path.realpath(f"{dir}/heatmap.html"))
+                webbrowser.open_new(file + os.path.realpath(f"{directory}/heatmap.html"))
 
             else:
                 hierarchical_viz.write_html("hierarchical_viz.html")
                 heatmap.write_html("heatmap.html")
-                webbrowser.open_new("file://" + os.path.realpath(f"hierarchical_viz.html"))
-                webbrowser.open_new("file://" + os.path.realpath(f"heatmap.html"))
+                webbrowser.open_new(file + os.path.realpath(f"hierarchical_viz.html"))
+                webbrowser.open_new(file + os.path.realpath(f"heatmap.html"))
         except Exception as e:
             print(e)
             self.session.logs["errors"].append(str(e.with_traceback()))
 
-    def _visualize_documents(self, model: BERTopic, dir: str = ""):
+    def _visualize_documents(self, model: BERTopic, directory: str = ""):
         try:
             doc_viz = model.visualize_documents(docs=self.session.data, sample=0.05)
 
-            if dir:
-                doc_viz.write_html(f"{dir}/document_viz.html")
+            if directory:
+                doc_viz.write_html(f"{directory}/document_viz.html")
                 webbrowser.open_new(
-                    "file://" + os.path.realpath(f"{dir}/document_viz.html")
+                    file + os.path.realpath(f"{directory}/document_viz.html")
                 )
             else:
                 doc_viz.write_html("document_viz.html")
-                webbrowser.open_new("file://" + os.path.realpath("document_viz.html"))
+                webbrowser.open_new(file + os.path.realpath("document_viz.html"))
         except Exception as e:
             print(e)
             self.session.logs["errors"].append(str(e.with_traceback()))
@@ -269,41 +275,41 @@ class Driver(ABC):
                 nr_levels=math.ceil(math.sqrt(len(hierarchical_topics) // 2)),
                 level_scale="log",
             )
-
-            if dir:
-                hierarchical_docs.write_html(f"{dir}/hierarchical_document_viz.html")
+    
+            if directory:
+                hierarchical_docs.write_html(f"{directory}/hierarchical_document_viz.html")
                 webbrowser.open_new(
-                    "file://" + os.path.realpath(f"{dir}/hierarchical_document_viz.html")
+                    file + os.path.realpath(f"{directory}/hierarchical_document_viz.html")
                 )
             else:
                 hierarchical_docs.write_html("hierarchical_document_viz.html")
                 webbrowser.open_new(
-                    "file://" + os.path.realpath("hierarchical_document_viz.html")
+                    file + os.path.realpath("hierarchical_document_viz.html")
                 )
         except Exception as e:
             print(e)
             self.session.logs["errors"].append(str(e.with_traceback()))
         
-    def _visualize_terms(self, model: BERTopic, dir: str = ""):
+    def _visualize_terms(self, model: BERTopic, directory: str = ""):
         try:
             terms = model.visualize_barchart(top_n_topics=50, n_words=10)
 
-            if dir:
-                terms.write_html(f"{dir}/term_viz.html")
-                webbrowser.open_new("file://" + os.path.realpath(f"{dir}/term_viz.html"))
+            if directory:
+                terms.write_html(f"{directory}/term_viz.html")
+                webbrowser.open_new(file + os.path.realpath(f"{directory}/term_viz.html"))
             else:
                 terms.write_html("term_viz.html")
-                webbrowser.open_new("file://" + os.path.realpath("term_viz.html"))
+                webbrowser.open_new(file + os.path.realpath("term_viz.html"))
         except Exception as e:
             print(e)
             self.session.logs["errors"].append(str(e.with_traceback()))
 
 
-    def _write_logs(self,dir):
+    def _write_logs(self, directory):
         info = self.session.logs["info"]
         errors = self.session.logs["errors"]
         data = self.session.logs["data"]
         logs = {"info": info, "errors": errors, "data": data}
-        with open(f"{dir}/logs.json", "w") as f:
+        with open(f"{directory}/logs.json", "w") as f:
             json.dump(logs, f)
         
