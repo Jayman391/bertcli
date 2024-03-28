@@ -20,7 +20,7 @@ class LNLPCLI:
         self.global_config_path = global_config_path
         self.global_optmization_path = global_optmization_path
 
-        print("\nWelcome to the NLLP CLI!")
+        print("\nWelcome to the LNLP CLI!")
 
         self.driver = GlobalDriver()
 

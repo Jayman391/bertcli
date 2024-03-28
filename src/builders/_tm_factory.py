@@ -56,7 +56,9 @@ class TopicModelFactory:
     def build_dim_red_model(self, model: str = "", config: dict = {}):
         model = model.lower()
         if model == "umap" or model == "":
-            self.dimension_reduction_model = UMAP(verbose=True, **config)
+            self.dimension_reduction_model = UMAP(
+                init="tswspectral", verbose=True, **config
+            )
 
         if model == "pca":
             self.dimension_reduction_model = PCA(**config)

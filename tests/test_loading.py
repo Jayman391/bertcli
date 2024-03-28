@@ -20,7 +20,6 @@ def test_load_data(data_filepath):
     """
 
     if data_filepath.endswith(".csv"):
-
         assert (
             data[0]
             == "We'd have the best vaccination program under her.\\n\\nVaccine, vaccine, vaccine, VAC-CIIIIIIIIIIIIIINE!"
@@ -39,7 +38,6 @@ def test_load_data(data_filepath):
         )
 
     if data_filepath.endswith(".json"):
-
         assert (
             data[0]
             == "We'd have the best vaccination program under her.\n\nVaccine, vaccine, vaccine, VAC-CIIIIIIIIIIIIIINE!"
