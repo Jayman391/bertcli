@@ -11,8 +11,8 @@ class Landing(Menu):
         is_leaf = False
         options = [
             "Run a Topic Model",
-            "Run an Optimization routine for a Topic Model (GPU reccomended)",
             "Run a Classification Model",
+            "Run an Optimization routine",
             "Load Global Configuration Files",
         ]
 

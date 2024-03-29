@@ -7,6 +7,8 @@ class DataLoader:
     def __init__(self):
         pass
 
+
+    @staticmethod
     def prompt_yes_no(self, message: str):
         response = input(message).lower()
         if not response in ["y", "n"]:
