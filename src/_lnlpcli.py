@@ -54,18 +54,23 @@ class LNLPCLI:
             self.run()
 
     def _process_responses(self, menu: Menu, driver: Driver):
-        response = driver.process_response(menu)
+        response = driver._process_response(menu)
 
         driver.log("data", {str(menu): str(response)})
 
         if isinstance(response, Menu):
+
             if not isinstance(response, (Landing, TopicMenu, OptimizationMenu)):
                 response.set_parent(menu)
+
             self._process_responses(response, driver)
+
         elif isinstance(response, BERTopic):
+
             if self.global_session.config_topic_model != {}:
-                driver.run_topic_model(from_file=True)
+
+                driver._run_topic_model(from_file=True)
             else:
-                driver.run_topic_model()
+                driver._run_topic_model()
         else:
             self._process_responses(menu.parent, driver)

@@ -1,12 +1,14 @@
 import json
 import pandas as pd
 from src.util._session import Session
-
+from random import shuffle
 
 class DataLoader:
     def __init__(self):
         pass
 
+
+    @staticmethod
     def prompt_yes_no(self, message: str):
         response = input(message).lower()
         if not response in ["y", "n"]:
@@ -25,6 +27,22 @@ class DataLoader:
             data_path = input("Please enter the path to the data file: ")
 
             data = self._load_data(data_path)
+
+            sample_bool = self.prompt_yes_no(
+                "Would you like to sample the data? (y/n): "
+            )
+
+            if sample_bool.lower() == "y":
+                sample_size = 10000
+
+                try:
+                    sample_size = int(input("Please enter the sample size: "))
+                except ValueError:
+                    print("Invalid input. Defaulting to 1000")
+
+                shuffle(data)
+                data = data[:sample_size]
+                
 
         return data
 

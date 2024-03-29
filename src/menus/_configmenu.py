@@ -27,26 +27,16 @@ class ConfigMenu(Menu):
         loader = DataLoader()
 
         if choice == 1:
-            prompt = input("Enter the path to the data file: ")
-            if prompt.endswith(".csv") or prompt.endswith(".json"):
-                self.session.set_data(loader._load_data(prompt))
-                return self
-            else:
-                return self
-
+           
+            self.session.set_data(loader.prompt_load_data())
+        
         elif choice == 2:
-            prompt = input("Enter the path to the topic model config file: ")
-            if prompt.endswith(".json"):
-                self.session.set_config_topic_model(loader._load_data(prompt))
-                return self
-            else:
-                return self
+            
+            self.session.set_config_topic_model(loader.prompt_load_tm_config())
+               
         elif choice == 3:
-            prompt = input("Enter the path to the optimization config file: ")
-            if prompt.endswith(".json"):
-                self.session.set_config_optimization(loader._load_data())
-                return self
-            else:
-                return self
+           
+            self.session.set_config_optimization(loader.prompt_load_opt_config())
+               
         else:
             return self.back()
