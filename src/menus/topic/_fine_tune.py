@@ -30,9 +30,9 @@ class FineTuneMenu(Menu):
                 prompt = True
                 words = ["Ignore Words"] if choice == 3 else ["Zero Shot"]
                 while prompt:
-                    prompt = input("Input a word, or leave blank to continue: ")
-                    if prompt.lower() != "":
-                        words.append(prompt)
+                    word = input("Input a word, or leave blank to continue: ")
+                    if word != "":
+                        words.append(word.lower())
                     else:
                         return words
             else:

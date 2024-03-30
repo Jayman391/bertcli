@@ -125,7 +125,7 @@ class TopicModelFactory:
             if log == "Enable Maximal Marginal Relevance":
                 self.fine_tune.append(MaximalMarginalRelevance(1))
             if log == "Enable Part of Speech filtering":
-                self.fine_tune.append(PartOfSpeech("en_core_web_sm"))
+                self.fine_tune.append(PartOfSpeech())
 
         return self.fine_tune
 

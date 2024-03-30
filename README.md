@@ -24,6 +24,8 @@ source venv/bin/activate</code>
 
 install requirements
 <code>python -m pip install -r requirements.txt</code>
+python -m spacy download en
+
 
 ## Contributing
 
