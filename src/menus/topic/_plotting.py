@@ -13,6 +13,7 @@ class TopicPlottingMenu(Menu):
             "Enable All Visualizations",
             "Specify Plot Directory",
             "Specify Web Browser",
+            "Enable Word Shift Graphs"
         ]
 
         self.name = "Plotting"
