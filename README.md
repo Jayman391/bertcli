@@ -16,7 +16,7 @@ related algorithms either in parallel or directly through the provided CLI.
 - Make sure that you have python 3.9 installed
 
 clone the repo
-<code>git clone https://github.com/Jayman391/lnlp.git /code>
+<code>git clone https://github.com/Jayman391/lnlp.git </code>
 
 create and activate virtual environment
 <code>python3.9 -m venv venv
@@ -24,7 +24,7 @@ source venv/bin/activate</code>
 
 install requirements
 <code>python -m pip install -r requirements.txt</code>
-python -m spacy download en
+<code>python -m spacy download en </code>
 
 
 ## Contributing
