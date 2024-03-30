@@ -59,7 +59,7 @@ class LNLPCLI:
     def _process_responses(self, menu: Menu, driver: Driver):
         response = driver._process_response(menu)
 
-        driver.log("data", {str(menu): str(response)})
+        driver.log("data", {str(menu): response})
 
         if isinstance(response, Menu):
 

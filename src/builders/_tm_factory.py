@@ -116,9 +116,10 @@ class TopicModelFactory:
                     iszero = False
                     if word == "Zero Shot":
                         iszero = True
-                        log.drop(word)
+                        log.remove(word)
                 if iszero:
-                    self.fine_tune.append(ZeroShotClassification(candidate_topics=log))
+                    zeroshot = ZeroShotClassification(candidate_topics=log)
+                    self.fine_tune.append(zeroshot)
             if log == "Enable KeyBERT algorithm":
                 self.fine_tune.append(KeyBERTInspired())
             if log == "Enable Maximal Marginal Relevance":
@@ -129,7 +130,6 @@ class TopicModelFactory:
         return self.fine_tune
 
     def build_topic_model(self, config: dict = {}) -> BERTopic:
-        print(self.fine_tune)
         return BERTopic(
             embedding_model=self.embedding_model,
             umap_model=self.dimension_reduction_model,

@@ -34,7 +34,6 @@ class FineTuneMenu(Menu):
                     if prompt.lower() != "":
                         words.append(prompt)
                     else:
-                        words.append(self.options[choice - 1])
                         return words
             else:
                 return self.options[choice - 1]
