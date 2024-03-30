@@ -13,12 +13,14 @@ class LNLPCLI:
         global_data_path: str = None,
         global_config_path: str = None,
         global_optmization_path: str = None,
+        num_samples:int = 0,
         debug: bool = False,
     ):
         self.debug = debug
         self.global_data_path = global_data_path
         self.global_config_path = global_config_path
         self.global_optmization_path = global_optmization_path
+        self.num_samples = num_samples
 
         print("\nWelcome to the LNLP CLI!")
 
@@ -28,6 +30,7 @@ class LNLPCLI:
             data_path=self.global_data_path,
             config_path=self.global_config_path,
             optimization_path=self.global_optmization_path,
+            num_samples=self.num_samples,
         )
 
         self.driver.log("info", "Initialized Global Session Object and Global Driver")
@@ -56,7 +59,11 @@ class LNLPCLI:
     def _process_responses(self, menu: Menu, driver: Driver):
         response = driver._process_response(menu)
 
-        driver.log("data", {str(menu): str(response)})
+        if isinstance(response,list):
+
+            driver.log("data", {str(menu): response})
+        else:
+            driver.log("data", {str(menu): str(response)})
 
         if isinstance(response, Menu):
 
@@ -66,9 +73,8 @@ class LNLPCLI:
             self._process_responses(response, driver)
 
         elif isinstance(response, BERTopic):
-
+            
             if self.global_session.config_topic_model != {}:
-
                 driver._run_topic_model(from_file=True)
             else:
                 driver._run_topic_model()

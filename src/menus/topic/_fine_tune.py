@@ -13,7 +13,7 @@ class FineTuneMenu(Menu):
             "Enable BM25 weighting",
             "Reduce frequent words",
             "Enable KeyBERT algorithm",
-            "Enable ZeroShotClassification",
+            "Enable Zero Shot Classification",
             "Enable Maximal Marginal Relevance",
             "Enable Part of Speech filtering",
         ]
@@ -26,15 +26,14 @@ class FineTuneMenu(Menu):
         if choice == len(self.options):
             self.exit()
         else:
-            if choice == 3:
+            if choice == 3 or choice == 7:
                 prompt = True
-                words = []
+                words = ["Ignore Words"] if choice == 3 else ["Zero Shot"]
                 while prompt:
-                    prompt = input("Input a word, or leave blank to continue: ")
-                    if prompt.lower() != "":
-                        words.append(prompt)
+                    word = input("Input a word, or leave blank to continue: ")
+                    if word != "":
+                        words.append(word.lower())
                     else:
-                        words.append(self.options[choice - 1])
                         return words
             else:
                 return self.options[choice - 1]

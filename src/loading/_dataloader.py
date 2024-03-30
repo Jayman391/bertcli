@@ -7,8 +7,6 @@ class DataLoader:
     def __init__(self):
         pass
 
-
-    @staticmethod
     def prompt_yes_no(self, message: str):
         response = input(message).lower()
         if not response in ["y", "n"]:
@@ -16,7 +14,7 @@ class DataLoader:
             return self.prompt_yes_no(message)
         return response
 
-    def prompt_load_data(self):
+    def prompt_load_data(self, num_samples: int = 0):
         data_bool = self.prompt_yes_no(
             "Would you like to use a dataset for this session? (y/n): "
         )
@@ -26,7 +24,10 @@ class DataLoader:
         if data_bool.lower() == "y":
             data_path = input("Please enter the path to the data file: ")
 
-            data = self._load_data(data_path)
+            if num_samples > 0:
+                data = self._load_data(data_path, num_samples)
+            else:
+                data = self._load_data(data_path)
 
             sample_bool = self.prompt_yes_no(
                 "Would you like to sample the data? (y/n): "
@@ -38,7 +39,7 @@ class DataLoader:
                 try:
                     sample_size = int(input("Please enter the sample size: "))
                 except ValueError:
-                    print("Invalid input. Defaulting to 1000")
+                    print("Invalid input. Defaulting to 10000")
 
                 shuffle(data)
                 data = data[:sample_size]
@@ -79,6 +80,7 @@ class DataLoader:
         data_path: str = None,
         config_path: str = None,
         optimization_path: str = None,
+        num_samples: int = 0,
     ):
         data = []
         config = {}
@@ -88,7 +90,7 @@ class DataLoader:
             data, config, opt = self._no_args_passed()
 
         if data_path is not None:
-            data = self._load_data(data_path)
+            data = self._load_data(data_path, num_samples)
             print(f"Loaded data from {data_path}")
 
         if config_path is not None:
@@ -101,7 +103,7 @@ class DataLoader:
 
         return Session(data, config, opt)
 
-    def _load_data(self, data_path: str):
+    def _load_data(self, data_path: str, num_samples: int = 0):
         data = None
 
         flag = True
@@ -116,6 +118,9 @@ class DataLoader:
 
         if flag:
             raise Exception("File type not supported")
+
+        if num_samples > 0:
+            data = data.sample(num_samples)
 
         # extract the text column
         data = data["text"].to_list()
@@ -145,9 +150,7 @@ class DataLoader:
         opt_config = {}
 
         if (
-            self.prompt_yes_no(
-                "\nWould you like to configure this session? (y/n): "
-            ).lower()
+            self.prompt_yes_no(message="\nWould you like to configure this session? (y/n): ").lower()
             == "y"
         ):
             data = self.prompt_load_data()
