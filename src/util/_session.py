@@ -113,6 +113,7 @@ class Session:
             self.topic_model_factory.build_ctfidf_model(ctfidf_config)
 
             fine_tune = [list(i.values())[0] for i in fine_tune]
+            print(fine_tune)
 
             self.topic_model_factory.build_fine_tune(fine_tune)
 
