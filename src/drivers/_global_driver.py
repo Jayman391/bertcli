@@ -20,17 +20,18 @@ class GlobalDriver(Driver):
         super().__init__(session)
 
     def _run_topic_model(self, from_file: bool = False):
-        model = self.session.build_topic_model(from_file=from_file)
-        self.session.logs["info"].append("Topic Model has been built")
-
-        topics, data = self._fit_model(model)
-
+        data = self.session.logs["data"]
         directory = ""
         # remove all logs that containg Back in the values
         data = [log for log in data if "Back" not in log.values()]
         # gather data where Topic is a key
         topic_choices = [log for log in data if "Topic" in log.keys()]
 
+        model = self.session.build_topic_model(from_file=from_file)
+        self.session.logs["info"].append("Topic Model has been built")
+        topics = self._fit_model(model)
+
+    
         for log in topic_choices:
             value = str(list(log.values())[0])
             dummy = self._process_topic_choice(model, value, topics)
@@ -54,9 +55,8 @@ class GlobalDriver(Driver):
         ]
 
         self.session.logs["info"].append("Topics have been extracted")
-        data = self.session.logs["data"]
 
-        return topics, data
+        return topics
 
     def _process_topic_choice(self, model: BERTopic, value: str, topics):
         if value.startswith("save_dir"):

@@ -7,8 +7,6 @@ class DataLoader:
     def __init__(self):
         pass
 
-
-    @staticmethod
     def prompt_yes_no(self, message: str):
         response = input(message).lower()
         if not response in ["y", "n"]:
@@ -145,9 +143,7 @@ class DataLoader:
         opt_config = {}
 
         if (
-            self.prompt_yes_no(
-                "\nWould you like to configure this session? (y/n): "
-            ).lower()
+            self.prompt_yes_no(message="\nWould you like to configure this session? (y/n): ").lower()
             == "y"
         ):
             data = self.prompt_load_data()

@@ -22,8 +22,9 @@ import os
 os.environ["TOKENIZERS_PARALLELISM"] = "False"
 
 from bertopic import BERTopic
-from bertopic.representation import KeyBERTInspired
 from bertopic.vectorizers import ClassTfidfTransformer
+
+from bertopic.representation import KeyBERTInspired, MaximalMarginalRelevance, ZeroShotClassification, PartOfSpeech
 
 
 class TopicModelFactory:
@@ -37,7 +38,7 @@ class TopicModelFactory:
         self.clustering_model = None
         # Step 4 - Tokenize topics
         self.vectorizer_model = None
-        # Step 5 - Create topic representation
+        # Step 5 - Create topic self.fine_tune
         self.ctfidf_model = None
         self.config = {}
 
@@ -106,14 +107,36 @@ class TopicModelFactory:
     def build_ctfidf_model(self, config: dict = {}):
         self.ctfidf_model = ClassTfidfTransformer(**config)
         return self.ctfidf_model
+    
+    def build_fine_tune(self, tune: list = []):
+        self.fine_tune = []
+        for log in tune:
+            if isinstance(log, list):
+                for word in log:
+                    iszero = False
+                    if word == "Zero Shot":
+                        iszero = True
+                        log.drop(word)
+                if iszero:
+                    self.fine_tune.append(ZeroShotClassification(candidate_topics=log))
+            if log == "Enable KeyBERT algorithm":
+                self.fine_tune.append(KeyBERTInspired())
+            if log == "Enable Maximal Marginal Relevance":
+                self.fine_tune.append(MaximalMarginalRelevance(1))
+            if log == "Enable Part of Speech filtering":
+                self.fine_tune.append(PartOfSpeech("en_core_web_sm"))
+
+        return self.fine_tune
 
     def build_topic_model(self, config: dict = {}) -> BERTopic:
+        print(self.fine_tune)
         return BERTopic(
             embedding_model=self.embedding_model,
             umap_model=self.dimension_reduction_model,
             hdbscan_model=self.clustering_model,
             vectorizer_model=self.vectorizer_model,
             ctfidf_model=self.ctfidf_model,
+            representation_model=self.fine_tune,
             verbose=True,
             **config
         )
