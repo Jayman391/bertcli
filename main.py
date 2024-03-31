@@ -14,6 +14,10 @@ def main():
   parser = argparse.ArgumentParser(description="BERTopic CLI")
 
   parser.add_argument(
+        "save_dir", type=str, nargs="?", help="Path to save the model"
+  )
+
+  parser.add_argument(
       "data", type=str, nargs="?", help="Path to the global data file"
   )
   parser.add_argument(
@@ -30,7 +34,9 @@ def main():
   
   args = parser.parse_args()
 
-  cli = LNLPCLI(global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig, num_samples=args.num_samples)
+  num_samples = args.num_samples if args.num_samples else 0
+
+  cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig, num_samples=num_samples)
 
   cli.run()
 

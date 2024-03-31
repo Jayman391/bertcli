@@ -65,60 +65,65 @@ class GlobalDriver(Driver):
 
     def _process_topic_choice(self, model: BERTopic, value: str, topics):
         directory = ""
+
+        if self.session.plot_dir != "":
+            directory = self.session.plot_dir
         if value.startswith("save_dir"):
             directory = value.split(" ")[1].strip()
         # if directory does not exist, create it
-            if not os.path.isdir(directory):
-                os.makedirs(directory)
+        if not os.path.isdir(directory):
+            os.makedirs(directory)
         # model.save(directory, serialization="pytorch", save_embedding_model=True)
         # map topics to the documents
 
-            topics = pd.DataFrame(topics).astype(int)
-            # name the columns
-            topics.columns = ["label"]
-            embeddings = pd.DataFrame(model._extract_embeddings(self.session.data))
-            session_data = pd.DataFrame(self.session.data)
-            # name column text
-            session_data.columns = ["text"]
-            session_data = pd.concat([session_data, topics], axis=1)
-            # map embeddings to the documents
-            # if embeddings dim is more than 2, reduce to 2
-            if embeddings.shape[1] > 2:
-                from umap import UMAP
+        topics = pd.DataFrame(topics).astype(int)
+        # name the columns
+        topics.columns = ["label"]
+        embeddings = pd.DataFrame(model._extract_embeddings(self.session.data))
+        session_data = pd.DataFrame(self.session.data)
+        # name column text
+        session_data.columns = ["text"]
+        session_data = pd.concat([session_data, topics], axis=1)
+        # map embeddings to the documents
+        # if embeddings dim is more than 2, reduce to 2
+        if embeddings.shape[1] > 2:
+            from umap import UMAP
 
-                umap = UMAP(n_components=2, verbose=True)
-                embeddings = pd.DataFrame(umap.fit_transform(embeddings))
-                # columns names are x and y
-                embeddings.columns = ["x", "y"]
-            session_data = pd.concat([session_data, embeddings], axis=1)
+            umap = UMAP(n_components=2, verbose=True)
+            embeddings = pd.DataFrame(umap.fit_transform(embeddings))
+            # columns names are x and y
+            embeddings.columns = ["x", "y"]
+        session_data = pd.concat([session_data, embeddings], axis=1)
 
-            pd.DataFrame(session_data).to_csv(
-                f"{directory}/labeled_corpus.csv", index=False
-            )
-            tm_config = self.session.config_topic_model
-            # save the topic model configuration
-            with open(f"{directory}/tm_config.json", "w") as f:
-                json.dump(tm_config, f)
+        pd.DataFrame(session_data).to_csv(
+            f"{directory}/labeled_corpus.csv", index=False
+        )
+        tm_config = self.session.config_topic_model
+        # save the topic model configuration
+        with open(f"{directory}/tm_config.json", "w") as f:
+            json.dump(tm_config, f)
 
-            formatter = DataFormatter()
+        formatter = DataFormatter()
 
-            for label in session_data["label"].unique():
-                data = session_data[session_data["label"] == label]
-                if len(data) > 1:
-                    if not os.path.isdir(f"{directory}/topics/"):
-                        os.makedirs(f"{directory}/topics/")
-                    df = formatter.zipf_data_to_dataframe(data["text"].tolist())
+        for label in session_data["label"].unique():
+            data = session_data[session_data["label"] == label]
+            if len(data) > 1:
+                if not os.path.isdir(f"{directory}/topics/"):
+                    os.makedirs(f"{directory}/topics/")
+                df = formatter.zipf_data_to_dataframe(data["text"].tolist())
 
-                    # sample of session_data size of df
-                    sample = session_data.sample(n=len(data)-1)
+                # sample of session_data size of df
+                sample = session_data.sample(n=len(data)-1)
 
-                    df.to_csv(
-                        f"{directory}/topics/{label}_zipf.csv", index=False
-                    )
+                sample = formatter.zipf_data_to_dataframe(sample["text"].tolist())
 
-                    sample.to_csv(
-                        f"{directory}/topics/{label}_sample_zipf.csv", index=False
-                    )
+                df.to_csv(
+                    f"{directory}/topics/{label}_zipf.csv", index=False
+                )
+
+                sample.to_csv(
+                    f"{directory}/topics/{label}_sample_zipf.csv", index=False
+                )
 
         return directory
 

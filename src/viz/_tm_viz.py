@@ -1,3 +1,4 @@
+import pandas as pd
 import os
 import math
 import webbrowser
@@ -5,6 +6,10 @@ from webbrowser import open_new_tab
 from bertopic import BERTopic
 from src.util._session import Session
 import sys
+import shifterator as sh
+import matplotlib.pyplot as plt
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
 if sys.platform.startswith("linux"):
     file = ""
@@ -52,13 +57,21 @@ def visualize(model: BERTopic, session:Session , directory: str = "", data: list
                     _visualize_documents(model, session, directory)
                     _visualize_terms(model, session, directory)
                     session.logs["info"].append("Visualizing All")
+                if "Enable Word Shift Graphs" in value:
+                    _visualize_word_shifts(session, directory)
+                    session.logs["info"].append("Visualizing Word Shifts")
+                if "Enable Power Danger Structure Graphs" in value:
+                    _visualize_power_danger_structure(session, directory)
+                    session.logs["info"].append("Visualizing Power Danger Structure Graphs")
         else:
             print(
                 "No plotting options selected. Visualizing all topics, documents, and terms by default."
             )
+            
             _visualize_topics(model, session, directory)
-            _visualize_documents(model, session, directory)
             _visualize_terms(model, session, directory)
+            _visualize_word_shifts(session, directory)
+            _visualize_documents(model, session, directory)
 
             session.logs["info"].append("Visualizing All")
 
@@ -76,7 +89,7 @@ def _visualize_topics(model: BERTopic, session:Session , directory: str = ""):
 
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e.with_traceback()))
+        session.logs["errors"].append(str(e))
 
     try:
         hierarchical_topics = model.hierarchical_topics(docs=session.data)
@@ -94,7 +107,7 @@ def _visualize_topics(model: BERTopic, session:Session , directory: str = ""):
             webbrowser.open_new(file + os.path.realpath("hierarchical_viz.html"))
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e.with_traceback()))
+        session.logs["errors"].append(str(e))
 
     try:
         heatmap = model.visualize_heatmap()
@@ -109,7 +122,7 @@ def _visualize_topics(model: BERTopic, session:Session , directory: str = ""):
             webbrowser.open_new(file + os.path.realpath(f"heatmap.html"))
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e.with_traceback()))
+        session.logs["errors"].append(str(e))
 
 def _visualize_documents( model: BERTopic, session:Session , directory: str = ""):
     try:
@@ -125,7 +138,7 @@ def _visualize_documents( model: BERTopic, session:Session , directory: str = ""
             webbrowser.open_new(file + os.path.realpath("document_viz.html"))
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e.with_traceback()))
+        session.logs["errors"].append(str(e))
 
     try:
         hierarchical_topics = model.hierarchical_topics(docs=session.data)
@@ -152,7 +165,7 @@ def _visualize_documents( model: BERTopic, session:Session , directory: str = ""
             )
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e.with_traceback()))
+        session.logs["errors"].append(str(e))
 
 def _visualize_terms( model: BERTopic, session:Session , directory: str = ""):
     try:
@@ -168,4 +181,68 @@ def _visualize_terms( model: BERTopic, session:Session , directory: str = ""):
             webbrowser.open_new(file + os.path.realpath("term_viz.html"))
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e.with_traceback()))
+        session.logs["errors"].append(str(e))
+    
+def _visualize_word_shifts(session:Session, directory: str = ""):
+    try:
+        # in directory, there is a sub directory named topics. For each topic, there is a file named topic_zipf.csv
+        # and topic_sample_zipf.csv.
+        # get all files in directory/topics 
+        files = os.listdir(f"{directory}/topics")
+        samples = [f for f in files if "sample" in f]
+        files = [f for f in files if "sample" not in f]
+        if len(samples) != len(files):
+            raise ValueError("Number of topics must equal number of samples")
+        
+        labmt = pd.read_csv('src/viz/LABMT.csv')
+
+        # calculate sentiment of corpus
+
+        lens_min = 4
+        lens_max = 6
+
+        for i, file in enumerate(files):
+
+            topic_words = pd.read_csv(f"{directory}/topics/{file}")
+            sample_words = pd.read_csv(f"{directory}/topics/{samples[i]}")
+    
+            # turn the types and counts columns into dicts
+            topic_words = dict(zip(topic_words['types'], topic_words['counts']))
+
+            sample_words = dict(zip(sample_words['types'], sample_words['counts']))
+
+            # filter through lens
+            topic_words = {k:v for k,v in topic_words.items() if k in labmt['Word'].values and (labmt[labmt['Word'] == k]['Happiness Score'].values[0] < lens_min or labmt[labmt['Word'] == k]['Happiness Score'].values[0] > lens_max)}
+
+            sample_words = {k:v for k,v in sample_words.items() if k in labmt['Word'].values and (labmt[labmt['Word'] == k]['Happiness Score'].values[0] < lens_min or labmt[labmt['Word'] == k]['Happiness Score'].values[0] > lens_max)}
+
+            sample_total_counts = sum(sample_words.values())
+            
+            if sample_total_counts:
+
+                sample_sentiment = {k:v/sample_total_counts * labmt[labmt['Word'] == k]['Happiness Score'].values[0] for k,v in sample_words.items()}
+                sample_full_sentiment = sum(sample_sentiment.values())
+
+                shift_graph = sh.WeightedAvgShift(type2freq_1=sample_words, type2freq_2=topic_words, type2score_1="labMT_English",
+                                                type2score_2="labMT_English", reference_value=sample_full_sentiment, handle_missing_scores="exclude")
+            
+                plt.figure(figsize=(10, 10))
+
+                g = shift_graph.get_shift_graph()
+            
+                plt.savefig(f"{directory}/topics/{file}_wordshift.png")
+
+                plt.close()
+
+    except Exception as e:
+        print(e)
+        session.logs["errors"].append(str(e))
+
+def _visualize_power_danger_structure(session:Session, directory: str = ""):
+    try:
+        files = os.listdir(f"{directory}/topics")
+        files = [f for f in files if "sample" not in f]
+       
+    except Exception as e:
+        print(e)
+        session.logs["errors"].append(str(e))
