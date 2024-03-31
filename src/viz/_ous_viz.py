@@ -132,11 +132,10 @@ class HeatMaps(object):
         elif weight_col is None:
             weights = len(df[xcol]) * [1]
 
-        xlabel = kwargs.pop('xlabel', xcol)
-        ylabel = kwargs.pop('ylabel', ycol)
+        #xlabel = kwargs.pop('xlabel', xcol)
+        #ylabel = kwargs.pop('ylabel', ycol)
 
         return cls.generate_heatmap(df[xcol], df[ycol], weights,
-                                    xlabel=xlabel, ylabel=ylabel,
                                     **kwargs,
                                     )
 
