@@ -11,34 +11,34 @@ from src._lnlpcli import LNLPCLI
 
 def main():
     
-  parser = argparse.ArgumentParser(description="BERTopic CLI")
+    parser = argparse.ArgumentParser(description="BERTopic CLI")
 
-  parser.add_argument(
-        "save_dir", type=str, nargs="?", help="Path to save the model"
-  )
+    parser.add_argument(
+        "--save_dir", type=str, help="Path to save the model"
+    )
 
-  parser.add_argument(
-      "data", type=str, nargs="?", help="Path to the global data file"
-  )
-  parser.add_argument(
-      "num_samples", type=int, nargs="?", help="Number of samples to generate"
-  )
+    parser.add_argument(
+        "--data", type=str, help="Path to the global data file"
+    )
+    parser.add_argument(
+        "--num_samples", type=int, help="Number of samples to generate"
+    )
 
-  parser.add_argument(
-      "tmconfig", type=str, nargs="?", help="Path to the global topic model config file"
-  )
-  parser.add_argument(
-      "optconfig", type=str, nargs="?", help="Path to the global optimization config file"
-  )
-  
-  args = parser.parse_args()
+    parser.add_argument(
+        "--tmconfig", type=str, help="Path to the global topic model config file"
+    )
+    parser.add_argument(
+        "--optconfig", type=str, help="Path to the global optimization config file"
+    )
 
-  num_samples = args.num_samples if args.num_samples else 0
+    args = parser.parse_args()
 
-  cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig, num_samples=num_samples)
+    num_samples = args.num_samples if args.num_samples else 0
 
-  cli.run()
+    cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig, num_samples=num_samples)
+
+    cli.run()
 
 if __name__ == "__main__":
-    
-  main()
+
+    main()

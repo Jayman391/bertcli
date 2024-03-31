@@ -1,8 +1,6 @@
 # Large Natural Language Processing
 
-This project is currently a CLI wrapper for the BERTopic topic modeling package as well as 
-infrastructure to continue adding features to said CLI. The goal of this package is to be able run several distinct NLP
-related algorithms either in parallel or directly through the provided CLI.
+The goal of this package is to be able run several distinct NLP related algorithms in parallel either within users own projects or through a provided CLI, currently a wrapper for the BERTopic topic modeling package. There is also infrastructure to continue adding new features to said CLI as well as use existing components of the CLI within users own projects. 
 
 ## Table of Contents
 
@@ -16,16 +14,39 @@ related algorithms either in parallel or directly through the provided CLI.
 - Make sure that you have python 3.9 installed
 
 clone the repo
+
 <code>git clone https://github.com/Jayman391/lnlp.git </code>
 
 create and activate virtual environment
-<code>python3.9 -m venv venv
-source venv/bin/activate</code>
+
+<code>python3.9 -m venv venv</code>
+
+<code>source venv/bin/activate</code>
 
 install requirements
+
 <code>python -m pip install -r requirements.txt</code>
+
 <code>python -m spacy download en </code>
 
+run CLI
+
+<code>python main.py</code>
+
+add an output directory
+
+<code>python main.py --save_dir=output</code>
+
+add data
+
+<code>python main.py --data=tests/test_data/data.csv</code>
+
+specify number of samples
+
+<code>python main.py --data=tests/test_data/data.csv --num_samples=1000</code>
+
+all together now
+<code>python main.py --save_dir=output --data=tests/test_data/data.csv --num_samples=1000 </code>
 
 ## Contributing
 
