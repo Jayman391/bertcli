@@ -5,9 +5,14 @@ import webbrowser
 from webbrowser import open_new_tab
 from bertopic import BERTopic
 from src.util._session import Session
+from src.viz._ous_viz import HeatMaps
 import sys
 import shifterator as sh
 import matplotlib.pyplot as plt
+from sklearn.decomposition import TruncatedSVD
+import warnings
+
+warnings.filterwarnings("ignore")
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
@@ -61,16 +66,16 @@ def visualize(model: BERTopic, session:Session , directory: str = "", data: list
                     _visualize_word_shifts(session, directory)
                     session.logs["info"].append("Visualizing Word Shifts")
                 if "Enable Power Danger Structure Graphs" in value:
-                    _visualize_power_danger_structure(session, directory)
+                    _visualize_power_danger_structure(directory)
                     session.logs["info"].append("Visualizing Power Danger Structure Graphs")
         else:
             print(
                 "No plotting options selected. Visualizing all topics, documents, and terms by default."
             )
-            
-            _visualize_topics(model, session, directory)
-            _visualize_terms(model, session, directory)
             _visualize_word_shifts(session, directory)
+            _visualize_power_danger_structure(directory) 
+            _visualize_topics(model, session, directory)
+            _visualize_terms(model, session, directory)     
             _visualize_documents(model, session, directory)
 
             session.logs["info"].append("Visualizing All")
@@ -230,7 +235,7 @@ def _visualize_word_shifts(session:Session, directory: str = ""):
 
                 g = shift_graph.get_shift_graph()
             
-                plt.savefig(f"{directory}/topics/{file}_wordshift.png")
+                plt.savefig(f"{directory}/topics/{file.split(sep='.')[0]}_wordshift.png")
 
                 plt.close()
 
@@ -238,11 +243,57 @@ def _visualize_word_shifts(session:Session, directory: str = ""):
         print(e)
         session.logs["errors"].append(str(e))
 
-def _visualize_power_danger_structure(session:Session, directory: str = ""):
+def _safe_read_csv(file_path):
     try:
-        files = os.listdir(f"{directory}/topics")
-        files = [f for f in files if "sample" not in f]
-       
+        return pd.read_csv(file_path, encoding='utf-8')
+    except UnicodeDecodeError as e:
+        print(f"Error reading {file_path}: {e}. The file may not be encoded in UTF-8.")
+        return None
+
+def _process_dataframe_for_visualization(df: pd.DataFrame, ous):
+    try:
+        df = df[df['types'].isin(ous['word'])]
+
+        df = df.merge(ous, left_on='types', right_on='word')
+        df.drop(columns=['counts', 'types', 'word'], inplace=True)
+        
+        svd = TruncatedSVD(n_components=3)
+        components = svd.fit_transform(df)
+        df_transformed = pd.DataFrame(components, columns=['Power', 'Danger', 'Structure'])
+        
+        # Apply the rotation if necessary
+        df_transformed['Power'] = df_transformed['Power'] * math.pi / 4
+        df_transformed['Danger'] = df_transformed['Danger'] * math.pi / 4
+        
+        return df_transformed
     except Exception as e:
-        print(e)
-        session.logs["errors"].append(str(e))
+        print(f"An error occurred during DataFrame processing: {e}")
+        return None
+
+def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name):
+    try:
+        # Assuming HeatMaps.generate_heatmap_from_df exists and works correctly.
+        mesh = HeatMaps.generate_heatmap_from_df(df, xcol, ycol)
+        plt.xlabel(xcol)
+        plt.ylabel(ycol)
+        plt.savefig(f"{directory}/topics/{file_base_name}_{xcol}_{ycol}.png")
+        plt.close(mesh.get_figure())
+    except Exception as e:
+        print(f"Failed to generate or save heatmap: {e}")
+
+def _visualize_power_danger_structure(directory):
+    ous = pd.read_csv('src/viz/NRC-VAD.txt', delimiter=' ')
+    if ous is None:
+        return
+
+    for file in os.listdir(f"{directory}/topics"):
+        if file.endswith(".csv") and "sample" not in file:
+            df = _safe_read_csv(os.path.join(f"{directory}/topics", file))
+            if df is not None:
+                df_transformed = _process_dataframe_for_visualization(df, ous)
+                if df_transformed is not None:
+                    file_base_name = os.path.splitext(file)[0]
+                    _visualize_heatmap_from_df(df_transformed, "Power", "Danger", directory, file_base_name)
+                    _visualize_heatmap_from_df(df_transformed, "Power", "Structure", directory, file_base_name)
+                    _visualize_heatmap_from_df(df_transformed, "Danger", "Structure", directory, file_base_name)
+          
