@@ -5,9 +5,11 @@ import webbrowser
 from webbrowser import open_new_tab
 from bertopic import BERTopic
 from src.util._session import Session
+from src.viz._ous_viz import HeatMaps
 import sys
 import shifterator as sh
 import matplotlib.pyplot as plt
+from sklearn.decomposition import TruncatedSVD
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
@@ -67,10 +69,10 @@ def visualize(model: BERTopic, session:Session , directory: str = "", data: list
             print(
                 "No plotting options selected. Visualizing all topics, documents, and terms by default."
             )
-            
-            _visualize_topics(model, session, directory)
-            _visualize_terms(model, session, directory)
-            _visualize_word_shifts(session, directory)
+            #_visualize_topics(model, session, directory)
+            #_visualize_terms(model, session, directory)
+            #_visualize_word_shifts(session, directory)
+            _visualize_power_danger_structure(session, directory)                                                            
             _visualize_documents(model, session, directory)
 
             session.logs["info"].append("Visualizing All")
@@ -230,7 +232,7 @@ def _visualize_word_shifts(session:Session, directory: str = ""):
 
                 g = shift_graph.get_shift_graph()
             
-                plt.savefig(f"{directory}/topics/{file}_wordshift.png")
+                plt.savefig(f"{directory}/topics/{file.split(sep='.')[0]}_wordshift.png")
 
                 plt.close()
 
@@ -240,8 +242,47 @@ def _visualize_word_shifts(session:Session, directory: str = ""):
 
 def _visualize_power_danger_structure(session:Session, directory: str = ""):
     try:
+
+        ous = pd.read_csv('src/viz/NRC-VAD.txt', delimiter = ' ')
+
         files = os.listdir(f"{directory}/topics")
         files = [f for f in files if "sample" not in f]
+
+        for _, file in enumerate(files):
+            df = pd.read_csv(f"{directory}/topics/{file}")
+            df = df[df['types'].isin(ous['word'])]
+
+            df = df.merge(ous, left_on='types', right_on='word')
+            #df.set_index('types', inplace=True)
+            df.drop(columns=['counts', 'word','types'], inplace=True)
+
+            svd = TruncatedSVD(n_components=3)
+            svd.fit(df)
+            df = svd.transform(df)
+            df = pd.DataFrame(df, columns=['x', 'y', 'z'])
+            df.index = df.index.astype(str)
+
+            # get the 2 largest components X AND Y and rotate them by 90 degrees
+            df['x'] = df['x'] * math.pi / 4
+            df['y'] = df['y'] * math.pi / 4
+
+            df.rename(columns={'x': 'Power', 'y': 'Danger', 'z': 'Structure'}, inplace=True)
+
+            plt.figure(figsize=(10, 10))
+            pow_dan = HeatMaps.generate_heatmap_from_df(df, 'Power', 'Danger')
+            plt.savefig(f"{directory}/topics/{file.split(sep='.')[0]}_power_danger.png")
+            plt.close()
+
+            plt.figure(figsize=(10, 10))
+            pow_str = HeatMaps.generate_heatmap_from_df(df, 'Power', 'Structure')
+            plt.savefig(f"{directory}/topics/{file.split(sep='.')[0]}_power_structure.png")
+            plt.close()
+
+            plt.figure(figsize=(10, 10))
+            dan_str = HeatMaps.generate_heatmap_from_df(df, 'Danger', 'Structure')
+            plt.savefig(f"{directory}/topics/{file.split(sep='.')[0]}_danger_structure.png")
+            plt.close()
+            
        
     except Exception as e:
         print(e)
