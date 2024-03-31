@@ -3,12 +3,12 @@ from bertopic import BERTopic
 
 
 class Session:
-    def __init__(self, data=[], config_topic_model={}, config_optimization={}) -> None:
+    def __init__(self, data=[], config_topic_model={}, config_optimization={}, save_dir:str='') -> None:
         self.data = data
         self.config_topic_model = config_topic_model
         self.config_optimization = config_optimization
         self.logs = {"errors": [], "info": [], "data": []}
-        self.plot_dir = None
+        self.plot_dir = save_dir
 
         self.topic_model_factory = TopicModelFactory()
 
@@ -113,7 +113,6 @@ class Session:
             self.topic_model_factory.build_ctfidf_model(ctfidf_config)
 
             fine_tune = [list(i.values())[0] for i in fine_tune]
-            print(fine_tune)
 
             self.topic_model_factory.build_fine_tune(fine_tune)
 

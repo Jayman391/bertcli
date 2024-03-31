@@ -10,6 +10,7 @@ from bertopic import BERTopic
 class LNLPCLI:
     def __init__(
         self,
+        save_dir: str = None,
         global_data_path: str = None,
         global_config_path: str = None,
         global_optmization_path: str = None,
@@ -21,6 +22,7 @@ class LNLPCLI:
         self.global_config_path = global_config_path
         self.global_optmization_path = global_optmization_path
         self.num_samples = num_samples
+        self.save_dir = save_dir
 
         print("\nWelcome to the LNLP CLI!")
 
@@ -31,6 +33,7 @@ class LNLPCLI:
             config_path=self.global_config_path,
             optimization_path=self.global_optmization_path,
             num_samples=self.num_samples,
+            save_dir=self.save_dir,
         )
 
         self.driver.log("info", "Initialized Global Session Object and Global Driver")

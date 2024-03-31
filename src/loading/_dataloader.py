@@ -81,6 +81,7 @@ class DataLoader:
         config_path: str = None,
         optimization_path: str = None,
         num_samples: int = 0,
+        save_dir: str = '',
     ):
         data = []
         config = {}
@@ -101,7 +102,7 @@ class DataLoader:
             opt = self._load_config(optimization_path)
             print(f"Loaded optimization from {optimization_path}")
 
-        return Session(data, config, opt)
+        return Session(data, config, opt, save_dir)
 
     def _load_data(self, data_path: str, num_samples: int = 0):
         data = None

@@ -32,10 +32,11 @@ class Driver(ABC):
         config_path: str = None,
         optimization_path: str = None,
         num_samples: int = 0,
+        save_dir: str = None,
     ):
         loader = DataLoader()
         self.session = loader.initialize_session(
-            data_path, config_path, optimization_path, num_samples
+            data_path, config_path, optimization_path, num_samples, save_dir
         )
 
         return self.session
