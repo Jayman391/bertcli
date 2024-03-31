@@ -15,7 +15,6 @@ class LNLPCLI:
         global_config_path: str = None,
         global_optmization_path: str = None,
         num_samples:int = 0,
-        num_samples:int = 0,
         debug: bool = False,
     ):
         self.debug = debug

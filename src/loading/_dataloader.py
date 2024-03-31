@@ -15,7 +15,6 @@ class DataLoader:
         return response
 
     def prompt_load_data(self, num_samples: int = 0):
-    def prompt_load_data(self, num_samples: int = 0):
         data_bool = self.prompt_yes_no(
             "Would you like to use a dataset for this session? (y/n): "
         )
@@ -111,7 +110,6 @@ class DataLoader:
         return Session(data, config, opt, save_dir)
 
     def _load_data(self, data_path: str, num_samples: int = 0):
-    def _load_data(self, data_path: str, num_samples: int = 0):
         data = None
 
         flag = True
@@ -161,7 +159,6 @@ class DataLoader:
         opt_config = {}
 
         if (
-            self.prompt_yes_no(message="\nWould you like to configure this session? (y/n): ").lower()
             self.prompt_yes_no(message="\nWould you like to configure this session? (y/n): ").lower()
             == "y"
         ):
