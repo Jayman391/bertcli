@@ -21,6 +21,8 @@ if sys.platform.startswith("linux"):
 else:
     file = "file://"
 
+plt.ioff()
+
 def visualize(model: BERTopic, session:Session , directory: str = "", data: list = []):
         plotting = [log for log in data if "Plotting" in log.keys()]
         session.logs["info"].append("Plotting Topics")
@@ -233,7 +235,7 @@ def _visualize_word_shifts(session:Session, directory: str = ""):
             
                 plt.figure(figsize=(10, 10))
 
-                g = shift_graph.get_shift_graph()
+                g = shift_graph.get_shift_graph(show_plot=False)
             
                 plt.savefig(f"{directory}/topics/{file.split(sep='.')[0]}_wordshift.png")
 
