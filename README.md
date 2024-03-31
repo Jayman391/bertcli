@@ -39,7 +39,7 @@ The goal of this package is to be able run several distinct NLP related algorith
 
 ### add data
 
-#### *can be any number of columns, just has to have a column with the name text*
+#### *can be any number of columns, just has to have a column named text*
 
 <code>python main.py --data=tests/test_data/data.csv</code>
 
