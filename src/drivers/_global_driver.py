@@ -46,6 +46,11 @@ class GlobalDriver(Driver):
             print(e)
             self.session.logs["errors"].append(str(e.with_traceback()))
             self._run_topic_model(from_file=from_file)
+            self._write_logs(directory)
+        except Exception as e:
+            print(e)
+            self.session.logs["errors"].append(str(e.with_traceback()))
+            self._run_topic_model(from_file=from_file)
 
     def _fit_model(self, model):
         topics, _ = model.fit_transform(self.session.data)

@@ -15,6 +15,7 @@ class DataLoader:
         return response
 
     def prompt_load_data(self, num_samples: int = 0):
+    def prompt_load_data(self, num_samples: int = 0):
         data_bool = self.prompt_yes_no(
             "Would you like to use a dataset for this session? (y/n): "
         )
@@ -24,6 +25,10 @@ class DataLoader:
         if data_bool.lower() == "y":
             data_path = input("Please enter the path to the data file: ")
 
+            if num_samples > 0:
+                data = self._load_data(data_path, num_samples)
+            else:
+                data = self._load_data(data_path)
             if num_samples > 0:
                 data = self._load_data(data_path, num_samples)
             else:
@@ -39,6 +44,7 @@ class DataLoader:
                 try:
                     sample_size = int(input("Please enter the sample size: "))
                 except ValueError:
+                    print("Invalid input. Defaulting to 10000")
                     print("Invalid input. Defaulting to 10000")
 
                 shuffle(data)
@@ -105,6 +111,7 @@ class DataLoader:
         return Session(data, config, opt, save_dir)
 
     def _load_data(self, data_path: str, num_samples: int = 0):
+    def _load_data(self, data_path: str, num_samples: int = 0):
         data = None
 
         flag = True
@@ -119,6 +126,9 @@ class DataLoader:
 
         if flag:
             raise Exception("File type not supported")
+
+        if num_samples > 0:
+            data = data.sample(num_samples)
 
         if num_samples > 0:
             data = data.sample(num_samples)
@@ -151,6 +161,7 @@ class DataLoader:
         opt_config = {}
 
         if (
+            self.prompt_yes_no(message="\nWould you like to configure this session? (y/n): ").lower()
             self.prompt_yes_no(message="\nWould you like to configure this session? (y/n): ").lower()
             == "y"
         ):

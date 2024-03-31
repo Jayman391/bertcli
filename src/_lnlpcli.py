@@ -15,6 +15,7 @@ class LNLPCLI:
         global_config_path: str = None,
         global_optmization_path: str = None,
         num_samples:int = 0,
+        num_samples:int = 0,
         debug: bool = False,
     ):
         self.debug = debug
@@ -67,6 +68,11 @@ class LNLPCLI:
             driver.log("data", {str(menu): response})
         else:
             driver.log("data", {str(menu): str(response)})
+        if isinstance(response,list):
+
+            driver.log("data", {str(menu): response})
+        else:
+            driver.log("data", {str(menu): str(response)})
 
         if isinstance(response, Menu):
 
@@ -76,6 +82,7 @@ class LNLPCLI:
             self._process_responses(response, driver)
 
         elif isinstance(response, BERTopic):
+            
             
             if self.global_session.config_topic_model != {}:
                 driver._run_topic_model(from_file=True)
