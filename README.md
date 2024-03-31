@@ -13,39 +13,42 @@ The goal of this package is to be able run several distinct NLP related algorith
 
 - Make sure that you have python 3.9 installed
 
-clone the repo
+### clone the repo
 
 <code>git clone https://github.com/Jayman391/lnlp.git </code>
 
-create and activate virtual environment
+### create and activate virtual environment
 
 <code>python3.9 -m venv venv</code>
 
 <code>source venv/bin/activate</code>
 
-install requirements
+### install requirements
 
 <code>python -m pip install -r requirements.txt</code>
 
 <code>python -m spacy download en </code>
 
-run CLI
+### run CLI
 
 <code>python main.py</code>
 
-add an output directory
+### add an output directory
 
 <code>python main.py --save_dir=output</code>
 
-add data
+### add data
+
+#### *can be any number of columns, just has to have a column with the name text*
 
 <code>python main.py --data=tests/test_data/data.csv</code>
 
-specify number of samples
+### specify number of samples
 
 <code>python main.py --data=tests/test_data/data.csv --num_samples=1000</code>
 
-all together now
+### all together now
+
 <code>python main.py --save_dir=output --data=tests/test_data/data.csv --num_samples=1000 </code>
 
 ## Contributing
