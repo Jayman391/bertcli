@@ -253,31 +253,40 @@ def _safe_read_csv(file_path):
 def _process_dataframe_for_visualization(df: pd.DataFrame, ous):
     try:
         df = df[df['types'].isin(ous['word'])]
-
+        df = df.drop_duplicates(subset=['types'])
+        df['total_unique'] = len(df)
+        df_copy = df.copy()
         df = df.merge(ous, left_on='types', right_on='word')
-        df.drop(columns=['counts', 'types', 'word'], inplace=True)
+        df.drop(columns=['counts', 'types', 'word', 'probs', 'total_unique'], inplace=True)
         
         svd = TruncatedSVD(n_components=3)
         components = svd.fit_transform(df)
+       
         df_transformed = pd.DataFrame(components, columns=['Power', 'Danger', 'Structure'])
         
         # Apply the rotation if necessary
         df_transformed['Power'] = df_transformed['Power'] * math.pi / 4
         df_transformed['Danger'] = df_transformed['Danger'] * math.pi / 4
         
-        return df_transformed
+        return df_transformed, df_copy
     except Exception as e:
         print(f"An error occurred during DataFrame processing: {e}")
         return None
 
 def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name):
     try:
+        # Create a new figure explicitly to ensure it's fresh
+        fig, ax = plt.subplots()  # This creates a new figure and axes for the plot
+        
         # Assuming HeatMaps.generate_heatmap_from_df exists and works correctly.
-        mesh = HeatMaps.generate_heatmap_from_df(df, xcol, ycol)
+        # We need to pass the `ax` argument to use the newly created axes.
+        im = HeatMaps.generate_heatmap_from_df(df, xcol, ycol, ax=ax)
+        
         plt.xlabel(xcol)
         plt.ylabel(ycol)
         plt.savefig(f"{directory}/topics/{file_base_name}_{xcol}_{ycol}.png")
-        plt.close(mesh.get_figure())
+        
+        plt.close(fig)  # Close the figure to free up memory
     except Exception as e:
         print(f"Failed to generate or save heatmap: {e}")
 
@@ -290,10 +299,12 @@ def _visualize_power_danger_structure(directory):
         if file.endswith(".csv") and "sample" not in file:
             df = _safe_read_csv(os.path.join(f"{directory}/topics", file))
             if df is not None:
-                df_transformed = _process_dataframe_for_visualization(df, ous)
+                df_transformed, df = _process_dataframe_for_visualization(df, ous)
                 if df_transformed is not None:
                     file_base_name = os.path.splitext(file)[0]
                     _visualize_heatmap_from_df(df_transformed, "Power", "Danger", directory, file_base_name)
                     _visualize_heatmap_from_df(df_transformed, "Power", "Structure", directory, file_base_name)
                     _visualize_heatmap_from_df(df_transformed, "Danger", "Structure", directory, file_base_name)
+                df = pd.merge(df, df_transformed, left_index=True, right_index=True)
+                df.to_csv(f"{directory}/topics/{file_base_name}_transformed.csv", index=False)
           
