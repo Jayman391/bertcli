@@ -24,7 +24,12 @@ os.environ["TOKENIZERS_PARALLELISM"] = "False"
 from bertopic import BERTopic
 from bertopic.vectorizers import ClassTfidfTransformer
 
-from bertopic.representation import KeyBERTInspired, MaximalMarginalRelevance, ZeroShotClassification, PartOfSpeech
+from bertopic.representation import (
+    KeyBERTInspired,
+    MaximalMarginalRelevance,
+    ZeroShotClassification,
+    PartOfSpeech,
+)
 
 
 class TopicModelFactory:
@@ -48,7 +53,7 @@ class TopicModelFactory:
         self.data = data
         return self.data
 
-    def build_embedding_model(self, model: str = ""):            
+    def build_embedding_model(self, model: str = ""):
         if model == "" or model == "Back":
             model = "all-MiniLM-L6-v2"
         self.embedding_model = SentenceTransformer(model)
@@ -107,7 +112,7 @@ class TopicModelFactory:
     def build_ctfidf_model(self, config: dict = {}):
         self.ctfidf_model = ClassTfidfTransformer(**config)
         return self.ctfidf_model
-    
+
     def build_fine_tune(self, tune: list = []):
         self.fine_tune = []
         for log in tune:

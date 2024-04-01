@@ -3,6 +3,7 @@ import pandas as pd
 from src.util._session import Session
 from random import shuffle
 
+
 class DataLoader:
     def __init__(self):
         pass
@@ -48,7 +49,6 @@ class DataLoader:
 
                 shuffle(data)
                 data = data[:sample_size]
-                
 
         return data
 
@@ -86,7 +86,7 @@ class DataLoader:
         config_path: str = None,
         optimization_path: str = None,
         num_samples: int = 0,
-        save_dir: str = '',
+        save_dir: str = "",
     ):
         data = []
         config = {}
@@ -159,7 +159,9 @@ class DataLoader:
         opt_config = {}
 
         if (
-            self.prompt_yes_no(message="\nWould you like to configure this session? (y/n): ").lower()
+            self.prompt_yes_no(
+                message="\nWould you like to configure this session? (y/n): "
+            ).lower()
             == "y"
         ):
             data = self.prompt_load_data()

@@ -23,7 +23,7 @@ class DataFormatter:
             content_dict[self.DATE_FIELD] = content_dict[self.DATE_FIELD].isoformat()
 
     def format_text_data(self, posts: list, comments: list = None):
-        
+
         if comments is not None:
             corpus = posts + comments
         else:
@@ -44,7 +44,6 @@ class DataFormatter:
             if word != "":
                 word_freq[word] += 1
         return dict(word_freq)
-
 
     def sort_data(self, data):
         # Sort the data in descending order

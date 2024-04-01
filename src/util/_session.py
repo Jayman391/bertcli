@@ -3,7 +3,9 @@ from bertopic import BERTopic
 
 
 class Session:
-    def __init__(self, data=[], config_topic_model={}, config_optimization={}, save_dir:str='') -> None:
+    def __init__(
+        self, data=[], config_topic_model={}, config_optimization={}, save_dir: str = ""
+    ) -> None:
         self.data = data
         self.config_topic_model = config_topic_model
         self.config_optimization = config_optimization

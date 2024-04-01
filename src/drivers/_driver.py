@@ -64,5 +64,3 @@ class Driver(ABC):
             return self._run_menu(response)
         else:
             return response
-
-    

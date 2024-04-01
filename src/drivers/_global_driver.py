@@ -10,8 +10,9 @@ import json
 import os
 import sys
 
+
 class GlobalDriver(Driver):
-    
+
     def __init__(self, session: Session = None):
         if sys.platform.startswith("linux"):
             self.file = ""
@@ -32,7 +33,6 @@ class GlobalDriver(Driver):
             self.session.logs["info"].append("Topic Model has been built")
             topics = self._fit_model(model)
 
-        
             for log in topic_choices:
                 value = str(list(log.values())[0])
                 dummy = self._process_topic_choice(model, value, topics)
@@ -58,9 +58,11 @@ class GlobalDriver(Driver):
         num_topics = len(set(topics))
 
         topics = [
-            int(topic)
-            if topic != -1 and isinstance(topic, bool) == False
-            else int(num_topics)
+            (
+                int(topic)
+                if topic != -1 and isinstance(topic, bool) == False
+                else int(num_topics)
+            )
             for topic in topics
         ]
 
@@ -118,13 +120,11 @@ class GlobalDriver(Driver):
                 df = formatter.zipf_data_to_dataframe(data["text"].tolist())
 
                 # sample of session_data size of df
-                sample = session_data.sample(n=len(data)-1)
+                sample = session_data.sample(n=len(data) - 1)
 
                 sample = formatter.zipf_data_to_dataframe(sample["text"].tolist())
 
-                df.to_csv(
-                    f"{directory}/topics/{label}_zipf.csv", index=False
-                )
+                df.to_csv(f"{directory}/topics/{label}_zipf.csv", index=False)
 
                 sample.to_csv(
                     f"{directory}/topics/{label}_sample_zipf.csv", index=False
@@ -143,4 +143,3 @@ class GlobalDriver(Driver):
         else:
             with open(f"logs.json", "w") as f:
                 json.dump(logs, f)
-
