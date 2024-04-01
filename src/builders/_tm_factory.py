@@ -48,8 +48,8 @@ class TopicModelFactory:
         self.data = data
         return self.data
 
-    def build_embedding_model(self, model: str = ""):
-        if model == "":
+    def build_embedding_model(self, model: str = ""):            
+        if model == "" or model == "Back":
             model = "all-MiniLM-L6-v2"
         self.embedding_model = SentenceTransformer(model)
         return self.embedding_model
