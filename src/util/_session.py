@@ -3,6 +3,26 @@ from bertopic import BERTopic
 
 
 class Session:
+    """
+    A class representing a session for topic modeling.
+
+    Attributes:
+        data (list): The data used for topic modeling.
+        config_topic_model (dict): The configuration for the topic model.
+        config_optimization (dict): The configuration for optimization.
+        logs (dict): The logs for errors, info, and data.
+        plot_dir (str): The directory to save plots.
+        topic_model_factory (TopicModelFactory): The factory for creating topic models.
+
+    Methods:
+        set_data: Set the data for topic modeling.
+        set_config_topic_model: Set the configuration for the topic model.
+        set_config_optimization: Set the configuration for optimization.
+        initialize_topic_model_factory: Initialize the topic model factory.
+        build_topic_model: Build the topic model.
+
+    """
+
     def __init__(
         self, data=[], config_topic_model={}, config_optimization={}, save_dir: str = ""
     ) -> None:
@@ -15,22 +35,70 @@ class Session:
         self.topic_model_factory = TopicModelFactory()
 
     def set_data(self, data):
+        """
+        Set the data for topic modeling.
+
+        Args:
+            data (list): The data to set.
+
+        Returns:
+            list: The updated data.
+
+        """
         self.data = data
         return self.data
 
     def set_config_topic_model(self, config):
+        """
+        Set the configuration for the topic model.
+
+        Args:
+            config (dict): The configuration to set.
+
+        Returns:
+            dict: The updated configuration.
+
+        """
         self.config_topic_model = config
         return self.config_topic_model
 
     def set_config_optimization(self, config):
+        """
+        Set the configuration for optimization.
+
+        Args:
+            config (dict): The configuration to set.
+
+        Returns:
+            dict: The updated configuration.
+
+        """
         self.config_optimization = config
         return self.config_optimization
 
     def initialize_topic_model_factory(self):
+        """
+        Initialize the topic model factory.
+
+        Returns:
+            TopicModelFactory: The initialized topic model factory.
+
+        """
         self.topic_model_factory.upload_data(self.data)
         return self.topic_model_factory
 
     def build_topic_model(self, from_file: bool = False, config: dict = {}) -> BERTopic:
+        """
+        Build the topic model.
+
+        Args:
+            from_file (bool): Whether to build the topic model from file.
+            config (dict): The configuration for building the topic model.
+
+        Returns:
+            BERTopic: The built topic model.
+
+        """
         if from_file:
             self.topic_model_factory.build_embedding_model(
                 self.config_topic_model["embedding_model"]

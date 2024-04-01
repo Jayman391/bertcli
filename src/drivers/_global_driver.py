@@ -12,8 +12,27 @@ import sys
 
 
 class GlobalDriver(Driver):
+    """
+    The GlobalDriver class is a subclass of the Driver class and represents a global driver for topic modeling.
+
+    Attributes:
+        session (Session): The session object associated with the driver.
+
+    Methods:
+        __init__(self, session=None): Initializes a new instance of the GlobalDriver class.
+        _run_topic_model(self, from_file=False): Runs the topic modeling process.
+        _fit_model(self, model): Fits the topic model to the session data and extracts the topics.
+        _process_topic_choice(self, model, value, topics): Processes the topic choice and saves the results.
+        _write_logs(self, directory): Writes the logs to a JSON file.
+    """
 
     def __init__(self, session: Session = None):
+        """
+        Initializes a new instance of the GlobalDriver class.
+
+        Args:
+            session (Session, optional): The session object associated with the driver. Defaults to None.
+        """
         if sys.platform.startswith("linux"):
             self.file = ""
         else:
@@ -21,12 +40,18 @@ class GlobalDriver(Driver):
         super().__init__(session)
 
     def _run_topic_model(self, from_file: bool = False):
+        """
+        Runs the topic modeling process.
+
+        Args:
+            from_file (bool, optional): Indicates whether to load data from a file. Defaults to False.
+        """
         try:
             data = self.session.logs["data"]
             directory = ""
-            # remove all logs that containg Back in the values
+            # remove all logs that contain "Back" in the values
             data = [log for log in data if "Back" not in log.values()]
-            # gather data where Topic is a key
+            # gather data where "Topic" is a key
             topic_choices = [log for log in data if "Topic" in log.keys()]
 
             model = self.session.build_topic_model(from_file=from_file)
@@ -53,6 +78,15 @@ class GlobalDriver(Driver):
             self._run_topic_model(from_file=from_file)
 
     def _fit_model(self, model):
+        """
+        Fits the topic model to the session data and extracts the topics.
+
+        Args:
+            model: The topic model object.
+
+        Returns:
+            list: The extracted topics.
+        """
         topics, _ = model.fit_transform(self.session.data)
         # set -1 cluster to num_clusters+1
         num_topics = len(set(topics))
@@ -71,6 +105,17 @@ class GlobalDriver(Driver):
         return topics
 
     def _process_topic_choice(self, model: BERTopic, value: str, topics):
+        """
+        Processes the topic choice and saves the results.
+
+        Args:
+            model (BERTopic): The topic model object.
+            value (str): The topic choice value.
+            topics (list): The extracted topics.
+
+        Returns:
+            str: The directory where the results are saved.
+        """
         directory = ""
 
         if self.session.plot_dir != "":
@@ -133,6 +178,12 @@ class GlobalDriver(Driver):
         return directory
 
     def _write_logs(self, directory):
+        """
+        Writes the logs to a JSON file.
+
+        Args:
+            directory (str): The directory where the logs should be saved.
+        """
         info = self.session.logs["info"]
         errors = self.session.logs["errors"]
         data = self.session.logs["data"]

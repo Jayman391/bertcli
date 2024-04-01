@@ -6,6 +6,10 @@ import sys
 
 
 class Driver(ABC):
+    """
+    Abstract base class for drivers.
+    """
+
     def __init__(self, session: Session = None):
         self._session: Session = session
         self._session_data = {}
@@ -34,6 +38,19 @@ class Driver(ABC):
         num_samples: int = 0,
         save_dir: str = None,
     ):
+        """
+        Initializes the session with the given parameters.
+
+        Args:
+            data_path (str): Path to the data.
+            config_path (str): Path to the configuration file.
+            optimization_path (str): Path to the optimization file.
+            num_samples (int): Number of samples.
+            save_dir (str): Directory to save the session.
+
+        Returns:
+            Session: The initialized session.
+        """
         loader = DataLoader()
         self.session = loader.initialize_session(
             data_path, config_path, optimization_path, num_samples, save_dir
@@ -42,6 +59,16 @@ class Driver(ABC):
         return self.session
 
     def log(self, type: str, message: str):
+        """
+        Logs a message of the given type.
+
+        Args:
+            type (str): The type of the log message.
+            message (str): The log message.
+
+        Returns:
+            dict: A dictionary containing the logged message.
+        """
         if type not in self.session.logs.keys():
             self.session.logs[type] = []
 
@@ -50,6 +77,15 @@ class Driver(ABC):
         return {type: message}
 
     def _run_menu(self, menu: Menu):
+        """
+        Runs the given menu.
+
+        Args:
+            menu (Menu): The menu to run.
+
+        Returns:
+            Any: The response from the menu.
+        """
         menu.display()
         choice = menu.prompt_numeric("Choose an option: ")
         if choice < 1 or choice > len(menu.options):
@@ -60,6 +96,15 @@ class Driver(ABC):
         return response
 
     def _process_response(self, response):
+        """
+        Processes the given response.
+
+        Args:
+            response (Any): The response to process.
+
+        Returns:
+            Any: The processed response.
+        """
         if isinstance(response, Menu):
             return self._run_menu(response)
         else:

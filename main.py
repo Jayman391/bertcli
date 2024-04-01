@@ -10,7 +10,12 @@ sys.path.append(os.path.join(cwd, 'src'))
 from src._lnlpcli import LNLPCLI
 
 def main():
-    
+    """
+    Entry point of the BERTopic CLI.
+
+    Parses command line arguments, initializes the LNLPCLI object, and runs the CLI.
+    """
+
     parser = argparse.ArgumentParser(description="BERTopic CLI")
 
     parser.add_argument(

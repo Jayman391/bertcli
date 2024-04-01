@@ -4,6 +4,47 @@ from loading._dataloader import DataLoader
 
 
 class Menu(ABC):
+    """
+    Represents a menu in a command-line interface.
+
+    Args:
+        session (Session): The session object associated with the menu.
+        options (list): The list of options available in the menu.
+        is_leaf (bool): Indicates whether the menu is a leaf menu or not.
+        is_root (bool, optional): Indicates whether the menu is the root menu or not. Defaults to False.
+        parent (Menu, optional): The parent menu of the current menu. Defaults to None.
+        name (str, optional): The name of the menu. Defaults to "Menu".
+
+    Attributes:
+        _options (list): The list of options available in the menu.
+        _is_leaf (bool): Indicates whether the menu is a leaf menu or not.
+        is_root (bool): Indicates whether the menu is the root menu or not.
+        parent (Menu): The parent menu of the current menu.
+        _menus (dict): A dictionary mapping options to child menus.
+        name (str): The name of the menu.
+        session (Session): The session object associated with the menu.
+
+    Methods:
+        __str__(): Returns the name of the menu.
+        options(): Getter method for _options attribute.
+        options(options): Setter method for _options attribute.
+        is_leaf(): Getter method for _is_leaf attribute.
+        is_leaf(is_leaf): Setter method for _is_leaf attribute.
+        menus(): Getter method for _menus attribute.
+        menus(option, menu): Setter method for _menus attribute.
+        session(): Getter method for _session attribute.
+        session(session): Setter method for _session attribute.
+        set_parent(parent): Sets the parent menu of the current menu.
+        display(): Displays the menu options.
+        prompt_numeric(prompt): Prompts the user for a numeric input.
+        prompt_string(prompt): Prompts the user for a string input.
+        back(): Returns the parent menu.
+        exit(): Exits the program.
+        handle_choice(choice): Handles the user's choice and returns the appropriate action.
+        map_options_to_menus(options, menus): Maps options to child menus.
+
+    """
+
     def __init__(
         self,
         session: Session,

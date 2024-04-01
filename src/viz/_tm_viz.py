@@ -12,10 +12,11 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import TruncatedSVD
 import warnings
 
+# ignore warnings
 warnings.filterwarnings("ignore")
-
+# add src to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
-
+# configure matplotlib and webbrowser
 if sys.platform.startswith("linux"):
     file = ""
 else:
@@ -23,8 +24,19 @@ else:
 
 plt.ioff()
 
-
 def visualize(model: BERTopic, session: Session, directory: str = "", data: list = []):
+    """
+    Visualizes the topics, documents, terms, wordshifts, and PDS graphs based on the user's input.
+
+    Args:
+        model (BERTopic): The BERTopic model.
+        session (Session): The session object.
+        directory (str, optional): The directory path. Defaults to "".
+        data (list, optional): The list of logs. Defaults to [].
+
+    Returns:
+        None
+    """
     plotting = [log for log in data if "Plotting" in log.keys()]
     session.logs["info"].append("Plotting Topics")
     if len(plotting) > 0:
@@ -84,6 +96,17 @@ def visualize(model: BERTopic, session: Session, directory: str = "", data: list
 
 
 def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
+    """
+    Visualizes the 2d topic map, hierarchical topic tree, and similarity heatmap.
+
+    Args:
+        model (BERTopic): The BERTopic model.
+        session (Session): The session object.
+        directory (str, optional): The directory path. Defaults to "".
+
+    Returns:
+        None
+    """
     try:
         topic_viz = model.visualize_topics()
         if directory != "":
@@ -130,6 +153,17 @@ def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
 
 
 def _visualize_documents(model: BERTopic, session: Session, directory: str = ""):
+    """
+    Visualizes the documents in 2d and hierarchical document tree in 2d.
+
+    Args:
+        model (BERTopic): The BERTopic model.
+        session (Session): The session object.
+        directory (str, optional): The directory path. Defaults to "".
+
+    Returns:
+        None
+    """
     try:
         doc_viz = model.visualize_documents(docs=session.data, sample=0.05)
 
@@ -186,6 +220,19 @@ def _visualize_terms(model: BERTopic, session: Session, directory: str = ""):
 
 
 def _visualize_word_shifts(session: Session, directory: str = ""):
+    """
+    Visualizes word shifts between topics and samples.
+
+    Args:
+        session (Session): The session object.
+        directory (str, optional): The directory path. Defaults to "".
+
+    Raises:
+        ValueError: If the number of topics is not equal to the number of samples.
+
+    Returns:
+        None
+    """
     try:
         # in directory, there is a sub directory named topics. For each topic, there is a file named topic_zipf.csv
         # and topic_sample_zipf.csv.
@@ -279,6 +326,9 @@ def _safe_read_csv(file_path):
 
 
 def _process_dataframe_for_visualization(df: pd.DataFrame, ous):
+    """
+    performs SVD on the df after being filtered through the VAD dataframe and constructs the resulting PDS dimesions.
+    """
     try:
         df = df[df["types"].isin(ous["word"])]
         df = df.drop_duplicates(subset=["types"])
@@ -307,6 +357,20 @@ def _process_dataframe_for_visualization(df: pd.DataFrame, ous):
 
 
 def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name):
+    """
+    Visualizes a heatmap from a DataFrame. Uses code written by 
+    The Computational Story Lab at the University of Vermont.
+
+    Args:
+        df (pd.DataFrame): The DataFrame to visualize.
+        xcol (str): The column to use for the x-axis.
+        ycol (str): The column to use for the y-axis.
+        directory (str): The directory to save the visualization.
+        file_base_name (str): The base name for the file.
+
+    Returns:
+        None 
+    """
     try:
         # Create a new figure explicitly to ensure it's fresh
         fig, ax = plt.subplots()  # This creates a new figure and axes for the plot
@@ -325,6 +389,15 @@ def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name):
 
 
 def _visualize_power_danger_structure(directory):
+    """"
+    Performs PDS calculations for every cluster and visualizes the results as heatmaps.
+
+    Args:
+        directory (str): The directory to save the visualizations.
+
+    Returns:
+        None
+    """
     ous = pd.read_csv("src/viz/NRC-VAD.txt", delimiter=" ")
     if ous is None:
         return
