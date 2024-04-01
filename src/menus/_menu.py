@@ -69,8 +69,6 @@ class Menu(ABC):
 
         self.name: str = name
 
-        self.session.logs["info"].append(f"Initialized {self.name} Menu")
-
     def __str__(self):
         return self.name
 

@@ -2,13 +2,13 @@ from src.drivers._driver import Driver
 from src.viz._tm_viz import visualize
 from src.util._formatter import DataFormatter
 from util._session import Session
-from webbrowser import open_new_tab
-from bertopic import BERTopic
 import pandas as pd
-
+from bertopic import BERTopic
+import traceback
 import json
 import os
 import sys
+import datetime
 
 
 class GlobalDriver(Driver):
@@ -46,36 +46,27 @@ class GlobalDriver(Driver):
         Args:
             from_file (bool, optional): Indicates whether to load data from a file. Defaults to False.
         """
-        try:
-            data = self.session.logs["data"]
-            directory = ""
-            # remove all logs that contain "Back" in the values
-            data = [log for log in data if "Back" not in log.values()]
-            # gather data where "Topic" is a key
-            topic_choices = [log for log in data if "Topic" in log.keys()]
+     
+        data = self.session.get_logs("data")
+        directory = ""
+        # remove all logs that contain "Back" in the values
+        data = [log for log in data if "Back" not in log.values()]
+        # gather data where "Topic" is a key
+        topic_choices = [log for log in data if "Topic" in log.keys()]
 
-            model = self.session.build_topic_model(from_file=from_file)
-            self.session.logs["info"].append("Topic Model has been built")
-            topics = self._fit_model(model)
+        model = self.session.build_topic_model(from_file=from_file)
+        topics = self._fit_model(model)
 
-            for log in topic_choices:
-                value = str(list(log.values())[0])
-                dummy = self._process_topic_choice(model, value, topics)
-                if dummy != "":
-                    directory = dummy
+        for log in topic_choices:
+            value = str(list(log.values())[0])
+            dummy = self._process_topic_choice(model, value, topics)
+            if dummy != "":
+                directory = dummy
 
-            visualize(model, self.session, directory, data)
+        visualize(model, self.session, directory, data)
 
-            self._write_logs(directory)
-        except Exception as e:
-            print(e)
-            self.session.logs["errors"].append(str(e.with_traceback()))
-            self._run_topic_model(from_file=from_file)
-            self._write_logs(directory)
-        except Exception as e:
-            print(e)
-            self.session.logs["errors"].append(str(e.with_traceback()))
-            self._run_topic_model(from_file=from_file)
+        self._write_logs(directory)
+      
 
     def _fit_model(self, model):
         """
@@ -99,8 +90,6 @@ class GlobalDriver(Driver):
             )
             for topic in topics
         ]
-
-        self.session.logs["info"].append("Topics have been extracted")
 
         return topics
 
@@ -184,10 +173,9 @@ class GlobalDriver(Driver):
         Args:
             directory (str): The directory where the logs should be saved.
         """
-        info = self.session.logs["info"]
-        errors = self.session.logs["errors"]
-        data = self.session.logs["data"]
-        logs = {"info": info, "errors": errors, "data": data}
+        errors = self.session.get_logs("errors")
+        data = self.session.get_logs("data")
+        logs = {"errors": errors, "data": data}
         if directory != "":
             with open(f"{directory}/logs.json", "w") as f:
                 json.dump(logs, f)

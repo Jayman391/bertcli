@@ -2,7 +2,6 @@ import pandas as pd
 import os
 import math
 import webbrowser
-from webbrowser import open_new_tab
 from bertopic import BERTopic
 from src.util._session import Session
 from src.viz._ous_viz import HeatMaps
@@ -11,6 +10,8 @@ import shifterator as sh
 import matplotlib.pyplot as plt
 from sklearn.decomposition import TruncatedSVD
 import warnings
+import datetime
+import traceback
 
 # ignore warnings
 warnings.filterwarnings("ignore")
@@ -38,7 +39,6 @@ def visualize(model: BERTopic, session: Session, directory: str = "", data: list
         None
     """
     plotting = [log for log in data if "Plotting" in log.keys()]
-    session.logs["info"].append("Plotting Topics")
     if len(plotting) > 0:
         for log in plotting:
             value = str(list(log.values())[0])
@@ -62,27 +62,21 @@ def visualize(model: BERTopic, session: Session, directory: str = "", data: list
             if "Enable Topic Visualizations" in value:
                 print("Visualizing Topics")
                 _visualize_topics(model, session, directory)
-                session.logs["info"].append("Visualizing Topics")
             if "Enable Document Visualizations" in value:
                 print("Visualizing Documents")
                 _visualize_documents(model, session, directory)
-                session.logs["info"].append("Visualizing Documents")
             if "Enable Term Visualizations" in value:
                 print("Visualizing Terms")
                 _visualize_terms(model, session, directory)
-                session.logs["info"].append("Visualizing Terms")
             if "Enable All Visualizations" in value:
                 print("Visualizing All")
                 _visualize_topics(model, session, directory)
                 _visualize_documents(model, session, directory)
                 _visualize_terms(model, session, directory)
-                session.logs["info"].append("Visualizing All")
             if "Enable Word Shift Graphs" in value:
                 _visualize_word_shifts(session, directory)
-                session.logs["info"].append("Visualizing Word Shifts")
             if "Enable Power Danger Structure Graphs" in value:
-                _visualize_power_danger_structure(directory)
-                session.logs["info"].append("Visualizing Power Danger Structure Graphs")
+                _visualize_power_danger_structure(session, directory)
     else:
         print(
             "No plotting options selected. Visualizing all topics, documents, and terms by default."
@@ -91,8 +85,7 @@ def visualize(model: BERTopic, session: Session, directory: str = "", data: list
         _visualize_terms(model, session, directory)
         _visualize_documents(model, session, directory)
         _visualize_word_shifts(session, directory)
-        _visualize_power_danger_structure(directory)
-        session.logs["info"].append("Visualizing All")
+        _visualize_power_danger_structure(session, directory)
 
 
 def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
@@ -118,7 +111,7 @@ def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
 
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e))
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
 
     try:
         hierarchical_topics = model.hierarchical_topics(docs=session.data)
@@ -136,7 +129,7 @@ def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
             webbrowser.open_new(file + os.path.realpath("hierarchical_viz.html"))
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e))
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
 
     try:
         heatmap = model.visualize_heatmap()
@@ -149,7 +142,7 @@ def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
             webbrowser.open_new(file + os.path.realpath(f"heatmap.html"))
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e))
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
 
 
 def _visualize_documents(model: BERTopic, session: Session, directory: str = ""):
@@ -177,7 +170,7 @@ def _visualize_documents(model: BERTopic, session: Session, directory: str = "")
             webbrowser.open_new(file + os.path.realpath("document_viz.html"))
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e))
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
 
     try:
         hierarchical_topics = model.hierarchical_topics(docs=session.data)
@@ -201,7 +194,7 @@ def _visualize_documents(model: BERTopic, session: Session, directory: str = "")
             )
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e))
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
 
 
 def _visualize_terms(model: BERTopic, session: Session, directory: str = ""):
@@ -216,7 +209,7 @@ def _visualize_terms(model: BERTopic, session: Session, directory: str = ""):
             webbrowser.open_new(file + os.path.realpath("term_viz.html"))
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e))
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
 
 
 def _visualize_word_shifts(session: Session, directory: str = ""):
@@ -238,10 +231,9 @@ def _visualize_word_shifts(session: Session, directory: str = ""):
         # and topic_sample_zipf.csv.
         # get all files in directory/topics
         files = os.listdir(f"{directory}/topics")
+
         samples = [f for f in files if "sample" in f]
         files = [f for f in files if "sample" not in f]
-        if len(samples) != len(files):
-            raise ValueError("Number of topics must equal number of samples")
 
         labmt = pd.read_csv("src/viz/LABMT.csv")
 
@@ -314,18 +306,19 @@ def _visualize_word_shifts(session: Session, directory: str = ""):
 
     except Exception as e:
         print(e)
-        session.logs["errors"].append(str(e))
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
 
 
-def _safe_read_csv(file_path):
+def _safe_read_csv(file_path, session):
     try:
         return pd.read_csv(file_path, encoding="utf-8")
     except UnicodeDecodeError as e:
-        print(f"Error reading {file_path}: {e}. The file may not be encoded in UTF-8.")
+        print(e)
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
         return None
 
 
-def _process_dataframe_for_visualization(df: pd.DataFrame, ous):
+def _process_dataframe_for_visualization(df: pd.DataFrame, ous, session):
     """
     performs SVD on the df after being filtered through the VAD dataframe and constructs the resulting PDS dimesions.
     """
@@ -338,6 +331,12 @@ def _process_dataframe_for_visualization(df: pd.DataFrame, ous):
         df.drop(
             columns=["counts", "types", "word", "probs", "total_unique"], inplace=True
         )
+        df = df.apply(pd.to_numeric)
+
+        df = df.dropna(axis=1)
+
+        if df.shape[1] < 3:
+            return None, None
 
         svd = TruncatedSVD(n_components=3)
         components = svd.fit_transform(df)
@@ -352,11 +351,12 @@ def _process_dataframe_for_visualization(df: pd.DataFrame, ous):
 
         return df_transformed, df_copy
     except Exception as e:
-        print(f"An error occurred during DataFrame processing: {e}")
+        print(e)
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
         return None, None
 
 
-def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name):
+def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name, session):
     """
     Visualizes a heatmap from a DataFrame. Uses code written by 
     The Computational Story Lab at the University of Vermont.
@@ -385,10 +385,11 @@ def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name):
 
         plt.close(fig)  # Close the figure to free up memory
     except Exception as e:
-        print(f"Failed to generate or save heatmap: {e}")
+        print(e)
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
 
 
-def _visualize_power_danger_structure(directory):
+def _visualize_power_danger_structure(session, directory):
     """"
     Performs PDS calculations for every cluster and visualizes the results as heatmaps.
 
@@ -398,28 +399,45 @@ def _visualize_power_danger_structure(directory):
     Returns:
         None
     """
+   
     ous = pd.read_csv("src/viz/NRC-VAD.txt", delimiter=" ")
     if ous is None:
         return
 
     for file in os.listdir(f"{directory}/topics"):
         if file.endswith(".csv") and "sample" not in file:
-            df = _safe_read_csv(os.path.join(f"{directory}/topics", file))
+            df = _safe_read_csv(os.path.join(f"{directory}/topics", file), session)
             if df is not None:
-                df_transformed, df = _process_dataframe_for_visualization(df, ous)
+                df_transformed, df = _process_dataframe_for_visualization(df, ous, session)
                 if df_transformed is not None:
                     file_base_name = os.path.splitext(file)[0]
-                    _visualize_heatmap_from_df(
-                        df_transformed, "Power", "Danger", directory, file_base_name
-                    )
-                    _visualize_heatmap_from_df(
-                        df_transformed, "Power", "Structure", directory, file_base_name
-                    )
-                    _visualize_heatmap_from_df(
-                        df_transformed, "Danger", "Structure", directory, file_base_name
-                    )
-                    df = pd.merge(df, df_transformed, left_index=True, right_index=True)
-                    df.to_csv(
-                        f"{directory}/topics/{file_base_name}_transformed.csv",
-                        index=False,
-                    )
+                    print(df_transformed.columns)
+                    try :
+                        _visualize_heatmap_from_df(
+                            df_transformed, "Power", "Danger", directory, file_base_name, session
+                        )
+
+                        _visualize_heatmap_from_df(
+                            df_transformed, "Power", "Structure", directory, file_base_name, session
+                        )
+
+                        _visualize_heatmap_from_df(
+                            df_transformed, "Danger", "Structure", directory, file_base_name, session
+                        )
+                    except Exception as e:
+                        print(e)
+                        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+                        
+                    try : 
+
+                        df = pd.merge(df, df_transformed, left_index=True, right_index=True)
+
+                        df.to_csv(
+                            f"{directory}/topics/{file_base_name}_transformed.csv",
+                            index=False,
+                        )
+                    
+                    except Exception as e:
+                        print(e)
+                        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+                      

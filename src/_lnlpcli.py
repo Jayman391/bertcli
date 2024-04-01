@@ -5,6 +5,8 @@ from src.menus._landing import Landing
 from src.menus.topic._topic import TopicMenu
 from src.menus.optimization._optimization import OptimizationMenu
 from bertopic import BERTopic
+import datetime
+import traceback
 
 
 class LNLPCLI:
@@ -48,8 +50,6 @@ class LNLPCLI:
             save_dir=self.save_dir,
         )
 
-        self.driver.log("info", "Initialized Global Session Object and Global Driver")
-
     def run(self):
         """
         Run the LNLPCLI command-line interface.
@@ -67,12 +67,13 @@ class LNLPCLI:
 
             self._process_responses(self.landing, self.driver)
         except Exception as e:
-            self.driver.log("error", str(e))
-            print("An error occurred. Please try again.")
-            trace = input("Would you like to see the error trace? (y/n): ")
-            if trace.lower() == "y":
-                print(e.with_traceback())
-            self.run()
+            print(e)
+            self.global_session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+            print('Apologies, an error occurred.\nPlease check the logs for more information after the session is over.')
+            if input('Continue Session? [y/n]') == 'y':
+                 self.run()
+            else:
+                self.driver._write_logs(self.save_dir)
 
     def _process_responses(self, menu: Menu, driver: Driver):
         """

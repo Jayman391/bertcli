@@ -10,7 +10,7 @@ class Session:
         data (list): The data used for topic modeling.
         config_topic_model (dict): The configuration for the topic model.
         config_optimization (dict): The configuration for optimization.
-        logs (dict): The logs for errors, info, and data.
+        logs (dict): The logs for errors and menu choice data.
         plot_dir (str): The directory to save plots.
         topic_model_factory (TopicModelFactory): The factory for creating topic models.
 
@@ -19,6 +19,7 @@ class Session:
         set_config_topic_model: Set the configuration for the topic model.
         set_config_optimization: Set the configuration for optimization.
         initialize_topic_model_factory: Initialize the topic model factory.
+        get_log: Get the log.
         build_topic_model: Build the topic model.
 
     """
@@ -29,7 +30,7 @@ class Session:
         self.data = data
         self.config_topic_model = config_topic_model
         self.config_optimization = config_optimization
-        self.logs = {"errors": [], "info": [], "data": []}
+        self.logs = {"errors": [], "data": []}
         self.plot_dir = save_dir
 
         self.topic_model_factory = TopicModelFactory()
@@ -86,6 +87,12 @@ class Session:
         """
         self.topic_model_factory.upload_data(self.data)
         return self.topic_model_factory
+    
+    def log(self, name, log):
+        self.logs[name].append(log)
+    
+    def get_logs(self, name):
+        return self.logs[name]
 
     def build_topic_model(self, from_file: bool = False, config: dict = {}) -> BERTopic:
         """
