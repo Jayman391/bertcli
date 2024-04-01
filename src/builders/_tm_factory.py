@@ -24,37 +24,92 @@ os.environ["TOKENIZERS_PARALLELISM"] = "False"
 from bertopic import BERTopic
 from bertopic.vectorizers import ClassTfidfTransformer
 
-from bertopic.representation import KeyBERTInspired, MaximalMarginalRelevance, ZeroShotClassification, PartOfSpeech
+from bertopic.representation import (
+    KeyBERTInspired,
+    MaximalMarginalRelevance,
+    ZeroShotClassification,
+    PartOfSpeech,
+)
 
 
 class TopicModelFactory:
+    """
+    A factory class for building a topic model using various steps and models.
+
+    Attributes:
+        data (pd.DataFrame): The input data for the topic model.
+        embedding_model: The model used for extracting embeddings.
+        dimension_reduction_model: The model used for reducing dimensionality.
+        clustering_model: The model used for clustering reduced embeddings.
+        vectorizer_model: The model used for tokenizing topics.
+        ctfidf_model: The model used for creating topic self.fine_tune.
+        config (dict): Additional configuration parameters for the topic model.
+
+    Methods:
+        upload_data: Uploads the input data for the topic model.
+        build_embedding_model: Builds the embedding model.
+        build_dim_red_model: Builds the dimensionality reduction model.
+        build_cluster_model: Builds the clustering model.
+        build_vectorizer_model: Builds the vectorizer model.
+        build_ctfidf_model: Builds the ctfidf model.
+        build_fine_tune: Builds the fine-tuning models.
+        build_topic_model: Builds the final topic model.
+
+    """
+
     def __init__(self):
         self.data = None
-        # Step 1 - Extract embeddings
         self.embedding_model = None
-        # Step 2 - Reduce dimensionality
         self.dimension_reduction_model = None
-        # Step 3 - Cluster reduced embeddings
         self.clustering_model = None
-        # Step 4 - Tokenize topics
         self.vectorizer_model = None
-        # Step 5 - Create topic self.fine_tune
         self.ctfidf_model = None
         self.config = {}
 
     def upload_data(self, data: pd.DataFrame = None):
+        """
+        Uploads the input data for the topic model.
+
+        Args:
+            data (pd.DataFrame, optional): The input data as a pandas DataFrame. If not provided, it will be read from a default file.
+
+        Returns:
+            pd.DataFrame: The uploaded data.
+
+        """
         if data is None:
             data = pd.read_csv("tests/test_data/data.csv")
         self.data = data
         return self.data
 
-    def build_embedding_model(self, model: str = ""):            
+    def build_embedding_model(self, model: str = ""):
+        """
+        Builds the embedding model.
+
+        Args:
+            model (str, optional): The name of the embedding model to use. If not provided, a default model will be used.
+
+        Returns:
+            The built embedding model.
+
+        """
         if model == "" or model == "Back":
             model = "all-MiniLM-L6-v2"
         self.embedding_model = SentenceTransformer(model)
         return self.embedding_model
 
     def build_dim_red_model(self, model: str = "", config: dict = {}):
+        """
+        Builds the dimensionality reduction model.
+
+        Args:
+            model (str, optional): The name of the dimensionality reduction model to use. If not provided, a default model will be used.
+            config (dict, optional): Additional configuration parameters for the model.
+
+        Returns:
+            The built dimensionality reduction model.
+
+        """
         model = model.lower()
         if model == "umap" or model == "":
             self.dimension_reduction_model = UMAP(
@@ -73,6 +128,17 @@ class TopicModelFactory:
         return self.dimension_reduction_model
 
     def build_cluster_model(self, model: str = "", config: dict = {}):
+        """
+        Builds the clustering model.
+
+        Args:
+            model (str, optional): The name of the clustering model to use. If not provided, a default model will be used.
+            config (dict, optional): Additional configuration parameters for the model.
+
+        Returns:
+            The built clustering model.
+
+        """
         model = model.lower()
         if model == "hdbscan" or model == "":
             self.clustering_model = HDBSCAN(**config)
@@ -101,14 +167,44 @@ class TopicModelFactory:
         return self.clustering_model
 
     def build_vectorizer_model(self, config: dict = {}):
+        """
+        Builds the vectorizer model.
+
+        Args:
+            config (dict, optional): Additional configuration parameters for the model.
+
+        Returns:
+            The built vectorizer model.
+
+        """
         self.vectorizer_model = CountVectorizer(**config)
         return self.vectorizer_model
 
     def build_ctfidf_model(self, config: dict = {}):
+        """
+        Builds the ctfidf model.
+
+        Args:
+            config (dict, optional): Additional configuration parameters for the model.
+
+        Returns:
+            The built ctfidf model.
+
+        """
         self.ctfidf_model = ClassTfidfTransformer(**config)
         return self.ctfidf_model
-    
+
     def build_fine_tune(self, tune: list = []):
+        """
+        Builds the fine-tuning models.
+
+        Args:
+            tune (list, optional): A list of fine-tuning models to enable.
+
+        Returns:
+            list: The built fine-tuning models.
+
+        """
         self.fine_tune = []
         for log in tune:
             if isinstance(log, list):
@@ -130,6 +226,16 @@ class TopicModelFactory:
         return self.fine_tune
 
     def build_topic_model(self, config: dict = {}) -> BERTopic:
+        """
+        Builds the final topic model.
+
+        Args:
+            config (dict, optional): Additional configuration parameters for the topic model.
+
+        Returns:
+            BERTopic: The built topic model.
+
+        """
         return BERTopic(
             embedding_model=self.embedding_model,
             umap_model=self.dimension_reduction_model,

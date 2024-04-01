@@ -27,16 +27,16 @@ class ConfigMenu(Menu):
         loader = DataLoader()
 
         if choice == 1:
-           
+
             self.session.set_data(loader.prompt_load_data())
-        
+
         elif choice == 2:
-            
+
             self.session.set_config_topic_model(loader.prompt_load_tm_config())
-               
+
         elif choice == 3:
-           
+
             self.session.set_config_optimization(loader.prompt_load_opt_config())
-               
+
         else:
             return self.back()

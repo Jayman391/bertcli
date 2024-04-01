@@ -8,6 +8,7 @@ from menus.topic._plotting import TopicPlottingMenu
 from menus._configmenu import ConfigMenu
 from random import shuffle
 
+
 class TopicMenu(Menu):
     def __init__(self, session: Session):
         is_root = False
@@ -50,7 +51,7 @@ class TopicMenu(Menu):
                 self.session.logs["info"].append(f"User went back to {self.parent}")
                 return self.back()
             elif choice == 6:
-                
+
                 sample_size = self.prompt_numeric("Please enter the sample size: ")
 
                 data = self.session.data

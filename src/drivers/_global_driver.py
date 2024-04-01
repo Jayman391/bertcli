@@ -2,17 +2,37 @@ from src.drivers._driver import Driver
 from src.viz._tm_viz import visualize
 from src.util._formatter import DataFormatter
 from util._session import Session
-from webbrowser import open_new_tab
-from bertopic import BERTopic
 import pandas as pd
-
+from bertopic import BERTopic
+import traceback
 import json
 import os
 import sys
+import datetime
+
 
 class GlobalDriver(Driver):
-    
+    """
+    The GlobalDriver class is a subclass of the Driver class and represents a global driver for topic modeling.
+
+    Attributes:
+        session (Session): The session object associated with the driver.
+
+    Methods:
+        __init__(self, session=None): Initializes a new instance of the GlobalDriver class.
+        _run_topic_model(self, from_file=False): Runs the topic modeling process.
+        _fit_model(self, model): Fits the topic model to the session data and extracts the topics.
+        _process_topic_choice(self, model, value, topics): Processes the topic choice and saves the results.
+        _write_logs(self, directory): Writes the logs to a JSON file.
+    """
+
     def __init__(self, session: Session = None):
+        """
+        Initializes a new instance of the GlobalDriver class.
+
+        Args:
+            session (Session, optional): The session object associated with the driver. Defaults to None.
+        """
         if sys.platform.startswith("linux"):
             self.file = ""
         else:
@@ -20,55 +40,71 @@ class GlobalDriver(Driver):
         super().__init__(session)
 
     def _run_topic_model(self, from_file: bool = False):
-        try:
-            data = self.session.logs["data"]
-            directory = ""
-            # remove all logs that containg Back in the values
-            data = [log for log in data if "Back" not in log.values()]
-            # gather data where Topic is a key
-            topic_choices = [log for log in data if "Topic" in log.keys()]
+        """
+        Runs the topic modeling process.
 
-            model = self.session.build_topic_model(from_file=from_file)
-            self.session.logs["info"].append("Topic Model has been built")
-            topics = self._fit_model(model)
+        Args:
+            from_file (bool, optional): Indicates whether to load data from a file. Defaults to False.
+        """
+     
+        data = self.session.get_logs("data")
+        directory = ""
+        # remove all logs that contain "Back" in the values
+        data = [log for log in data if "Back" not in log.values()]
+        # gather data where "Topic" is a key
+        topic_choices = [log for log in data if "Topic" in log.keys()]
 
-        
-            for log in topic_choices:
-                value = str(list(log.values())[0])
-                dummy = self._process_topic_choice(model, value, topics)
-                if dummy != "":
-                    directory = dummy
+        model = self.session.build_topic_model(from_file=from_file)
+        topics = self._fit_model(model)
 
-            visualize(model, self.session, directory, data)
+        for log in topic_choices:
+            value = str(list(log.values())[0])
+            dummy = self._process_topic_choice(model, value, topics)
+            if dummy != "":
+                directory = dummy
 
-            self._write_logs(directory)
-        except Exception as e:
-            print(e)
-            self.session.logs["errors"].append(str(e.with_traceback()))
-            self._run_topic_model(from_file=from_file)
-            self._write_logs(directory)
-        except Exception as e:
-            print(e)
-            self.session.logs["errors"].append(str(e.with_traceback()))
-            self._run_topic_model(from_file=from_file)
+        visualize(model, self.session, directory, data)
+
+        self._write_logs(directory)
+      
 
     def _fit_model(self, model):
+        """
+        Fits the topic model to the session data and extracts the topics.
+
+        Args:
+            model: The topic model object.
+
+        Returns:
+            list: The extracted topics.
+        """
         topics, _ = model.fit_transform(self.session.data)
         # set -1 cluster to num_clusters+1
         num_topics = len(set(topics))
 
         topics = [
-            int(topic)
-            if topic != -1 and isinstance(topic, bool) == False
-            else int(num_topics)
+            (
+                int(topic)
+                if topic != -1 and isinstance(topic, bool) == False
+                else int(num_topics)
+            )
             for topic in topics
         ]
-
-        self.session.logs["info"].append("Topics have been extracted")
 
         return topics
 
     def _process_topic_choice(self, model: BERTopic, value: str, topics):
+        """
+        Processes the topic choice and saves the results.
+
+        Args:
+            model (BERTopic): The topic model object.
+            value (str): The topic choice value.
+            topics (list): The extracted topics.
+
+        Returns:
+            str: The directory where the results are saved.
+        """
         directory = ""
 
         if self.session.plot_dir != "":
@@ -118,13 +154,11 @@ class GlobalDriver(Driver):
                 df = formatter.zipf_data_to_dataframe(data["text"].tolist())
 
                 # sample of session_data size of df
-                sample = session_data.sample(n=len(data)-1)
+                sample = session_data.sample(n=len(data) - 1)
 
                 sample = formatter.zipf_data_to_dataframe(sample["text"].tolist())
 
-                df.to_csv(
-                    f"{directory}/topics/{label}_zipf.csv", index=False
-                )
+                df.to_csv(f"{directory}/topics/{label}_zipf.csv", index=False)
 
                 sample.to_csv(
                     f"{directory}/topics/{label}_sample_zipf.csv", index=False
@@ -133,14 +167,18 @@ class GlobalDriver(Driver):
         return directory
 
     def _write_logs(self, directory):
-        info = self.session.logs["info"]
-        errors = self.session.logs["errors"]
-        data = self.session.logs["data"]
-        logs = {"info": info, "errors": errors, "data": data}
+        """
+        Writes the logs to a JSON file.
+
+        Args:
+            directory (str): The directory where the logs should be saved.
+        """
+        errors = self.session.get_logs("errors")
+        data = self.session.get_logs("data")
+        logs = {"errors": errors, "data": data}
         if directory != "":
             with open(f"{directory}/logs.json", "w") as f:
                 json.dump(logs, f)
         else:
             with open(f"logs.json", "w") as f:
                 json.dump(logs, f)
-
