@@ -3,13 +3,12 @@ from src.viz._tm_viz import visualize
 from src.util._formatter import DataFormatter
 from util._session import Session
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 from bertopic import BERTopic
-import traceback
 import json
 import os
 import sys
-import datetime
-
 
 class GlobalDriver(Driver):
     """
@@ -141,10 +140,20 @@ class GlobalDriver(Driver):
         )
         tm_config = self.session.config_topic_model
         # save the topic model configuration
-        with open(f"{directory}/tm_config.json", "w") as f:
-            json.dump(tm_config, f)
+        if tm_config != {}:
+            with open(f"{directory}/tm_config.json", "w") as f:
+                json.dump(tm_config, f)
 
         formatter = DataFormatter()
+
+        #size distribution of labels
+        label_distribution = session_data["label"].value_counts().reset_index()
+
+        plt.scatter(np.log10(list(range(len(label_distribution)))), np.log10(label_distribution["count"]))
+        plt.title("Topic Size Distribution")
+        plt.xlabel("log rank")
+        plt.ylabel("log size")
+        plt.savefig(f"{directory}/topic_size_distribution.png")
 
         for label in session_data["label"].unique():
             data = session_data[session_data["label"] == label]
