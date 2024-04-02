@@ -48,15 +48,15 @@ stuck in a local optimum which has only two clusters*
 
 #### *can be any number of columns, just has to have a column named text*
 
-<code>python main.py --data=tests/test_data/data.csv</code>
+<code>python main.py --data=tests/test_data/usa-vaccine-comments.csv</code>
 
 ### specify number of samples
 
-<code>python main.py --data=tests/test_data/data.csv --num_samples=1000</code>
+<code>python main.py --data=tests/test_data/usa-vaccine-comments.csv --num_samples=1000</code>
 
 ### all together now
 
-<code>python main.py --save_dir=output --data=tests/test_data/data.csv --num_samples=1000 </code>
+<code>python main.py --save_dir=output --data=tests/test_data/usa-vaccine-comments.csv --num_samples=1000 </code>
 
 ## Contributing
 
