@@ -149,6 +149,8 @@ class GlobalDriver(Driver):
         #size distribution of labels
         label_distribution = session_data["label"].value_counts().reset_index()
 
+        label_distribution.to_csv(f"{directory}/topic_size_distribution.csv", index=False)
+
         plt.scatter(np.log10(list(range(len(label_distribution)))), np.log10(label_distribution["count"]))
         plt.title("Topic Size Distribution")
         plt.xlabel("log rank")

@@ -411,7 +411,6 @@ def _visualize_power_danger_structure(session, directory):
                 df_transformed, df = _process_dataframe_for_visualization(df, ous, session)
                 if df_transformed is not None:
                     file_base_name = os.path.splitext(file)[0]
-                    print(df_transformed.columns)
                     try :
                         _visualize_heatmap_from_df(
                             df_transformed, "Power", "Danger", directory, file_base_name, session
