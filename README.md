@@ -35,7 +35,7 @@ The goal of this package is to be able run several distinct NLP related algorith
 
 *for now only the topic modeling section is functional*
 
-*you might also need to rerun the script a few times to get a good partition of the data, as sometimes the clustering algorithm gets
+*for data sets under ~5000 documents, you might also need to rerun the script a few times to get a good partition of the data, as sometimes the clustering algorithm gets
 stuck in a local optimum which has only two clusters*
 
 *there are also some runtime errors that occur somewhat regularly, another cause to rerun the script. There are some bugs already open on the issues page in the repo*

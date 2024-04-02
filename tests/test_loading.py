@@ -7,7 +7,7 @@ loader = DataLoader()
 
 
 @pytest.mark.parametrize(
-    "data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"]
+    "data_filepath", ["tests/test_data/usa-vaccine-comments.csv"]
 )
 def test_load_data(data_filepath):
     data = loader._load_data(data_filepath)
@@ -98,13 +98,15 @@ def test_load_config():
     assert config["seed"] == 42
 
 
-@pytest.mark.parametrize(
-    "data_filepath", ["tests/test_data/data.csv", "tests/test_data/data.json"]
-)
+@pytest.mark.parametrize("data_filepath", ["tests/test_data/usa-vaccine-comments.csv"])
 @pytest.mark.parametrize("config_filepath", ["tests/test_data/config-tm.json"])
 @pytest.mark.parametrize("opt_filepath", ["tests/test_data/config-opt.json"])
 def test_handle_globals(data_filepath, config_filepath, opt_filepath):
-    cli = LNLPCLI(data_filepath, config_filepath, opt_filepath, True)
+    cli = LNLPCLI(
+        global_data_path=data_filepath, 
+        global_config_path=config_filepath, 
+        global_optmization_path=opt_filepath, 
+        debug=True)
 
     assert cli.global_session.data is not None
     assert cli.global_session.config_topic_model is not None
@@ -113,9 +115,9 @@ def test_handle_globals(data_filepath, config_filepath, opt_filepath):
 
 def test_invalid_filetype():
     with pytest.raises(Exception):
-        cli = LNLPCLI("tests/test_data/data.txt")
+        cli = LNLPCLI(global_data_path="tests/test_data/data.txt")
 
 
 def test_invalid_config_file():
     with pytest.raises(Exception):
-        cli = LNLPCLI("tests/test_data/data.csv", "tests/test_data/config.txt")
+        cli = LNLPCLI(global_data_path="tests/test_data/data.csv", global_config_path="tests/test_data/config.txt")

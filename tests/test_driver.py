@@ -7,7 +7,7 @@ from menus._menu import Menu
 def test_initialize_session():
     driver = Driver()
     session = driver.initialize_session(
-        data_path="tests/test_data/data.csv",
+        data_path="tests/test_data/usa-vaccine-comments.csv",
         config_path="tests/test_data/config-tm.json",
         optimization_path=None,
     )
@@ -29,7 +29,7 @@ def test_run_menu_leaf():
     session = Session()
     menu = Menu(session, options=["Option 1", "Option 2"], is_leaf=True, is_root=True)
     # choose option 1
-    assert driver.run_menu(menu) == "Option 1"
+    assert driver._run_menu(menu) == "Option 1"
 
 
 def test_run_menu_branch():
@@ -45,4 +45,4 @@ def test_run_menu_branch():
     menus = [sub_menu_1, sub_menu_2]
     menu.map_options_to_menus(menu.options, menus)
     # choose 1
-    assert driver.run_menu(menu) == sub_menu_1
+    assert driver._run_menu(menu) == sub_menu_1

@@ -65,6 +65,7 @@ class TopicModelFactory:
         self.vectorizer_model = None
         self.ctfidf_model = None
         self.config = {}
+        self.fine_tune = []
 
     def upload_data(self, data: pd.DataFrame = None):
         """
