@@ -10,7 +10,7 @@ session = Session()
 
 model = BERTopic()
 
-data = _safe_read_csv(file_path="tests/test_data/brazil-vaccine-comments.csv", session=session)
+data = _safe_read_csv(file_path="tests/test_data/usa-vaccine-comments.csv", session=session)
 
 docs = data["text"].tolist()[:1000]
 
@@ -37,7 +37,14 @@ def test_visualize_terms():
     assert os.path.exists("output/term_viz.html")
 """
 def test_visualize_word_shifts():
-    pass
+    driver = GlobalDriver()
+    formatter = DataFormatter() 
+    driver._save_zipf_distribution(session.data, 'output', formatter)
+
+    _visualize_word_shifts(model, session, 'output')
+
+    assert os.path.exists("output/topics/0_zipf_wordshift.png")
+
 
 def test_process_dataframe_for_visualization():
     pass
