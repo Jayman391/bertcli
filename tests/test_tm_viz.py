@@ -21,7 +21,7 @@ topics, _ = model.fit_transform(docs)
 os.makedirs("output", exist_ok=True)
 
 
-""" def test_visualize_topics():
+def test_visualize_topics():
     _visualize_topics(model, session, 'output')
     assert os.path.exists("output/topic_viz.html")
     assert os.path.exists("output/hierarchical_viz.html")
@@ -35,25 +35,13 @@ def test_visualize_documents():
 def test_visualize_terms():
     _visualize_terms(model, session, 'output')
     assert os.path.exists("output/term_viz.html")
-"""
+
 def test_visualize_word_shifts():
     driver = GlobalDriver()
     formatter = DataFormatter() 
-    driver._save_zipf_distribution(session.data, 'output', formatter)
+    session_data = pd.DataFrame(list(zip(session.data, topics)), columns=["text", "label"])
+    driver._save_zipf_distribution(session_data, 'output', formatter)
 
-    _visualize_word_shifts(model, session, 'output')
+    _visualize_word_shifts(session, 'output')
 
     assert os.path.exists("output/topics/0_zipf_wordshift.png")
-
-
-def test_process_dataframe_for_visualization():
-    pass
-
-def test_visualize_heatmap_from_df():
-    pass
-
-def test_visualize_power_danger_structure():
-    pass
-
-def test_visualize():
-    pass 
