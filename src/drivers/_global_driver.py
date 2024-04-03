@@ -5,7 +5,7 @@ from util._session import Session
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from bertopic import BERTopic
+from umap import UMAP
 import json
 import os
 import sys
@@ -58,15 +58,14 @@ class GlobalDriver(Driver):
 
         for log in topic_choices:
             value = str(list(log.values())[0])
-            dummy = self._process_topic_choice(model, value, topics)
-            if dummy != "":
-                directory = dummy
+            save_dir = self._process_save_dir_choice(model, value, topics)
+            if save_dir != "":
+                directory = save_dir
 
         visualize(model, self.session, directory, data)
 
         self._write_logs(directory)
       
-
     def _fit_model(self, model):
         """
         Fits the topic model to the session data and extracts the topics.
@@ -92,90 +91,122 @@ class GlobalDriver(Driver):
 
         return topics
 
-    def _process_topic_choice(self, model: BERTopic, value: str, topics):
+    def _process_save_dir_choice(self, model, value, topics):
         """
         Processes the topic choice and saves the results.
-
+        
         Args:
             model (BERTopic): The topic model object.
             value (str): The topic choice value.
             topics (list): The extracted topics.
-
+            
         Returns:
             str: The directory where the results are saved.
         """
-        directory = ""
-
-        if self.session.plot_dir != "":
-            directory = self.session.plot_dir
+        # Setup directory for saving results
+        directory = self._setup_directory(value)
+        
+        # Map topics to documents and process session data
+        session_data, embeddings = self._map_topics_to_documents(topics, model)
+        
+        # Reduce embeddings dimensions if necessary
+        embeddings = self._reduce_embeddings_dimensions(embeddings)
+        session_data = pd.concat([session_data, embeddings], axis=1)
+        
+        # Save the session data to CSV
+        self._save_session_data(session_data, directory)
+        
+        # Save the topic model configuration
+        self._save_topic_model_config(directory)
+        
+        # Plot and save the topic size distribution
+        self._plot_topic_size_distribution(session_data, directory)
+        
+        # Save Zipf distribution for each topic and a sample
+        formatter = DataFormatter()  # Assuming DataFormatter is defined elsewhere
+        self._save_zipf_distribution(session_data, directory, formatter)
+        
+        return directory
+    
+    def _setup_directory(self, value):
+        """
+        Setup the directory for saving results.
+        """
+        directory = self.session.plot_dir if self.session.plot_dir != "" else ""
         if value.startswith("save_dir"):
             directory = value.split(" ")[1].strip()
-        # if directory does not exist, create it
         if not os.path.isdir(directory):
             os.makedirs(directory)
-        # model.save(directory, serialization="pytorch", save_embedding_model=True)
-        # map topics to the documents
+        return directory
 
-        topics = pd.DataFrame(topics).astype(int)
-        # name the columns
-        topics.columns = ["label"]
+    def _save_model(self, model, directory):
+        """
+        Save the model to the directory.
+        """
+        model.save(directory, serialization="pytorch", save_embedding_model=True)
+
+    def _map_topics_to_documents(self, topics, model):
+        """
+        Process topics and map them to documents.
+        """
+        topics_df = pd.DataFrame(data=topics, columns=['label']).astype(int)
         embeddings = pd.DataFrame(model._extract_embeddings(self.session.data))
-        session_data = pd.DataFrame(self.session.data)
-        # name column text
-        session_data.columns = ["text"]
-        session_data = pd.concat([session_data, topics], axis=1)
-        # map embeddings to the documents
-        # if embeddings dim is more than 2, reduce to 2
+        session_data = pd.DataFrame(self.session.data, columns=["text"])
+        session_data = pd.concat([session_data, topics_df], axis=1)
+        return session_data, embeddings
+
+    def _reduce_embeddings_dimensions(self, embeddings):
+        """
+        Reduce the dimensionality of embeddings if necessary.
+        """
         if embeddings.shape[1] > 2:
-            from umap import UMAP
+            umap = UMAP(n_components=2)
+            embeddings = pd.DataFrame(umap.fit_transform(embeddings), columns=["x", "y"])
+        return embeddings
 
-            umap = UMAP(n_components=2, verbose=True)
-            embeddings = pd.DataFrame(umap.fit_transform(embeddings))
-            # columns names are x and y
-            embeddings.columns = ["x", "y"]
-        session_data = pd.concat([session_data, embeddings], axis=1)
+    def _save_session_data(self, session_data, directory):
+        """
+        Save the session data to a CSV file.
+        """
+        session_data.to_csv(f"{directory}/labeled_corpus.csv", index=False)
 
-        pd.DataFrame(session_data).to_csv(
-            f"{directory}/labeled_corpus.csv", index=False
-        )
+    def _save_topic_model_config(self, directory):
+        """
+        Save the topic model configuration.
+        """
         tm_config = self.session.config_topic_model
-        # save the topic model configuration
         if tm_config != {}:
             with open(f"{directory}/tm_config.json", "w") as f:
                 json.dump(tm_config, f)
 
-        formatter = DataFormatter()
-
-        #size distribution of labels
+    def _plot_topic_size_distribution(self, session_data, directory):
+        """
+        Plot and save the topic size distribution.
+        """
         label_distribution = session_data["label"].value_counts().reset_index()
-
+        os.makedirs(directory, exist_ok=True)
         label_distribution.to_csv(f"{directory}/topic_size_distribution.csv", index=False)
-
-        plt.scatter(np.log10(list(range(len(label_distribution)))), np.log10(label_distribution["count"]))
+        plt.scatter(np.log10(list(range(len(label_distribution)))), np.log10(label_distribution["label"]))
         plt.title("Topic Size Distribution")
         plt.xlabel("log rank")
         plt.ylabel("log size")
         plt.savefig(f"{directory}/topic_size_distribution.png")
 
+    def _save_zipf_distribution(self, session_data, directory, formatter):
+        """
+        Save the Zipf distribution for each topic and a sample.
+        """
         for label in session_data["label"].unique():
             data = session_data[session_data["label"] == label]
             if len(data) > 1:
-                if not os.path.isdir(f"{directory}/topics/"):
-                    os.makedirs(f"{directory}/topics/")
+                topic_dir = f"{directory}/topics/"
+                if not os.path.isdir(topic_dir):
+                    os.makedirs(topic_dir)
                 df = formatter.zipf_data_to_dataframe(data["text"].tolist())
-
-                # sample of session_data size of df
                 sample = session_data.sample(n=len(data) - 1)
-
-                sample = formatter.zipf_data_to_dataframe(sample["text"].tolist())
-
-                df.to_csv(f"{directory}/topics/{label}_zipf.csv", index=False)
-
-                sample.to_csv(
-                    f"{directory}/topics/{label}_sample_zipf.csv", index=False
-                )
-
-        return directory
+                sample_df = formatter.zipf_data_to_dataframe(sample["text"].tolist())
+                df.to_csv(f"{topic_dir}/{label}_zipf.csv", index=False)
+                sample_df.to_csv(f"{topic_dir}/{label}_sample_zipf.csv", index=False)
 
     def _write_logs(self, directory):
         """
@@ -188,6 +219,8 @@ class GlobalDriver(Driver):
         data = self.session.get_logs("data")
         logs = {"errors": errors, "data": data}
         if directory != "":
+            if not os.path.isdir(directory):
+                os.makedirs(directory)
             with open(f"{directory}/logs.json", "w") as f:
                 json.dump(logs, f)
         else:
