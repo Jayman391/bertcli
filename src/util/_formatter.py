@@ -33,7 +33,7 @@ class DataFormatter:
             np.array: The modified content array with the date field converted to ISO format.
         """
         for content_dict in content:
-            content_dict[self.DATE_FIELD] = content_dict[self.DATE_FIELD].isoformat()
+            content_dict[self.DATE_FIELD] = pd.to_datetime(content_dict[self.DATE_FIELD]).isoformat()
 
     def format_text_data(self, posts: list, comments: list = None):
         """

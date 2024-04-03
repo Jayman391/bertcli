@@ -79,7 +79,7 @@ def visualize(model: BERTopic, session: Session, directory: str = "", data: list
                 _visualize_power_danger_structure(session, directory)
     else:
         print(
-            "No plotting options selected. Visualizing all topics, documents, and terms by default."
+            "No plotting options selected. Visualizing all topics, documents, and terms,\nas well as word shift and Power-Danger-Structure plots."
         )
         _visualize_topics(model, session, directory)
         _visualize_terms(model, session, directory)
@@ -100,6 +100,9 @@ def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
     Returns:
         None
     """
+    if not os.path.exists(f"{directory}"):
+        os.mkdir(f"{directory}")
+
     try:
         topic_viz = model.visualize_topics()
         if directory != "":

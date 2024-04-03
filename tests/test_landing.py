@@ -15,8 +15,8 @@ def test_init_data():
     # Check if the options and menus are initialized correctly
     assert landing.options == [
         "Run a Topic Model",
-        "Run an Optimization routine for a Topic Model (GPU reccomended)",
         "Run a Classification Model",
+        "Run an Optimization routine",
         "Load Global Configuration Files",
         "Exit",
     ]
