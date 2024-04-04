@@ -30,20 +30,24 @@ def main():
     )
 
     parser.add_argument(
+        "--sequence", type=str, help="Sequence of commands to process"
+    )
+
+    parser.add_argument(
         "--tmconfig", type=str, help="Path to the global topic model config file"
     )
     parser.add_argument(
         "--optconfig", type=str, help="Path to the global optimization config file"
     )
-
     args = parser.parse_args()
 
     num_samples = args.num_samples if args.num_samples else 0
 
-    cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_config_path=args.tmconfig, global_optmization_path=args.optconfig, num_samples=num_samples)
+    cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_config_path=args.tmconfig, sequence=args.sequence, global_optmization_path=args.optconfig, num_samples=num_samples)
 
     cli.run()
 
 if __name__ == "__main__":
 
     main()
+
