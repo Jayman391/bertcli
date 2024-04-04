@@ -2,36 +2,12 @@ import json
 import os
 import pytest
 from bertopic import BERTopic
-from drivers._global_driver import GlobalDriver
+from drivers._tm_driver import TopicDriver
 from util._formatter import DataFormatter
 import pandas as pd
 
-def test_write_logs():
-    driver = GlobalDriver()
-    
-    directory = "logs"
-
-    driver.initialize_session(data_path='tests/test_data/brazil-vaccine-comments.csv',save_dir=directory)
-
-    driver.session.log("data", "This is a data message.")
-    driver.session.log("errors", "This is an error message.")
-
-    driver._write_logs(directory)
-
-    assert os.path.exists(directory)
-    assert os.path.exists(os.path.join(directory, "logs.json"))
-
-    with open(os.path.join(directory, "logs.json"), "r") as f:
-        logs = json.load(f)
-
-    assert logs["data"] == ["This is a data message."]
-    assert logs["errors"] == ["This is an error message."]
-
-    os.remove(os.path.join(directory, "logs.json"))
-    os.rmdir(directory)
-    
 def test_save_zipf_distribution(tmpdir):
-    driver = GlobalDriver()
+    driver = TopicDriver()
     session_data = pd.DataFrame({
         "label": ["A", "A", "B", "B"],
         "text": ["text1", "text2", "text3", "text4"]
@@ -53,7 +29,7 @@ def test_save_zipf_distribution(tmpdir):
     os.rmdir(f"{directory}/topics/")
 
 def test_save_topic_model_config(tmpdir):
-    driver = GlobalDriver()
+    driver = TopicDriver()
     directory = str(tmpdir)
     driver.initialize_session(data_path='tests/test_data/brazil-vaccine-comments.csv',save_dir=directory)
     driver.session.config_topic_model = {"n_gram_range": (1, 2)}
@@ -69,7 +45,7 @@ def test_save_topic_model_config(tmpdir):
     os.remove(f"{directory}/tm_config.json")
 
 def test_save_session_data(tmpdir):
-    driver = GlobalDriver()
+    driver = TopicDriver()
     session_data = pd.DataFrame({
         "label": ["A", "A", "B", "B"],
         "text": ["text1", "text2", "text3", "text4"]
@@ -90,7 +66,7 @@ def test_plot_topic_size_distribution():
         "label": [1 for i in range(1, 10)] + [0 for i in range(1, 5)]
     })
 
-    driver = GlobalDriver()
+    driver = TopicDriver()
     driver._plot_topic_size_distribution(session_data, 'output')
 
     assert os.path.isfile(f"output/topic_size_distribution.csv")
@@ -107,7 +83,7 @@ def test_reduce_embeddings_no_reduction():
         "y": [4, 5, 6]
     })
 
-    driver = GlobalDriver()
+    driver = TopicDriver()
     reduced_embeddings = driver._reduce_embeddings_dimensions(embeddings)
 
     assert reduced_embeddings.equals(embeddings)
@@ -119,7 +95,7 @@ def test_reduce_embeddings_with_reduction_pass():
         "z": [9, 10, 11, 12]
     })
 
-    driver = GlobalDriver()
+    driver = TopicDriver()
     reduced_embeddings = driver._reduce_embeddings_dimensions(embeddings)
 
     assert reduced_embeddings.shape == (4, 2)
@@ -131,12 +107,12 @@ def test_reduce_embeddings_with_reduction_fail():
         "z": [9, 10]
     })
 
-    driver = GlobalDriver()
+    driver = TopicDriver()
     with pytest.raises(ValueError):
         reduced_embeddings = driver._reduce_embeddings_dimensions(embeddings)
 
 def test_map_topics_to_documents(tmpdir):
-    driver = GlobalDriver()
+    driver = TopicDriver()
     directory = str(tmpdir)
     driver.initialize_session(data_path='tests/test_data/brazil-vaccine-comments.csv',save_dir=directory)
 

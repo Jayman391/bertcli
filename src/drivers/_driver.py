@@ -109,3 +109,22 @@ class Driver(ABC):
             return self._run_menu(response)
         else:
             return response
+    
+    def _write_logs(self, directory):
+        """
+        Writes the logs to a JSON file.
+
+        Args:
+            directory (str): The directory where the logs should be saved.
+        """
+        errors = self.session.get_logs("errors")
+        data = self.session.get_logs("data")
+        logs = {"errors": errors, "data": data}
+        if directory != "":
+            if not os.path.isdir(directory):
+                os.makedirs(directory)
+            with open(f"{directory}/logs.json", "w") as f:
+                json.dump(logs, f)
+        else:
+            with open(f"logs.json", "w") as f:
+                json.dump(logs, f)

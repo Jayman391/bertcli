@@ -1,14 +1,13 @@
 import pytest
 import sys
 import os
-
+import json
 # Add the source directory to the system path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
 from drivers._driver import Driver
 from util._session import Session
 from menus._menu import Menu
-
 
 
 def test_initialize_session():
@@ -20,7 +19,30 @@ def test_initialize_session():
     )
     assert session is not None
 
+def test_write_logs():
+    driver = Driver()
+    
+    directory = "logs"
 
+    driver.initialize_session(data_path='tests/test_data/brazil-vaccine-comments.csv',save_dir=directory)
+
+    driver.session.log("data", "This is a data message.")
+    driver.session.log("errors", "This is an error message.")
+
+    driver._write_logs(directory)
+
+    assert os.path.exists(directory)
+    assert os.path.exists(os.path.join(directory, "logs.json"))
+
+    with open(os.path.join(directory, "logs.json"), "r") as f:
+        logs = json.load(f)
+
+    assert logs["data"] == ["This is a data message."]
+    assert logs["errors"] == ["This is an error message."]
+
+    os.remove(os.path.join(directory, "logs.json"))
+    os.rmdir(directory)
+    
 def test_log():
     driver = Driver()
     driver.initialize_session()

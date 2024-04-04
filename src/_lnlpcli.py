@@ -1,5 +1,6 @@
 from src.drivers._driver import Driver
 from src.drivers._global_driver import GlobalDriver
+from src.drivers._tm_driver import TopicDriver
 from src.menus._menu import Menu
 from src.menus._landing import Landing
 from src.menus.topic._topic import TopicMenu
@@ -43,15 +44,17 @@ class LNLPCLI:
 
         print("\nWelcome to the LNLP CLI!")
 
-        self.driver = GlobalDriver()
+        self.global_driver = GlobalDriver()
 
-        self.global_session = self.driver.initialize_session(
+        self.global_session = self.global_driver.initialize_session(
             data_path=self.global_data_path,
             config_path=self.global_config_path,
             optimization_path=self.global_optmization_path,
             num_samples=self.num_samples,
             save_dir=self.save_dir,
         )
+
+        self.tm_driver = TopicDriver(session=self.global_session)
 
     def run(self):
         """
@@ -61,7 +64,7 @@ class LNLPCLI:
             if self.sequence != '':
                 self._process_sequence(self.sequence)
             else:
-                self.landing = Landing(session=self.driver.session)
+                self.landing = Landing(session=self.global_driver.session)
 
                 if self.debug:
                     self.landing.handle_choice(1)
@@ -71,7 +74,7 @@ class LNLPCLI:
                     if value is not None and isinstance(value, Menu):
                         value.set_parent(self.landing)
 
-                self._process_responses(self.landing, self.driver)
+                self._process_responses(self.landing, self.global_driver)
         except Exception as e:
             print(e)
             self.global_session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
@@ -79,7 +82,7 @@ class LNLPCLI:
             if input('Continue Session? [y/n]') == 'y':
                  self.run()
             else:
-                self.driver._write_logs(self.save_dir)
+                self.global_driver._write_logs(self.save_dir)
 
     def _process_responses(self, menu: Menu, driver: Driver):
         """
@@ -104,9 +107,9 @@ class LNLPCLI:
 
         elif isinstance(response, BERTopic):
             if self.global_session.config_topic_model != {}:
-                driver._run_topic_model(from_file=True)
+                self.tm_driver._run_topic_model(from_file=True)
             else:
-                driver._run_topic_model()
+                self.tm_driver._run_topic_model()
         else:
             self._process_responses(menu.parent, driver)
 
@@ -136,13 +139,13 @@ class LNLPCLI:
         if self.save_dir is None:
             self.save_dir = "output"
         
-        self.driver.log("data", {"Topic": self.save_dir})
+        self.global_driver.log("data", {"Topic": self.save_dir})
 
         sequence = sequence.split(",")
 
         sequence = [int(x) for x in sequence]
 
-        self.landing = Landing(session=self.driver.session)
+        self.landing = Landing(session=self.global_driver.session)
 
         choice = self.landing.handle_choice(sequence[0])
 
@@ -154,14 +157,14 @@ class LNLPCLI:
                 response = menu.handle_choice(second_choice)
                 
                 if isinstance(response, list):
-                    self.driver.log("data", {str(menu): response})
+                    self.global_driver.log("data", {str(menu): response})
                 else:
-                    self.driver.log("data", {str(menu): str(response)})
+                    self.global_driver.log("data", {str(menu): str(response)})
             else:
                 choice = choice.handle_choice(s) 
         
         if isinstance(choice, BERTopic):
             if self.global_session.config_topic_model != {}:
-                self.driver._run_topic_model(from_file=True)
+                self.tm_driver._run_topic_model(from_file=True)
             else:
-                self.driver._run_topic_model()
+                self.tm_driver._run_topic_model()
