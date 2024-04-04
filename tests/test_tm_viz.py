@@ -2,7 +2,7 @@ from bertopic import BERTopic
 import os
 import pandas as pd
 from util._session import Session
-from drivers._global_driver import GlobalDriver
+from drivers._tm_driver import TopicDriver
 from util._formatter import DataFormatter
 from viz._tm_viz import visualize, _visualize_topics, _visualize_documents, _visualize_terms,_visualize_word_shifts, _visualize_heatmap_from_df, _visualize_power_danger_structure, _process_dataframe_for_visualization, _safe_read_csv
 
@@ -37,7 +37,7 @@ def test_visualize_terms():
     assert os.path.exists("output/term_viz.html")
 
 def test_visualize_word_shifts():
-    driver = GlobalDriver()
+    driver = TopicDriver()
     formatter = DataFormatter() 
     session_data = pd.DataFrame(list(zip(session.data, topics)), columns=["text", "label"])
     driver._save_zipf_distribution(session_data, 'output', formatter)
