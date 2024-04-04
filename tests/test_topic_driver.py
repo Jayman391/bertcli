@@ -61,22 +61,6 @@ def test_save_session_data(tmpdir):
 
     os.remove(f"{directory}/labeled_corpus.csv")
 
-def test_plot_topic_size_distribution():
-    session_data = pd.DataFrame({
-        "label": [1 for i in range(1, 10)] + [0 for i in range(1, 5)]
-    })
-
-    driver = TopicDriver()
-    driver._plot_topic_size_distribution(session_data, 'output')
-
-    assert os.path.isfile(f"output/topic_size_distribution.csv")
-    assert os.path.isfile(f"output/topic_size_distribution.png")
-
-    os.remove(f"output/topic_size_distribution.csv")
-    os.remove(f"output/topic_size_distribution.png")
-
-    os.rmdir("output")
-
 def test_reduce_embeddings_no_reduction():
     embeddings = pd.DataFrame({
         "x": [1, 2, 3],

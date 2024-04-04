@@ -1,9 +1,5 @@
-import pytest
-import sys
-import os
 import json
-# Add the source directory to the system path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
+import os 
 
 from drivers._driver import Driver
 from util._session import Session
@@ -22,7 +18,7 @@ def test_initialize_session():
 def test_write_logs():
     driver = Driver()
     
-    directory = "logs"
+    directory = "output"
 
     driver.initialize_session(data_path='tests/test_data/brazil-vaccine-comments.csv',save_dir=directory)
 
