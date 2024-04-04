@@ -7,6 +7,7 @@ from src.menus.optimization._optimization import OptimizationMenu
 from bertopic import BERTopic
 import datetime
 import traceback
+from math import floor
 
 
 class LNLPCLI:
@@ -30,6 +31,7 @@ class LNLPCLI:
         global_optmization_path: str = None,
         num_samples: int = 0,
         debug: bool = False,
+        sequence: str = '',
     ):
         self.debug = debug
         self.global_data_path = global_data_path
@@ -37,6 +39,7 @@ class LNLPCLI:
         self.global_optmization_path = global_optmization_path
         self.num_samples = num_samples
         self.save_dir = save_dir
+        self.sequence = sequence
 
         print("\nWelcome to the LNLP CLI!")
 
@@ -55,17 +58,20 @@ class LNLPCLI:
         Run the LNLPCLI command-line interface.
         """
         try:
-            self.landing = Landing(session=self.driver.session)
+            if self.sequence != '':
+                self._process_sequence(self.sequence)
+            else:
+                self.landing = Landing(session=self.driver.session)
 
-            if self.debug:
-                self.landing.handle_choice(1)
-                return
+                if self.debug:
+                    self.landing.handle_choice(1)
+                    return
 
-            for _, value in self.landing.menus.items():
-                if value is not None and isinstance(value, Menu):
-                    value.set_parent(self.landing)
+                for _, value in self.landing.menus.items():
+                    if value is not None and isinstance(value, Menu):
+                        value.set_parent(self.landing)
 
-            self._process_responses(self.landing, self.driver)
+                self._process_responses(self.landing, self.driver)
         except Exception as e:
             print(e)
             self.global_session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
@@ -103,3 +109,59 @@ class LNLPCLI:
                 driver._run_topic_model()
         else:
             self._process_responses(menu.parent, driver)
+
+    def _process_sequence(self, sequence: str):
+        """
+        Process a sequence of choices in the LNLPCLI command-line interface.
+
+        Args:
+            sequence (str): The sequence of commands to process.
+
+
+        Example:
+            sequence = '1,11,21,31,41,9'
+                1: Run a Topic Model
+                1: Select LLM to generate Embeddings
+                    1: all-MiniLM-L6-v2
+                2: Select Dimensionality Reduction Technique
+                    1: UMAP
+                3: Select Clustering Technique
+                    1: HDBSCAN
+                4: Fine Tuning
+                    1: Enable 2 grams
+                9: Run Topic Model
+
+            python main.py --sequence='1,11,21,31,41,9'
+        """
+        if self.save_dir is None:
+            self.save_dir = "output"
+        
+        self.driver.log("data", {"Topic": self.save_dir})
+
+        sequence = sequence.split(",")
+
+        sequence = [int(x) for x in sequence]
+
+        self.landing = Landing(session=self.driver.session)
+
+        choice = self.landing.handle_choice(sequence[0])
+
+        for s in sequence[1:]:
+            if s > 9:
+                first_choice = floor(s / 10)
+                menu = choice.handle_choice(first_choice)
+                second_choice = s % 10
+                response = menu.handle_choice(second_choice)
+                
+                if isinstance(response, list):
+                    self.driver.log("data", {str(menu): response})
+                else:
+                    self.driver.log("data", {str(menu): str(response)})
+            else:
+                choice = choice.handle_choice(s) 
+        
+        if isinstance(choice, BERTopic):
+            if self.global_session.config_topic_model != {}:
+                self.driver._run_topic_model(from_file=True)
+            else:
+                self.driver._run_topic_model()

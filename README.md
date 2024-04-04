@@ -40,23 +40,27 @@ stuck in a local optimum which has only two clusters*
 
 *there are also some runtime errors that occur somewhat regularly, another cause to rerun the script. There are some bugs already open on the issues page in the repo*
 
-### add an output directory
-
-<code>python main.py --save_dir=output</code>
-
 ### add data
 
 #### *can be any number of columns, just has to have a column named text*
 
 <code>python main.py --data=tests/test_data/usa-vaccine-comments.csv</code>
 
+### add an output directory
+
+<code>python main.py --data=tests/test_data/usa-vaccine-comments.csv --save_dir=output</code>
+
 ### specify number of samples
 
 <code>python main.py --data=tests/test_data/usa-vaccine-comments.csv --num_samples=1000</code>
 
+## run a cli menu sequence (read documentation)
+
+<code>python main.py --data=tests/test_data/usa-vaccine-comments.csv --sequence='1,11,21,31,41,9'</code>
+
 ### all together now
 
-<code>python main.py --save_dir=output --data=tests/test_data/usa-vaccine-comments.csv --num_samples=1000 </code>
+<code>python main.py --save_dir=output --data=tests/test_data/usa-vaccine-comments.csv --num_samples=1000 --sequence='1,11,21,31,41,9'</code>
 
 ## Contributing
 

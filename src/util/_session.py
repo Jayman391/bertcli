@@ -32,7 +32,6 @@ class Session:
         self.config_optimization = config_optimization
         self.logs = {"errors": [], "data": []}
         self.plot_dir = save_dir
-
         self.topic_model_factory = TopicModelFactory()
 
     def set_data(self, data):

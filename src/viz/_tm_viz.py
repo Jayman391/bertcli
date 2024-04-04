@@ -79,7 +79,7 @@ def visualize(model: BERTopic, session: Session, directory: str = "", data: list
                 _visualize_power_danger_structure(session, directory)
     else:
         print(
-            "No plotting options selected. Visualizing all topics, documents, and terms,\nas well as word shift and Power-Danger-Structure plots."
+            "No plotting options selected. Visualizing all topics, documents, and terms, as well as word shift and Power-Danger-Structure plots."
         )
         _visualize_topics(model, session, directory)
         _visualize_terms(model, session, directory)
