@@ -1,5 +1,7 @@
 from src.menus._menu import Menu
 from src.menus.topic._topic import TopicMenu
+from src.menus.optimization._optimization import OptimizationMenu
+from src.menus.finetune._finetune import FineTuneMenu
 from src.menus._configmenu import ConfigMenu
 from util._session import Session
 from src.loading._dataloader import DataLoader
@@ -11,7 +13,7 @@ class Landing(Menu):
         is_leaf = False
         options = [
             "Run a Topic Model",
-            "Run a Classification Model",
+            "Fine Tune a LLM",
             "Run an Optimization routine",
             "Load Global Configuration Files",
         ]
@@ -24,8 +26,8 @@ class Landing(Menu):
 
         menus = [
             TopicMenu(session),
-            None,
-            None,
+            FineTuneMenu(session),
+            OptimizationMenu(session),
             ConfigMenu(session),
         ]
 
