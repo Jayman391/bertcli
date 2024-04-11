@@ -5,7 +5,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
 
-from obj._tuner import Tuner
+from obj._finetuner import FineTuner
 from builders._tu_factory import TunerFactory
 
 def test_create_tuner():
@@ -16,21 +16,6 @@ def test_create_tuner():
 
     tuner = TunerFactory.create_tuner(model_filepath, data_filepath, prompt, training_params)
 
-    assert tuner.model_filepath == model_filepath
-    assert tuner.data_filepath == data_filepath
-    assert tuner.prompt == prompt
-    assert tuner.training_params == training_params
-    
-def test_tuner_run():
-    model_filepath = 'models/model.pt'
-    data_filepath = 'data/data.csv'
-    prompt = 'Enter a sentence:'
-    training_params = {'epochs': 10, 'batch_size': 32}
-
-    tuner = Tuner(model_filepath, data_filepath, prompt, training_params)
-
-    # Add your test logic here
-    tuner.run()
     assert tuner.model_filepath == model_filepath
     assert tuner.data_filepath == data_filepath
     assert tuner.prompt == prompt

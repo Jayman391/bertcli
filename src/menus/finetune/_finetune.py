@@ -11,6 +11,7 @@ class FineTuneMenu(Menu):
             "Upload Training Data",
             "Specify System Prompt",
             "Configure Training Parameters",
+            "Specify Output Path",
             "Commence Fine Tune",
         ]
 
@@ -47,5 +48,9 @@ class FineTuneMenu(Menu):
             return self
         if choice == 4:
             return self.menus[self.options[choice - 1]]
+        if choice == 5:
+            output = self.prompt_string("Please enter the output path:")
+            self.session.log("data", {"Fine Tune" : f"output {output}"})
+            return self
         
             
