@@ -34,14 +34,17 @@ class FineTuneMenu(Menu):
         if choice == len(self.options) - 1:
             return self.back()
         if choice == 1:
-            model = self.prompt("Please enter the path to the model weights:")
+            model = self.prompt_string("Please enter the path to the model weights:")
             self.session.log("data", {"Fine Tune" : f"weights {model}"})
+            return self
         if choice == 2:
-            data = self.prompt("Please enter the path to the training data:")
+            data = self.prompt_string("Please enter the path to the training data:")
             self.session.log("data", {"Fine Tune" : f"data {data}"})
+            return self
         if choice == 3:
-            prompt = self.prompt("Please enter the system prompt: ")
+            prompt = self.prompt_string("Please enter the system prompt: ")
             self.session.log("data", {"Fine Tune" : f"system prompt {prompt}"})
+            return self
         if choice == 4:
             return self.menus[self.options[choice - 1]]
         

@@ -30,14 +30,16 @@ class TrainValMenu(Menu):
         if choice == len(self.options) - 1:
             return self.back()
         if choice == 1:
-            lr = self.prompt("Please enter the learning rate:")
+            lr = self.prompt_string("Please enter the learning rate:")
             self.session.log("data", {"Train" : f"learning rate {lr}"})
+            return self
         if choice == 2:
-            epochs = self.prompt("Please enter the number of epochs:")
+            epochs = self.prompt_string("Please enter the number of epochs:")
             self.session.log("data", {"Train" : f"epochs {epochs}"})
+            return self
         if choice == 3:
-            outdir = self.prompt("Please enter the output directory:")
+            outdir = self.prompt_string("Please enter the output directory:")
             self.session.log("data", {"Train" : f"output directory {outdir}"})
-        if choice == 4:
-            return self.menus[self.options[choice - 1]]
+            return self
+     
 
