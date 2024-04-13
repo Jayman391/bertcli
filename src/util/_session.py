@@ -1,4 +1,5 @@
 from src.builders._tm_factory import TopicModelFactory
+from src.builders._tu_factory import TunerFactory
 from bertopic import BERTopic
 
 
@@ -25,14 +26,16 @@ class Session:
     """
 
     def __init__(
-        self, data=[], config_topic_model={}, config_optimization={}, save_dir: str = ""
+        self, data=[], config_topic_model={}, config_fine_fune = {}, config_optimization={}, save_dir: str = ""
     ) -> None:
         self.data = data
         self.config_topic_model = config_topic_model
         self.config_optimization = config_optimization
+        self.config_fine_tune = config_fine_fune
         self.logs = {"errors": [], "data": []}
         self.plot_dir = save_dir
         self.topic_model_factory = TopicModelFactory()
+        self.tuner_factory = TunerFactory()
 
     def set_data(self, data):
         """
@@ -61,6 +64,20 @@ class Session:
         """
         self.config_topic_model = config
         return self.config_topic_model
+    
+    def set_config_fine_tune(self, config):
+        """
+        Set the configuration for fine tuning.
+
+        Args:
+            config (dict): The configuration to set.
+
+        Returns:
+            dict: The updated configuration.
+
+        """
+        self.config_fine_tune = config
+        return self.config_fine_tune
 
     def set_config_optimization(self, config):
         """
@@ -193,3 +210,49 @@ class Session:
             self.topic_model_factory.build_fine_tune(fine_tune)
 
             return self.topic_model_factory.build_topic_model()
+
+    def build_tuner(self, from_file: bool = False):
+        if from_file:
+            model_weights_path = self.config_topic_model["model_weights_path"]
+            training_data_path = self.config_topic_model["training_data_path"]
+            system_prompt = self.config_topic_model["system_prompt"]
+            output_path = self.config_topic_model["output_path"]
+            learning_rate = self.config_topic_model["learning_rate"]
+            epochs = self.config_topic_model["epochs"]
+            train_test_split_ratio = self.config_topic_model["train_test_split_ratio"]
+        else:
+            data = self.logs["data"]
+
+            ft_data = [log for log in data if "Fine Tune" in log.keys()]
+
+            ft_tr_data = [log for log in data if "Train" in log.keys()]
+
+            ft_data.extend(ft_tr_data)
+
+            for log in ft_data:
+                if "weights" in log.values():
+                    model_weights_path = list(log.values())[0].split(" ")[1]
+                if "data" in log.values():
+                    training_data_path = list(log.values())[0].split(" ")[1]
+                if "system-prompt" in log.values():
+                    system_prompt = str(list(log.values())[0].split(" ")[1:])
+                if "output" in log.values():
+                    output_path = list(log.values())[0].split(" ")[1]
+                if "learning rate" in log.values():
+                    learning_rate = list(log.values())[0].split(" ")[1]
+                if "epochs" in log.values():
+                    epochs = list(log.values())[0].split(" ")[1]
+                if "train test split ratio" in log.values():
+                    train_test_split_ratio = list(log.values())[0].split(" ")[1]
+        
+        training_params = {}
+        if learning_rate:
+            training_params["learning_rate"] = learning_rate
+        if epochs:
+            training_params["num_train_epochs"] = epochs
+        if train_test_split_ratio:
+            training_params["train_test_split_ratio"] = train_test_split_ratio
+
+        return self.tuner_factory.create_tuner(
+            model_weights_path, training_data_path, system_prompt, output_path, training_params
+        )

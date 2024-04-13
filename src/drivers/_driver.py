@@ -35,6 +35,7 @@ class Driver(ABC):
         self,
         data_path: str = None,
         config_path: str = None,
+        ft_config_path: str = None,
         optimization_path: str = None,
         num_samples: int = 0,
         save_dir: str = '',
@@ -54,7 +55,7 @@ class Driver(ABC):
         """
         loader = DataLoader()
         self.session = loader.initialize_session(
-            data_path, config_path, optimization_path, num_samples, save_dir
+            data_path, config_path, ft_config_path, optimization_path, num_samples, save_dir
         )
 
         return self.session

@@ -9,7 +9,6 @@ class TrainValMenu(Menu):
         options = [
             "Specify Learning Rate",
             "Specify Number of Epochs",
-            "Specify Output Directory",
             "Specify Train Test Split Ratio",
         ]
 
@@ -39,10 +38,6 @@ class TrainValMenu(Menu):
             self.session.log("data", {"Train" : f"epochs {epochs}"})
             return self
         if choice == 3:
-            outdir = self.prompt_string("Please enter the output directory:")
-            self.session.log("data", {"Train" : f"output directory {outdir}"})
-            return self
-        if choice == 4:
             split = self.prompt_numeric("Please enter the train test split ratio:")
             while split < 0 or split > 1:
                 split = self.prompt_numeric("Please enter a valid train test split ratio between 0 and 1:")

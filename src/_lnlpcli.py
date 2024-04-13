@@ -1,10 +1,12 @@
 from src.drivers._driver import Driver
 from src.drivers._global_driver import GlobalDriver
 from src.drivers._tm_driver import TopicDriver
+from src.drivers._tu_driver import TunerDriver
 from src.menus._menu import Menu
 from src.menus._landing import Landing
 from src.menus.topic._topic import TopicMenu
 from src.menus.optimization._optimization import OptimizationMenu
+from src.obj._finetuner import FineTuner
 from bertopic import BERTopic
 import datetime
 import traceback
@@ -18,7 +20,7 @@ class LNLPCLI:
     Args:
         save_dir (str): The directory path to save the LNLP session data. Default is None.
         global_data_path (str): The path to the global data file. Default is None.
-        global_config_path (str): The path to the global configuration file. Default is None.
+        global_tm_config_path (str): The path to the global configuration file. Default is None.
         global_optmization_path (str): The path to the global optimization file. Default is None.
         num_samples (int): The number of samples to use for optimization. Default is 0.
         debug (bool): Flag indicating whether to run in debug mode. Default is False.
@@ -28,7 +30,8 @@ class LNLPCLI:
         self,
         save_dir: str = None,
         global_data_path: str = None,
-        global_config_path: str = None,
+        global_tm_config_path: str = None,
+        global_ft_config_path: str = None,
         global_optmization_path: str = None,
         num_samples: int = 0,
         debug: bool = False,
@@ -36,7 +39,8 @@ class LNLPCLI:
     ):
         self.debug = debug
         self.global_data_path = global_data_path
-        self.global_config_path = global_config_path
+        self.global_tm_config_path = global_tm_config_path
+        self.global_ft_config_path = global_ft_config_path
         self.global_optmization_path = global_optmization_path
         self.num_samples = num_samples
         self.save_dir = save_dir
@@ -48,13 +52,15 @@ class LNLPCLI:
 
         self.global_session = self.global_driver.initialize_session(
             data_path=self.global_data_path,
-            config_path=self.global_config_path,
+            config_path=self.global_tm_config_path,
+            fine_tuning_path=self.global_ft_config_path,
             optimization_path=self.global_optmization_path,
             num_samples=self.num_samples,
             save_dir=self.save_dir,
         )
 
         self.tm_driver = TopicDriver(session=self.global_session)
+        self.tu_driver = TunerDriver(session=self.global_session)
 
     def run(self):
         """
@@ -110,6 +116,13 @@ class LNLPCLI:
                 self.tm_driver._run_topic_model(from_file=True)
             else:
                 self.tm_driver._run_topic_model()
+        
+        elif isinstance(response, FineTuner):
+            if self.global_session.config_fine_tune != {}:
+                self.tu_driver._run_tuner(from_file=True)
+            else:
+                self.tu_driver._run_tuner()
+
         else:
             self._process_responses(menu.parent, driver)
 
@@ -168,3 +181,9 @@ class LNLPCLI:
                 self.tm_driver._run_topic_model(from_file=True)
             else:
                 self.tm_driver._run_topic_model()
+        
+        elif isinstance(choice, FineTuner):
+            if self.global_session.config_fine_tune != {}:
+                self.tu_driver._run_tuner(from_file=True)
+            else:
+                self.tu_driver._run_tuner()
