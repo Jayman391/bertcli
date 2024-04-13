@@ -37,7 +37,7 @@ class Driver(ABC):
         config_path: str = None,
         optimization_path: str = None,
         num_samples: int = 0,
-        save_dir: str = None,
+        save_dir: str = '',
     ):
         """
         Initializes the session with the given parameters.

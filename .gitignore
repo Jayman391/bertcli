@@ -2,3 +2,4 @@ __pycache__/
 .vscode/
 lnlp/
 output/
+tests/test_data/

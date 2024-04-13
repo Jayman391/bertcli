@@ -43,7 +43,9 @@ def main():
 
     num_samples = args.num_samples if args.num_samples else 0
 
-    cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_config_path=args.tmconfig, sequence=args.sequence, global_optmization_path=args.optconfig, num_samples=num_samples)
+    sequence = args.sequence if args.sequence else ''
+
+    cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_config_path=args.tmconfig, sequence=sequence, global_optmization_path=args.optconfig, num_samples=num_samples)
 
     cli.run()
 

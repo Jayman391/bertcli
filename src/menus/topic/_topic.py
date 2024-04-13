@@ -34,7 +34,7 @@ class TopicMenu(Menu):
             None,
             None,
             None,
-            ConfigMenu(session),
+            None,
         ]
 
         self.name = "Topic"
