@@ -221,6 +221,8 @@ class Session:
             learning_rate = self.config_topic_model["learning_rate"]
             epochs = self.config_topic_model["epochs"]
             train_test_split_ratio = self.config_topic_model["train_test_split_ratio"]
+            r = self.config_topic_model["r"]
+            alpha = self.config_topic_model["alpha"]
         else:
             data = self.logs["data"]
 
@@ -245,8 +247,14 @@ class Session:
                     learning_rate = list(log.values())[0].split(" ")[1]
                 if "epochs" in log.values():
                     epochs = list(log.values())[0].split(" ")[1]
-                if "train test split ratio" in log.values():
+                if "train-test-split-ratio" in log.values():
                     train_test_split_ratio = list(log.values())[0].split(" ")[1]
+                if "r " in log.values():
+                    r = list(log.values())[0].split(" ")[1]
+                if "alpha" in log.values():
+                    alpha = list(log.values())[0].split(" ")[1]
+                
+        lora_params = {"r": r, "alpha": alpha}
         
         training_params = {}
         if learning_rate:
@@ -257,5 +265,5 @@ class Session:
             training_params["train_test_split_ratio"] = train_test_split_ratio
 
         return self.tuner_factory.create_tuner(
-            model_weights_path, training_data_path, system_prompt,prompt_format, output_path, training_params
+            model_weights_path, training_data_path, system_prompt,prompt_format, output_path, lora_params, training_params
         )

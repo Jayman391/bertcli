@@ -13,11 +13,12 @@ Tuning Logic from https://github.com/jstonge/kitty-llama/
 """
 
 class FineTuner:
-  def __init__(self, model_filepath = '', data_filepath = '', prompt = '', format = '', output_path = '', training_params:dict = {}):
+  def __init__(self, model_filepath = '', data_filepath = '', prompt = '', format = '', output_path = '',lora_params:dict={}, training_params:dict = {}):
     self.model_filepath = model_filepath
     self.data_filepath = data_filepath
     self.prompt = prompt
     self.format = format
+    self.lora_params = lora_params
     self.training_params = training_params
     self.output_path = output_path
 
@@ -46,8 +47,8 @@ class FineTuner:
     peft_config = LoraConfig(
           task_type=TaskType.CAUSAL_LM,
           inference_mode=False,
-          r=256, # tune this
-          lora_alpha=512, # and this
+          r=self.lora_params['r'], # tune this
+          lora_alpha=self.lora_params['alpha'], # and this
           lora_dropout=0.05,
           # the target modules can also be tuned
           target_modules=[

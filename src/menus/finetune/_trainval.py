@@ -41,7 +41,7 @@ class TrainValMenu(Menu):
             split = self.prompt_numeric("Please enter the train test split ratio:")
             while split < 0 or split > 1:
                 split = self.prompt_numeric("Please enter a valid train test split ratio between 0 and 1:")
-            self.session.log("data", {"Train" : f"train test split ratio {split}"})
+            self.session.log("data", {"Train" : f"train-test-split-ratio {split}"})
             return self
      
 
