@@ -13,10 +13,11 @@ Tuning Logic from https://github.com/jstonge/kitty-llama/
 """
 
 class FineTuner:
-  def __init__(self, model_filepath = '', data_filepath = '', prompt = '', output_path = '', training_params:dict = {}):
+  def __init__(self, model_filepath = '', data_filepath = '', prompt = '', format = '', output_path = '', training_params:dict = {}):
     self.model_filepath = model_filepath
     self.data_filepath = data_filepath
     self.prompt = prompt
+    self.format = format
     self.training_params = training_params
     self.output_path = output_path
 
@@ -30,17 +31,16 @@ class FineTuner:
     dataset = dataset['train'].train_test_split(test_size=train_test_split_ratio, seed=42, shuffle=True)
     return dataset
   
-  def formatting_func(self, example):
+  def formatting_func(self, example, format_str):
     text = f"""<s>[INST] <<SYS>> {self.prompt} <</SYS>>
 
     ```{example['input']}``` 
-    Make sure to include prerequisites and exclude any 
-    non-course information. [/INST] {example['output']}
+    {format_str} [/INST] {example['output']}
     """
     return text
   
-  def generate_and_tokenize_prompt(self, prompt, tokenizer, formatting_func):
-    return tokenizer(formatting_func(prompt))
+  def generate_and_tokenize_prompt(self, prompt, tokenizer, formatting_func, format_str):
+    return tokenizer(formatting_func(prompt, format_str))
   
   def initialize_training(self, model):
     peft_config = LoraConfig(

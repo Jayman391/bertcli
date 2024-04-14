@@ -216,6 +216,7 @@ class Session:
             model_weights_path = self.config_topic_model["model_weights_path"]
             training_data_path = self.config_topic_model["training_data_path"]
             system_prompt = self.config_topic_model["system_prompt"]
+            prompt_format = self.config_topic_model["prompt_format"]
             output_path = self.config_topic_model["output_path"]
             learning_rate = self.config_topic_model["learning_rate"]
             epochs = self.config_topic_model["epochs"]
@@ -236,6 +237,8 @@ class Session:
                     training_data_path = list(log.values())[0].split(" ")[1]
                 if "system-prompt" in log.values():
                     system_prompt = str(list(log.values())[0].split(" ")[1:])
+                if "prompt-format" in log.values():
+                    prompt_format = list(log.values())[0].split(" ")[1]
                 if "output" in log.values():
                     output_path = list(log.values())[0].split(" ")[1]
                 if "learning rate" in log.values():
@@ -254,5 +257,5 @@ class Session:
             training_params["train_test_split_ratio"] = train_test_split_ratio
 
         return self.tuner_factory.create_tuner(
-            model_weights_path, training_data_path, system_prompt, output_path, training_params
+            model_weights_path, training_data_path, system_prompt,prompt_format, output_path, training_params
         )

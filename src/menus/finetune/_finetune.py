@@ -10,8 +10,9 @@ class FineTuneMenu(Menu):
             "Upload Model Weights",
             "Upload Training Data",
             "Specify System Prompt",
+            "Specify Prompt Format",
             "Configure Training Parameters",
-            "Specify Output Direcotory",
+            "Specify Output Directory",
             "Commence Fine Tune",
         ]
 
@@ -47,8 +48,12 @@ class FineTuneMenu(Menu):
             self.session.log("data", {"Fine Tune" : f"system-prompt {prompt}"})
             return self
         if choice == 4:
-            return self.menus[self.options[choice - 1]]
+            prompt = self.prompt_string("Please enter the prompt format: ")
+            self.session.log("data", {"Fine Tune" : f"prompt-format {prompt}"})
+            return self
         if choice == 5:
+            return self.menus[4]
+        if choice == 6:
             output = self.prompt_string("Please enter the path to the output directory:")
             self.session.log("data", {"Fine Tune" : f"output {output}"})
             return self
