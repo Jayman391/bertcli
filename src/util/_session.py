@@ -25,7 +25,7 @@ class Session:
     """
 
     def __init__(
-        self, data=[], config_topic_model={}, config_optimization={}, save_dir: str = ""
+        self, data=[], config_topic_model={}, config_optimization={}, save_dir: str = "", data_path: str = None
     ) -> None:
         self.data = data
         self.config_topic_model = config_topic_model
@@ -33,6 +33,7 @@ class Session:
         self.logs = {"errors": [], "data": []}
         self.plot_dir = save_dir
         self.topic_model_factory = TopicModelFactory()
+        self.data_path = data_path
 
     def set_data(self, data):
         """

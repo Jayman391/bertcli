@@ -156,7 +156,7 @@ class DataLoader:
             opt = self._load_config(optimization_path)
             print(f"Loaded optimization from {optimization_path}")
 
-        return Session(data, config, opt, save_dir)
+        return Session(data, config, opt, save_dir, data_path)
 
     def _load_data(self, data_path: str, num_samples: int = 0):
         """
