@@ -213,16 +213,16 @@ class Session:
 
     def build_tuner(self, from_file: bool = False):
         if from_file:
-            model_weights_path = self.config_topic_model["model_weights_path"]
-            training_data_path = self.config_topic_model["training_data_path"]
-            system_prompt = self.config_topic_model["system_prompt"]
-            prompt_format = self.config_topic_model["prompt_format"]
-            output_path = self.config_topic_model["output_path"]
-            learning_rate = self.config_topic_model["learning_rate"]
-            epochs = self.config_topic_model["epochs"]
-            train_test_split_ratio = self.config_topic_model["train_test_split_ratio"]
-            r = self.config_topic_model["r"]
-            alpha = self.config_topic_model["alpha"]
+            model_weights_path = self.config_fine_tune["model_weights_path"]
+            training_data_path = self.config_fine_tune["train_data_path"]
+            system_prompt = self.config_fine_tune["system_prompt"]
+            prompt_format = self.config_fine_tune["prompt_format"]
+            output_path = self.config_fine_tune["output_path"]
+            learning_rate = self.config_fine_tune["learning_rate"]
+            epochs = self.config_fine_tune["epochs"]
+            train_test_split_ratio = self.config_fine_tune["train_test_split_ratio"]
+            r = self.config_fine_tune["r"]
+            alpha = self.config_fine_tune["alpha"]
         else:
             data = self.logs["data"]
 

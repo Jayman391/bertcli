@@ -53,7 +53,7 @@ class LNLPCLI:
         self.global_session = self.global_driver.initialize_session(
             data_path=self.global_data_path,
             config_path=self.global_tm_config_path,
-            fine_tuning_path=self.global_ft_config_path,
+            ft_config_path=self.global_ft_config_path,
             optimization_path=self.global_optmization_path,
             num_samples=self.num_samples,
             save_dir=self.save_dir,

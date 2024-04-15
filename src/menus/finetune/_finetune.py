@@ -13,7 +13,7 @@ class FineTuneMenu(Menu):
             "Specify System Prompt",
             "Specify Prompt Format",
             "Configure Training Parameters",
-            "Configure LORA Parameters"
+            "Configure LORA Parameters",
             "Specify Output Directory",
             "Commence Fine Tune",
         ]
@@ -22,14 +22,16 @@ class FineTuneMenu(Menu):
             None,
             None,
             None,
+            None,
             TrainValMenu(session),
-            LORAMenu(),
-            None
+            LORAMenu(session),
+            None,
+            None,
         ]
 
         self.name = "Fine Tune"
 
-        super().__init__(session, options, is_leaf, is_root)
+        super().__init__(session, options, is_leaf, is_root, name=self.name)
 
         self.map_options_to_menus(options, menus)
 
@@ -60,5 +62,11 @@ class FineTuneMenu(Menu):
             output = self.prompt_string("Please enter the path to the output directory:")
             self.session.log("data", {"Fine Tune" : f"output {output}"})
             return self
+        if choice == 8:
+            from_file = input("Was the model loaded from a file? (y/n): ")
+            if from_file == "y":
+                return self.session.build_tuner(from_file=True)
+            else:
+                return self.session.build_tuner()
         
             
