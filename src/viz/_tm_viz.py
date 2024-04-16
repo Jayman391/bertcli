@@ -5,6 +5,7 @@ import webbrowser
 from bertopic import BERTopic
 from src.util._session import Session
 from src.viz._ous_viz import HeatMaps
+from src.loading._dataloader import DataLoader
 import sys
 import shifterator as sh
 import matplotlib.pyplot as plt
@@ -22,6 +23,8 @@ if sys.platform.startswith("linux"):
     file = ""
 else:
     file = "file://"
+
+loader = DataLoader()
 
 plt.ioff()
 
@@ -77,6 +80,8 @@ def visualize(model: BERTopic, session: Session, directory: str = "", data: list
                 _visualize_word_shifts(session, directory)
             if "Enable Power Danger Structure Graphs" in value:
                 _visualize_power_danger_structure(session, directory)
+            if "Enable Topics over Time" in value:
+                _visualize_topics_over_time(model, session, directory)
     else:
         print(
             "No plotting options selected. Visualizing all topics, documents, and terms, as well as word shift and Power-Danger-Structure plots."
@@ -86,7 +91,69 @@ def visualize(model: BERTopic, session: Session, directory: str = "", data: list
         _visualize_documents(model, session, directory)
         _visualize_word_shifts(session, directory)
         _visualize_power_danger_structure(session, directory)
+        _visualize_topics_over_time(model, session, directory)
 
+def _visualize_topics_over_time(model:BERTopic, session: Session, directory: str = ""):
+    session_data = session.data
+    docs = pd.read_csv(session.data_path)
+
+    # get timestamps for each document in the session
+    session_data = pd.DataFrame(session_data, columns=["text"])
+
+    # only keep the documents that are in the session
+    docs = docs[docs["text"].isin(session_data["text"])]
+
+    # get the timestamps for the documents
+    timestamps = docs["date"].to_list()
+    # keep the first 10 characters of each timestamp and convert to datetime
+    timestamps = [ts[:10] for ts in timestamps]
+    # dates can be YYY-MM-DD or DD-MM-YYYY, so we need to check which format it is and convert to datetime
+    for i, ts in enumerate(timestamps):
+        try:
+            timestamps[i] = datetime.datetime.strptime(ts, "%Y-%m-%d")
+        except ValueError:
+            try:
+                timestamps[i] = datetime.datetime.strptime(ts, "%d-%m-%y")
+            except ValueError:
+                timestamps[i] = datetime.datetime.strptime(ts, "%m-%d-%y")
+    # convert the dates to int since epoch 
+    timestamps = [int(ts.timestamp()) for ts in timestamps]
+   
+    docs = docs["text"].to_list()
+
+    # get topic of each document
+
+    topics = model.topics_
+
+    tpl = len(topics)
+
+    dl = len(docs)
+
+    tl = len(timestamps)
+
+    len_diff = abs(tpl - dl)
+
+    if len_diff > 0:
+        if tpl >= dl:
+            topics = topics[:dl]
+        else:
+            docs = docs[:tpl]
+            timestamps = timestamps[:tpl]
+
+    try : 
+        if len(docs) == len(timestamps):
+            topics_over_time = model.topics_over_time(docs, timestamps, topics, nr_bins=100)
+            tt = model.visualize_topics_over_time(topics_over_time, top_n_topics=15)
+
+            if directory != "":
+                tt.write_html(f"{directory}/topics_over_time.html")
+                webbrowser.open_new(file + os.path.realpath(f"{directory}/topics_over_time.html"))
+            else:
+                tt.write_html("topics_over_time.html")
+                webbrowser.open_new(file + os.path.realpath("topics_over_time.html"))
+    except Exception as e:
+        print(e)
+        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
 
 def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
     """

@@ -15,6 +15,7 @@ class TopicPlottingMenu(Menu):
             "Specify Web Browser",
             "Enable Word Shift Graphs",
             "Enable Power Danger Structure Graphs",
+            "Enable Topics over Time",
         ]
 
         self.name = "Plotting"

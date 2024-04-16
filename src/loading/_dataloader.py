@@ -157,7 +157,7 @@ class DataLoader:
             ft = self._load_config(fine_tuning_path)
             print(f"Loaded fine-tuning from {fine_tuning_path}")
 
-        return Session(data, config, ft, save_dir)
+        return Session(data, config, ft, save_dir, data_path)
 
     def _load_data(self, data_path: str, num_samples: int = 0):
         """
