@@ -24,7 +24,11 @@ class Session:
     """
 
     def __init__(
+<<<<<<< HEAD
         self, data=[], config_topic_model={}, config_fine_fune = {}, save_dir: str = "", data_path: str = None
+=======
+        self, data=[], config_topic_model={}, config_optimization={}, save_dir: str = "", data_path: str = None
+>>>>>>> cce7e3b (logic for plotting topics over time (#60))
     ) -> None:
         self.data = data
         self.config_topic_model = config_topic_model
@@ -32,7 +36,10 @@ class Session:
         self.logs = {"errors": [], "data": []}
         self.plot_dir = save_dir
         self.topic_model_factory = TopicModelFactory()
+<<<<<<< HEAD
         self.tuner_factory = TunerFactory()
+=======
+>>>>>>> cce7e3b (logic for plotting topics over time (#60))
         self.data_path = data_path
 
     def set_data(self, data):
