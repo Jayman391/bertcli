@@ -17,6 +17,7 @@ class TrainValMenu(Menu):
             None,
             None,
             None,
+            None,
         ]
 
         self.name = "Train"

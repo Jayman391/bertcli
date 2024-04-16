@@ -186,7 +186,7 @@ class TopicDriver(Driver):
         label_distribution = session_data["label"].value_counts().reset_index()
         os.makedirs(directory, exist_ok=True)
         label_distribution.to_csv(f"{directory}/topic_size_distribution.csv", index=False)
-        plt.scatter(np.log10(list(range(len(label_distribution)))), np.log10(label_distribution["label"]))
+        plt.scatter(np.log10(list(range(len(label_distribution)))), np.log10(sorted(label_distribution["label"])[::-1]))
         plt.title("Topic Size Distribution")
         plt.xlabel("log rank")
         plt.ylabel("log size")
