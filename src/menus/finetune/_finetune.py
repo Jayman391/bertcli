@@ -17,7 +17,6 @@ class FineTuneMenu(Menu):
             None,
             None,
             None,
-            TrainValMenu(session),
             None,
             None
         ]

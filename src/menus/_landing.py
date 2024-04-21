@@ -12,7 +12,6 @@ class Landing(Menu):
         is_leaf = False
         options = [
             "Run a Topic Model",
-            "Fine Tune a LLM",
             "Load Global Configuration Files",
         ]
 
@@ -24,7 +23,6 @@ class Landing(Menu):
 
         menus = [
             TopicMenu(session),
-            FineTuneMenu(session),
             ConfigMenu(session),
         ]
 
