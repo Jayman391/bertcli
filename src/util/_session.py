@@ -10,7 +10,6 @@ class Session:
     Attributes:
         data (list): The data used for topic modeling.
         config_topic_model (dict): The configuration for the topic model.
-        config_optimization (dict): The configuration for optimization.
         logs (dict): The logs for errors and menu choice data.
         plot_dir (str): The directory to save plots.
         topic_model_factory (TopicModelFactory): The factory for creating topic models.
@@ -18,7 +17,6 @@ class Session:
     Methods:
         set_data: Set the data for topic modeling.
         set_config_topic_model: Set the configuration for the topic model.
-        set_config_optimization: Set the configuration for optimization.
         initialize_topic_model_factory: Initialize the topic model factory.
         get_log: Get the log.
         build_topic_model: Build the topic model.
@@ -26,11 +24,10 @@ class Session:
     """
 
     def __init__(
-        self, data=[], config_topic_model={}, config_fine_fune = {}, config_optimization={}, save_dir: str = ""
+        self, data=[], config_topic_model={}, config_fine_fune = {}, save_dir: str = ""
     ) -> None:
         self.data = data
         self.config_topic_model = config_topic_model
-        self.config_optimization = config_optimization
         self.config_fine_tune = config_fine_fune
         self.logs = {"errors": [], "data": []}
         self.plot_dir = save_dir
@@ -78,20 +75,6 @@ class Session:
         """
         self.config_fine_tune = config
         return self.config_fine_tune
-
-    def set_config_optimization(self, config):
-        """
-        Set the configuration for optimization.
-
-        Args:
-            config (dict): The configuration to set.
-
-        Returns:
-            dict: The updated configuration.
-
-        """
-        self.config_optimization = config
-        return self.config_optimization
 
     def initialize_topic_model_factory(self):
         """

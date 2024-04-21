@@ -36,7 +36,6 @@ class Driver(ABC):
         data_path: str = None,
         config_path: str = None,
         ft_config_path: str = None,
-        optimization_path: str = None,
         num_samples: int = 0,
         save_dir: str = '',
     ):
@@ -46,7 +45,6 @@ class Driver(ABC):
         Args:
             data_path (str): Path to the data.
             config_path (str): Path to the configuration file.
-            optimization_path (str): Path to the optimization file.
             num_samples (int): Number of samples.
             save_dir (str): Directory to save the session.
 
@@ -55,7 +53,7 @@ class Driver(ABC):
         """
         loader = DataLoader()
         self.session = loader.initialize_session(
-            data_path, config_path, ft_config_path, optimization_path, num_samples, save_dir
+            data_path, config_path, ft_config_path, num_samples, save_dir
         )
 
         return self.session
@@ -122,7 +120,7 @@ class Driver(ABC):
         errors = self.session.get_logs("errors")
         data = self.session.get_logs("data")
         logs = {"errors": errors, "data": data}
-        if directory != "":
+        if directory != "" and directory is not None:
             if not os.path.isdir(directory):
                 os.makedirs(directory)
             with open(f"{directory}/logs.json", "w") as f:

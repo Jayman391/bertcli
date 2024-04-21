@@ -36,9 +36,7 @@ def main():
     parser.add_argument(
         "--tmconfig", type=str, help="Path to the global topic model config file"
     )
-    parser.add_argument(
-        "--optconfig", type=str, help="Path to the global optimization config file"
-    )
+  
     parser.add_argument(
         "--ftconfig", type=str, help="Path to the global fine tuning config file"
     )
@@ -48,7 +46,7 @@ def main():
 
     sequence = args.sequence if args.sequence else ''
 
-    cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_tm_config_path=args.tmconfig, global_ft_config_path=args.ftconfig, sequence=sequence, global_optmization_path=args.optconfig, num_samples=num_samples)
+    cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_tm_config_path=args.tmconfig, global_ft_config_path=args.ftconfig, sequence=sequence, num_samples=num_samples)
 
     cli.run()
 

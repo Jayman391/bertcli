@@ -117,32 +117,11 @@ class DataLoader:
 
         return config
 
-    def prompt_load_opt_config(self):
-        """
-        Prompt the user to load optimization configurations.
-
-        Returns:
-        - config: The loaded optimization configurations.
-        """
-        opt_bool = self.prompt_yes_no(
-            "Do you want to load optimization configurations? (y/n): "
-        )
-
-        config = {}
-
-        if opt_bool.lower() == "y":
-            opt_path = input("Please enter the path to the optimization file:")
-
-            config = self._load_config(opt_path)
-
-        return config
-
     def initialize_session(
         self,
         data_path: str = None,
         config_path: str = None,
         fine_tuning_path: str = None,
-        optimization_path: str = None,
         num_samples: int = 0,
         save_dir: str = "",
     ):
@@ -161,10 +140,10 @@ class DataLoader:
         """
         data = []
         config = {}
-        opt = {}
+        ft = {}
 
-        if data_path is None and config_path is None and optimization_path is None and fine_tuning_path is None:
-            data, config, ft, opt = self._no_args_passed()
+        if data_path is None and config_path is None and fine_tuning_path is None:
+            data, config, ft = self._no_args_passed()
 
         if data_path is not None:
             data = self._load_data(data_path, num_samples)
@@ -174,15 +153,11 @@ class DataLoader:
             config = self._load_config(config_path)
             print(f"Loaded config from {config_path}")
 
-        if optimization_path is not None:
-            opt = self._load_config(optimization_path)
-            print(f"Loaded optimization from {optimization_path}")
-
         if fine_tuning_path is not None:
             ft = self._load_config(fine_tuning_path)
             print(f"Loaded fine-tuning from {fine_tuning_path}")
 
-        return Session(data, config, ft, opt, save_dir)
+        return Session(data, config, ft, save_dir)
 
     def _load_data(self, data_path: str, num_samples: int = 0):
         """
@@ -255,7 +230,7 @@ class DataLoader:
         """
         data = []
         tm_config = {}
-        opt_config = {}
+        ft_config = {}
 
         if (
             self.prompt_yes_no(
@@ -269,6 +244,4 @@ class DataLoader:
 
             ft_config = self.prompt_ft_config()
 
-            opt_config = self.prompt_load_opt_config()
-
-        return data, tm_config, ft_config, opt_config
+        return data, tm_config, ft_config

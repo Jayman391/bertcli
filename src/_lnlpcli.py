@@ -5,7 +5,7 @@ from src.drivers._tu_driver import TunerDriver
 from src.menus._menu import Menu
 from src.menus._landing import Landing
 from src.menus.topic._topic import TopicMenu
-from src.menus.optimization._optimization import OptimizationMenu
+from src.menus.finetune._finetune import FineTuneMenu
 from src.obj._finetuner import FineTuner
 from bertopic import BERTopic
 import datetime
@@ -32,7 +32,6 @@ class LNLPCLI:
         global_data_path: str = None,
         global_tm_config_path: str = None,
         global_ft_config_path: str = None,
-        global_optmization_path: str = None,
         num_samples: int = 0,
         debug: bool = False,
         sequence: str = '',
@@ -41,7 +40,6 @@ class LNLPCLI:
         self.global_data_path = global_data_path
         self.global_tm_config_path = global_tm_config_path
         self.global_ft_config_path = global_ft_config_path
-        self.global_optmization_path = global_optmization_path
         self.num_samples = num_samples
         self.save_dir = save_dir
         self.sequence = sequence
@@ -54,7 +52,6 @@ class LNLPCLI:
             data_path=self.global_data_path,
             config_path=self.global_tm_config_path,
             ft_config_path=self.global_ft_config_path,
-            optimization_path=self.global_optmization_path,
             num_samples=self.num_samples,
             save_dir=self.save_dir,
         )
@@ -106,7 +103,7 @@ class LNLPCLI:
             driver.log("data", {str(menu): str(response)})
 
         if isinstance(response, Menu):
-            if not isinstance(response, (Landing, TopicMenu, OptimizationMenu)):
+            if not isinstance(response, (Landing, TopicMenu, FineTuneMenu)):
                 response.set_parent(menu)
 
             self._process_responses(response, driver)
