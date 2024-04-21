@@ -1,6 +1,5 @@
 from src.menus._menu import Menu
 from util._session import Session
-from menus.finetune._trainval import TrainValMenu
 
 class FineTuneMenu(Menu):
     def __init__(self, session: Session):
@@ -10,8 +9,7 @@ class FineTuneMenu(Menu):
             "Upload Model Weights",
             "Upload Training Data",
             "Specify System Prompt",
-            "Configure Training Parameters",
-            "Specify Output Path",
+            "Specify Prompt Format",
             "Commence Fine Tune",
         ]
 
@@ -26,7 +24,7 @@ class FineTuneMenu(Menu):
 
         self.name = "Fine Tune"
 
-        super().__init__(session, options, is_leaf, is_root)
+        super().__init__(session, options, is_leaf, is_root, name=self.name)
 
         self.map_options_to_menus(options, menus)
 
@@ -45,13 +43,12 @@ class FineTuneMenu(Menu):
             return self
         if choice == 3:
             prompt = self.prompt_string("Please enter the system prompt: ")
-            self.session.log("data", {"Fine Tune" : f"system prompt {prompt}"})
+            self.session.log("data", {"Fine Tune" : f"system-prompt {prompt}"})
             return self
         if choice == 4:
-            return self.menus[self.options[choice - 1]]
-        if choice == 5:
-            output = self.prompt_string("Please enter the output path:")
-            self.session.log("data", {"Fine Tune" : f"output {output}"})
+            prompt = self.prompt_string("Please enter the prompt format: ")
+            self.session.log("data", {"Fine Tune" : f"prompt-format {prompt}"})
             return self
-        
+        else:
+            return self.menus[choice - 1]
             

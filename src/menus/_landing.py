@@ -1,6 +1,5 @@
 from src.menus._menu import Menu
 from src.menus.topic._topic import TopicMenu
-from src.menus.optimization._optimization import OptimizationMenu
 from src.menus.finetune._finetune import FineTuneMenu
 from src.menus._configmenu import ConfigMenu
 from util._session import Session
@@ -14,7 +13,6 @@ class Landing(Menu):
         options = [
             "Run a Topic Model",
             "Fine Tune a LLM",
-            "Run an Optimization routine",
             "Load Global Configuration Files",
         ]
 
@@ -27,7 +25,6 @@ class Landing(Menu):
         menus = [
             TopicMenu(session),
             FineTuneMenu(session),
-            OptimizationMenu(session),
             ConfigMenu(session),
         ]
 

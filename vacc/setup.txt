@@ -1,6 +1,6 @@
  spack load python@3.7.7%gcc@7.3.0 arch=linux-rhel7-haswell && source venv/bin/activate 
  pip3 install --upgrade pip && pip3 install -r requirements.txt
  mv vacc/run_usa_vaccine_tm.sh run_usa_vaccine_tm.sh
- mv vacc/run.sh run.sh
+ mv vacc/run_tm.sh run_tm.sh
  chmod +x run_usa_vaccine_tm.sh
  ./run_usa_vaccine_tm.sh

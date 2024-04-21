@@ -12,6 +12,7 @@ class DataLoader:
     - prompt_yes_no: Prompt the user for a yes/no response.
     - prompt_load_data: Prompt the user to load a dataset for the session.
     - prompt_load_tm_config: Prompt the user to load topic model configurations.
+    - prompt_ft_config: Prompt the user to load fine-tuning configurations.
     - prompt_load_opt_config: Prompt the user to load optimization configurations.
     - initialize_session: Initialize a session with data, configurations, and optimization settings.
     """
@@ -95,24 +96,24 @@ class DataLoader:
             config = self._load_config(config_path)
 
         return config
-
-    def prompt_load_opt_config(self):
+    
+    def prompt_ft_config(self):
         """
-        Prompt the user to load optimization configurations.
+        Prompt the user to load fine-tuning configurations.
 
         Returns:
-        - config: The loaded optimization configurations.
+        - config: The loaded fine-tuning configurations.
         """
-        opt_bool = self.prompt_yes_no(
-            "Do you want to load optimization configurations? (y/n): "
+        config_bool = self.prompt_yes_no(
+            "Do you want to load fine-tuning configurations? (y/n): "
         )
 
         config = {}
 
-        if opt_bool.lower() == "y":
-            opt_path = input("Please enter the path to the optimization file:")
+        if config_bool.lower() == "y":
+            config_path = input("Please enter the path to the configuration file:")
 
-            config = self._load_config(opt_path)
+            config = self._load_config(config_path)
 
         return config
 
@@ -120,7 +121,7 @@ class DataLoader:
         self,
         data_path: str = None,
         config_path: str = None,
-        optimization_path: str = None,
+        fine_tuning_path: str = None,
         num_samples: int = 0,
         save_dir: str = "",
     ):
@@ -139,10 +140,10 @@ class DataLoader:
         """
         data = []
         config = {}
-        opt = {}
+        ft = {}
 
-        if data_path is None and config_path is None and optimization_path is None:
-            data, config, opt = self._no_args_passed()
+        if data_path is None and config_path is None and fine_tuning_path is None:
+            data, config, ft = self._no_args_passed()
 
         if data_path is not None:
             data = self._load_data(data_path, num_samples)
@@ -152,11 +153,12 @@ class DataLoader:
             config = self._load_config(config_path)
             print(f"Loaded config from {config_path}")
 
-        if optimization_path is not None:
-            opt = self._load_config(optimization_path)
-            print(f"Loaded optimization from {optimization_path}")
+        if fine_tuning_path is not None:
+            ft = self._load_config(fine_tuning_path)
+            print(f"Loaded fine-tuning from {fine_tuning_path}")
+            
+        return Session(data, config, ft, save_dir, data_path)
 
-        return Session(data, config, opt, save_dir, data_path)
 
     def _load_data(self, data_path: str, num_samples: int = 0):
         """
@@ -229,7 +231,7 @@ class DataLoader:
         """
         data = []
         tm_config = {}
-        opt_config = {}
+        ft_config = {}
 
         if (
             self.prompt_yes_no(
@@ -241,6 +243,6 @@ class DataLoader:
 
             tm_config = self.prompt_load_tm_config()
 
-            opt_config = self.prompt_load_opt_config()
+            ft_config = self.prompt_ft_config()
 
-        return data, tm_config, opt_config
+        return data, tm_config, ft_config
