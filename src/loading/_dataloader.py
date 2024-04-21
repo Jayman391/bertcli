@@ -156,12 +156,9 @@ class DataLoader:
         if fine_tuning_path is not None:
             ft = self._load_config(fine_tuning_path)
             print(f"Loaded fine-tuning from {fine_tuning_path}")
-
-<<<<<<< HEAD
+            
         return Session(data, config, ft, save_dir, data_path)
-=======
-        return Session(data, config, opt, save_dir, data_path)
->>>>>>> cce7e3b (logic for plotting topics over time (#60))
+
 
     def _load_data(self, data_path: str, num_samples: int = 0):
         """
