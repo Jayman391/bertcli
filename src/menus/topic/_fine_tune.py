@@ -16,6 +16,7 @@ class FineTuneMenu(Menu):
             "Enable Zero Shot Classification",
             "Enable Maximal Marginal Relevance",
             "Enable Part of Speech filtering",
+            "Enable Huggingface Text Generation",
         ]
 
         self.name = "Fine Tuning"

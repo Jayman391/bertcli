@@ -35,6 +35,7 @@ class LNLPCLI:
         num_samples: int = 0,
         debug: bool = False,
         sequence: str = '',
+        sentiment = ''
     ):
         self.debug = debug
         self.global_data_path = global_data_path
@@ -43,6 +44,7 @@ class LNLPCLI:
         self.num_samples = num_samples
         self.save_dir = save_dir
         self.sequence = sequence
+        self.sentiment = sentiment
 
         print("\nWelcome to the LNLP CLI!")
 
@@ -55,6 +57,8 @@ class LNLPCLI:
             num_samples=self.num_samples,
             save_dir=self.save_dir,
         )
+
+        self.global_session.sentiment = self.sentiment
 
         self.tm_driver = TopicDriver(session=self.global_session)
         self.tu_driver = TunerDriver(session=self.global_session)
@@ -160,7 +164,17 @@ class LNLPCLI:
         choice = self.landing.handle_choice(sequence[0])
 
         for s in sequence[1:]:
-            if s > 9:
+            if s > 99:
+                first_choice = floor(s / 100)
+                menu = choice.handle_choice(first_choice)
+                second_choice = s % 100
+                response = menu.handle_choice(second_choice)
+                
+                if isinstance(response, list):
+                    self.global_driver.log("data", {str(menu): response})
+                else:
+                    self.global_driver.log("data", {str(menu): str(response)})
+            elif s > 9:
                 first_choice = floor(s / 10)
                 menu = choice.handle_choice(first_choice)
                 second_choice = s % 10

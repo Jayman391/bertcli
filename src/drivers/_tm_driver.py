@@ -2,6 +2,7 @@ from src.drivers._driver import Driver
 from src.viz._tm_viz import visualize
 from src.util._formatter import DataFormatter
 from util._session import Session
+from transformers import pipeline
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -112,7 +113,9 @@ class TopicDriver(Driver):
         # Reduce embeddings dimensions if necessary
         embeddings = self._reduce_embeddings_dimensions(embeddings)
         session_data = pd.concat([session_data, embeddings], axis=1)
-        
+
+        session_data = self._label_text_with_sentiment(session_data)
+
         # Save the session data to CSV
         self._save_session_data(session_data, directory)
         
@@ -169,6 +172,27 @@ class TopicDriver(Driver):
         Save the session data to a CSV file.
         """
         session_data.to_csv(f"{directory}/labeled_corpus.csv", index=False)
+
+    def _label_text_with_sentiment(self, session_data):
+        if self.session.sentiment != '':
+            sentiment = pipeline(self.session.sentiment)
+        else:
+            sentiment = pipeline("sentiment-analysis")
+
+        # for each entry in the "text" column, if any entry is too long, split it into smaller chunks and analyze sentiment and then pool
+        # the sentiment scores
+        for i, row in session_data.iterrows():
+            if len(row["text"]) > 512:
+                text = row["text"]
+                chunks = [text[i:i+512] for i in range(0, len(text), 512)]
+                scores = [sentiment(chunk)[0]["score"] for chunk in chunks]
+                session_data.at[i, "sentiment"] = sum(scores) / len(scores)
+            else:
+                session_data.at[i, "sentiment"] = sentiment(row["text"])[0]["score"]
+        
+        return session_data
+        
+
 
     def _save_topic_model_config(self, directory):
         """

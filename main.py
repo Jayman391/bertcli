@@ -40,13 +40,20 @@ def main():
     parser.add_argument(
         "--ftconfig", type=str, help="Path to the global fine tuning config file"
     )
+
+    parser.add_argument(
+        "--sentiment", type=str, help="llm to generate sentiment analysis"
+    )
+
     args = parser.parse_args()
 
     num_samples = args.num_samples if args.num_samples else 0
 
     sequence = args.sequence if args.sequence else ''
 
-    cli = LNLPCLI(save_dir=args.save_dir, global_data_path=args.data, global_tm_config_path=args.tmconfig, global_ft_config_path=args.ftconfig, sequence=sequence, num_samples=num_samples)
+    sentiment = args.sentiment if args.sentiment else ''
+
+    cli = LNLPCLI(sentiment=sentiment, save_dir=args.save_dir, global_data_path=args.data, global_tm_config_path=args.tmconfig, global_ft_config_path=args.ftconfig, sequence=sequence, num_samples=num_samples)
 
     cli.run()
 
