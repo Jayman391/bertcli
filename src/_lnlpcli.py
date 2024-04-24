@@ -34,8 +34,8 @@ class LNLPCLI:
         global_ft_config_path: str = None,
         num_samples: int = 0,
         debug: bool = False,
-        sequence: str = '',
-        sentiment = ''
+        sequence: str = "",
+        sentiment="",
     ):
         self.debug = debug
         self.global_data_path = global_data_path
@@ -68,7 +68,7 @@ class LNLPCLI:
         Run the LNLPCLI command-line interface.
         """
         try:
-            if self.sequence != '':
+            if self.sequence != "":
                 self._process_sequence(self.sequence)
             else:
                 self.landing = Landing(session=self.global_driver.session)
@@ -84,10 +84,14 @@ class LNLPCLI:
                 self._process_responses(self.landing, self.global_driver)
         except Exception as e:
             print(e)
-            self.global_session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
-            print('Apologies, an error occurred.\nPlease check the logs for more information after the session is over.')
-            if input('Continue Session? [y/n]') == 'y':
-                 self.run()
+            self.global_session.log(
+                "errors", {str(datetime.datetime.now()): traceback.format_exc()}
+            )
+            print(
+                "Apologies, an error occurred.\nPlease check the logs for more information after the session is over."
+            )
+            if input("Continue Session? [y/n]") == "y":
+                self.run()
             else:
                 self.global_driver._write_logs(self.save_dir)
 
@@ -117,7 +121,7 @@ class LNLPCLI:
                 self.tm_driver._run_topic_model(from_file=True)
             else:
                 self.tm_driver._run_topic_model()
-        
+
         elif isinstance(response, FineTuner):
             if self.global_session.config_fine_tune != {}:
                 self.tu_driver._run_tuner(from_file=True)
@@ -152,7 +156,7 @@ class LNLPCLI:
         """
         if self.save_dir is None:
             self.save_dir = "output"
-        
+
         self.global_driver.log("data", {"Topic": self.save_dir})
 
         sequence = sequence.split(",")
@@ -169,7 +173,7 @@ class LNLPCLI:
                 menu = choice.handle_choice(first_choice)
                 second_choice = s % 100
                 response = menu.handle_choice(second_choice)
-                
+
                 if isinstance(response, list):
                     self.global_driver.log("data", {str(menu): response})
                 else:
@@ -179,20 +183,20 @@ class LNLPCLI:
                 menu = choice.handle_choice(first_choice)
                 second_choice = s % 10
                 response = menu.handle_choice(second_choice)
-                
+
                 if isinstance(response, list):
                     self.global_driver.log("data", {str(menu): response})
                 else:
                     self.global_driver.log("data", {str(menu): str(response)})
             else:
-                choice = choice.handle_choice(s) 
-        
+                choice = choice.handle_choice(s)
+
         if isinstance(choice, BERTopic):
             if self.global_session.config_topic_model != {}:
                 self.tm_driver._run_topic_model(from_file=True)
             else:
                 self.tm_driver._run_topic_model()
-        
+
         elif isinstance(choice, FineTuner):
             if self.global_session.config_fine_tune != {}:
                 self.tu_driver._run_tuner(from_file=True)

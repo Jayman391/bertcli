@@ -11,6 +11,7 @@ import json
 import os
 import sys
 
+
 class TopicDriver(Driver):
     """
     The GlobalDriver class is a subclass of the Driver class and represents a global driver for topic modeling.
@@ -46,7 +47,7 @@ class TopicDriver(Driver):
         Args:
             from_file (bool, optional): Indicates whether to load data from a file. Defaults to False.
         """
-     
+
         data = self.session.get_logs("data")
         directory = ""
         # remove all logs that contain "Back" in the values
@@ -66,7 +67,7 @@ class TopicDriver(Driver):
         visualize(model, self.session, directory, data)
 
         self._write_logs(directory)
-      
+
     def _fit_model(self, model):
         """
         Fits the topic model to the session data and extracts the topics.
@@ -95,21 +96,21 @@ class TopicDriver(Driver):
     def _process_save_dir_choice(self, model, value, topics):
         """
         Processes the topic choice and saves the results.
-        
+
         Args:
             model (BERTopic): The topic model object.
             value (str): The topic choice value.
             topics (list): The extracted topics.
-            
+
         Returns:
             str: The directory where the results are saved.
         """
         # Setup directory for saving results
         directory = self._setup_directory(value)
-        
+
         # Map topics to documents and process session data
         session_data, embeddings = self._map_topics_to_documents(topics, model)
-        
+
         # Reduce embeddings dimensions if necessary
         embeddings = self._reduce_embeddings_dimensions(embeddings)
         session_data = pd.concat([session_data, embeddings], axis=1)
@@ -118,19 +119,19 @@ class TopicDriver(Driver):
 
         # Save the session data to CSV
         self._save_session_data(session_data, directory)
-        
+
         # Save the topic model configuration
         self._save_topic_model_config(directory)
-        
+
         # Plot and save the topic size distribution
         self._plot_topic_size_distribution(session_data, directory)
-        
+
         # Save Zipf distribution for each topic and a sample
         formatter = DataFormatter()  # Assuming DataFormatter is defined elsewhere
         self._save_zipf_distribution(session_data, directory, formatter)
-        
+
         return directory
-    
+
     def _setup_directory(self, value):
         """
         Setup the directory for saving results.
@@ -152,7 +153,7 @@ class TopicDriver(Driver):
         """
         Process topics and map them to documents.
         """
-        topics_df = pd.DataFrame(data=topics, columns=['label']).astype(int)
+        topics_df = pd.DataFrame(data=topics, columns=["label"]).astype(int)
         embeddings = pd.DataFrame(model._extract_embeddings(self.session.data))
         session_data = pd.DataFrame(self.session.data, columns=["text"])
         session_data = pd.concat([session_data, topics_df], axis=1)
@@ -164,7 +165,9 @@ class TopicDriver(Driver):
         """
         if embeddings.shape[1] > 2:
             umap = UMAP(n_components=2)
-            embeddings = pd.DataFrame(umap.fit_transform(embeddings), columns=["x", "y"])
+            embeddings = pd.DataFrame(
+                umap.fit_transform(embeddings), columns=["x", "y"]
+            )
         return embeddings
 
     def _save_session_data(self, session_data, directory):
@@ -174,7 +177,7 @@ class TopicDriver(Driver):
         session_data.to_csv(f"{directory}/labeled_corpus.csv", index=False)
 
     def _label_text_with_sentiment(self, session_data):
-        if self.session.sentiment != '':
+        if self.session.sentiment != "":
             sentiment = pipeline(self.session.sentiment)
         else:
             sentiment = pipeline("sentiment-analysis")
@@ -184,15 +187,13 @@ class TopicDriver(Driver):
         for i, row in session_data.iterrows():
             if len(row["text"]) > 512:
                 text = row["text"]
-                chunks = [text[i:i+512] for i in range(0, len(text), 512)]
+                chunks = [text[i : i + 512] for i in range(0, len(text), 512)]
                 scores = [sentiment(chunk)[0]["score"] for chunk in chunks]
                 session_data.at[i, "sentiment"] = sum(scores) / len(scores)
             else:
                 session_data.at[i, "sentiment"] = sentiment(row["text"])[0]["score"]
-        
-        return session_data
-        
 
+        return session_data
 
     def _save_topic_model_config(self, directory):
         """
@@ -209,8 +210,13 @@ class TopicDriver(Driver):
         """
         label_distribution = session_data["label"].value_counts().reset_index()
         os.makedirs(directory, exist_ok=True)
-        label_distribution.to_csv(f"{directory}/topic_size_distribution.csv", index=False)
-        plt.scatter(np.log10(list(range(len(label_distribution)))), np.log10(sorted(label_distribution["label"])[::-1]))
+        label_distribution.to_csv(
+            f"{directory}/topic_size_distribution.csv", index=False
+        )
+        plt.scatter(
+            np.log10(list(range(len(label_distribution["label"].unique())))),
+            np.log10(sorted(label_distribution["count"])[::-1]),
+        )
         plt.title("Topic Size Distribution")
         plt.xlabel("log rank")
         plt.ylabel("log size")

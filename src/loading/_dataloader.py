@@ -96,7 +96,7 @@ class DataLoader:
             config = self._load_config(config_path)
 
         return config
-    
+
     def prompt_ft_config(self):
         """
         Prompt the user to load fine-tuning configurations.
@@ -156,9 +156,8 @@ class DataLoader:
         if fine_tuning_path is not None:
             ft = self._load_config(fine_tuning_path)
             print(f"Loaded fine-tuning from {fine_tuning_path}")
-            
-        return Session(data, config, ft, save_dir, data_path)
 
+        return Session(data, config, ft, save_dir, data_path)
 
     def _load_data(self, data_path: str, num_samples: int = 0):
         """

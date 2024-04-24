@@ -28,6 +28,7 @@ loader = DataLoader()
 
 plt.ioff()
 
+
 def visualize(model: BERTopic, session: Session, directory: str = "", data: list = []):
     """
     Visualizes the topics, documents, terms, wordshifts, and PDS graphs based on the user's input.
@@ -89,11 +90,12 @@ def visualize(model: BERTopic, session: Session, directory: str = "", data: list
         _visualize_topics(model, session, directory)
         _visualize_terms(model, session, directory)
         _visualize_documents(model, session, directory)
+        _visualize_topics_over_time(model, session, directory)
         _visualize_word_shifts(session, directory)
         _visualize_power_danger_structure(session, directory)
-        _visualize_topics_over_time(model, session, directory)
 
-def _visualize_topics_over_time(model:BERTopic, session: Session, directory: str = ""):
+
+def _visualize_topics_over_time(model: BERTopic, session: Session, directory: str = ""):
     session_data = session.data
     docs = pd.read_csv(session.data_path)
 
@@ -116,9 +118,16 @@ def _visualize_topics_over_time(model:BERTopic, session: Session, directory: str
                 timestamps[i] = datetime.datetime.strptime(ts, "%d-%m-%y")
             except ValueError:
                 timestamps[i] = datetime.datetime.strptime(ts, "%m-%d-%y")
-    # convert the dates to int since epoch 
+    # convert the dates to int since epoch
     timestamps = [int(ts.timestamp()) for ts in timestamps]
-   
+
+    try:
+        df = pd.read_csv(f"{directory}/labeled_corpus.csv")
+        df["timestamp"] = timestamps
+        df.to_csv(f"{directory}/labeled_corpus.csv", index=False)
+    except Exception as e:
+        pass
+
     docs = docs["text"].to_list()
 
     # get topic of each document
@@ -140,20 +149,25 @@ def _visualize_topics_over_time(model:BERTopic, session: Session, directory: str
             docs = docs[:tpl]
             timestamps = timestamps[:tpl]
 
-    try : 
+    try:
         if len(docs) == len(timestamps):
-            topics_over_time = model.topics_over_time(docs, timestamps, topics, nr_bins=100)
+            topics_over_time = model.topics_over_time(
+                docs, timestamps, topics, nr_bins=100
+            )
             tt = model.visualize_topics_over_time(topics_over_time, top_n_topics=15)
 
             if directory != "":
                 tt.write_html(f"{directory}/topics_over_time.html")
-                webbrowser.open_new(file + os.path.realpath(f"{directory}/topics_over_time.html"))
+                webbrowser.open_new(
+                    file + os.path.realpath(f"{directory}/topics_over_time.html")
+                )
             else:
                 tt.write_html("topics_over_time.html")
                 webbrowser.open_new(file + os.path.realpath("topics_over_time.html"))
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
+
 
 def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
     """
@@ -181,7 +195,7 @@ def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
 
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
 
     try:
         hierarchical_topics = model.hierarchical_topics(docs=session.data)
@@ -199,7 +213,7 @@ def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
             webbrowser.open_new(file + os.path.realpath("hierarchical_viz.html"))
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
 
     try:
         heatmap = model.visualize_heatmap()
@@ -212,7 +226,7 @@ def _visualize_topics(model: BERTopic, session: Session, directory: str = ""):
             webbrowser.open_new(file + os.path.realpath(f"heatmap.html"))
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
 
 
 def _visualize_documents(model: BERTopic, session: Session, directory: str = ""):
@@ -240,7 +254,7 @@ def _visualize_documents(model: BERTopic, session: Session, directory: str = "")
             webbrowser.open_new(file + os.path.realpath("document_viz.html"))
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
 
     try:
         hierarchical_topics = model.hierarchical_topics(docs=session.data)
@@ -264,7 +278,7 @@ def _visualize_documents(model: BERTopic, session: Session, directory: str = "")
             )
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
 
 
 def _visualize_terms(model: BERTopic, session: Session, directory: str = ""):
@@ -279,7 +293,7 @@ def _visualize_terms(model: BERTopic, session: Session, directory: str = ""):
             webbrowser.open_new(file + os.path.realpath("term_viz.html"))
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
 
 
 def _visualize_word_shifts(session: Session, directory: str = ""):
@@ -313,7 +327,6 @@ def _visualize_word_shifts(session: Session, directory: str = ""):
         lens_max = 6
 
         for i, file in enumerate(files):
-
             topic_words = pd.read_csv(f"{directory}/topics/{file}")
             sample_words = pd.read_csv(f"{directory}/topics/{samples[i]}")
 
@@ -346,7 +359,6 @@ def _visualize_word_shifts(session: Session, directory: str = ""):
             sample_total_counts = sum(sample_words.values())
 
             if sample_total_counts:
-
                 sample_sentiment = {
                     k: v
                     / sample_total_counts
@@ -376,7 +388,7 @@ def _visualize_word_shifts(session: Session, directory: str = ""):
 
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
 
 
 def _safe_read_csv(file_path, session):
@@ -384,7 +396,7 @@ def _safe_read_csv(file_path, session):
         return pd.read_csv(file_path, encoding="utf-8")
     except UnicodeDecodeError as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
         return None
 
 
@@ -422,13 +434,13 @@ def _process_dataframe_for_visualization(df: pd.DataFrame, ous, session):
         return df_transformed, df_copy
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
         return None, None
 
 
 def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name, session):
     """
-    Visualizes a heatmap from a DataFrame. Uses code written by 
+    Visualizes a heatmap from a DataFrame. Uses code written by
     The Computational Story Lab at the University of Vermont.
 
     Args:
@@ -439,7 +451,7 @@ def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name, sessio
         file_base_name (str): The base name for the file.
 
     Returns:
-        None 
+        None
     """
     try:
         # Create a new figure explicitly to ensure it's fresh
@@ -456,11 +468,11 @@ def _visualize_heatmap_from_df(df, xcol, ycol, directory, file_base_name, sessio
         plt.close(fig)  # Close the figure to free up memory
     except Exception as e:
         print(e)
-        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
+        session.log("errors", {str(datetime.datetime.now()): traceback.format_exc()})
 
 
 def _visualize_power_danger_structure(session, directory):
-    """"
+    """ "
     Performs PDS calculations for every cluster and visualizes the results as heatmaps.
 
     Args:
@@ -469,7 +481,7 @@ def _visualize_power_danger_structure(session, directory):
     Returns:
         None
     """
-   
+
     ous = pd.read_csv("src/viz/NRC-VAD.txt", delimiter=" ")
     if ous is None:
         return
@@ -478,35 +490,58 @@ def _visualize_power_danger_structure(session, directory):
         if file.endswith(".csv") and "sample" not in file:
             df = _safe_read_csv(os.path.join(f"{directory}/topics", file), session)
             if df is not None:
-                df_transformed, df = _process_dataframe_for_visualization(df, ous, session)
+                df_transformed, df = _process_dataframe_for_visualization(
+                    df, ous, session
+                )
                 if df_transformed is not None:
                     file_base_name = os.path.splitext(file)[0]
-                    try :
+                    try:
                         _visualize_heatmap_from_df(
-                            df_transformed, "Power", "Danger", directory, file_base_name, session
+                            df_transformed,
+                            "Power",
+                            "Danger",
+                            directory,
+                            file_base_name,
+                            session,
                         )
 
                         _visualize_heatmap_from_df(
-                            df_transformed, "Power", "Structure", directory, file_base_name, session
+                            df_transformed,
+                            "Power",
+                            "Structure",
+                            directory,
+                            file_base_name,
+                            session,
                         )
 
                         _visualize_heatmap_from_df(
-                            df_transformed, "Danger", "Structure", directory, file_base_name, session
+                            df_transformed,
+                            "Danger",
+                            "Structure",
+                            directory,
+                            file_base_name,
+                            session,
                         )
                     except Exception as e:
                         print(e)
-                        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
-                        
-                    try : 
+                        session.log(
+                            "errors",
+                            {str(datetime.datetime.now()): traceback.format_exc()},
+                        )
 
-                        df = pd.merge(df, df_transformed, left_index=True, right_index=True)
+                    try:
+                        df = pd.merge(
+                            df, df_transformed, left_index=True, right_index=True
+                        )
 
                         df.to_csv(
                             f"{directory}/topics/{file_base_name}_transformed.csv",
                             index=False,
                         )
-                    
+
                     except Exception as e:
                         print(e)
-                        session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
-                      
+                        session.log(
+                            "errors",
+                            {str(datetime.datetime.now()): traceback.format_exc()},
+                        )

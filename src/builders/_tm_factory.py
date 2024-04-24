@@ -31,11 +31,12 @@ from bertopic.representation import (
     ZeroShotClassification,
     PartOfSpeech,
     TextGeneration,
-    LangChain
+    LangChain,
 )
 
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
+
 
 class TopicModelFactory:
     """
@@ -229,9 +230,11 @@ class TopicModelFactory:
             if log == "Enable Part of Speech filtering":
                 self.fine_tune.append(PartOfSpeech())
             if log == "Enable Huggingface Text Generation":
-                generator = pipeline('text2text-generation', model='google/flan-t5-base')
+                generator = pipeline(
+                    "text2text-generation", model="google/flan-t5-base"
+                )
                 self.fine_tune.append(TextGeneration(generator))
-            
+
         return self.fine_tune
 
     def build_topic_model(self, config: dict = {}) -> BERTopic:

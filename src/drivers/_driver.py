@@ -37,7 +37,7 @@ class Driver(ABC):
         config_path: str = None,
         ft_config_path: str = None,
         num_samples: int = 0,
-        save_dir: str = '',
+        save_dir: str = "",
     ):
         """
         Initializes the session with the given parameters.
@@ -109,7 +109,7 @@ class Driver(ABC):
             return self._run_menu(response)
         else:
             return response
-    
+
     def _write_logs(self, directory):
         """
         Writes the logs to a JSON file.
