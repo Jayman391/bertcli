@@ -118,15 +118,15 @@ class LNLPCLI:
 
         elif isinstance(response, BERTopic):
             if self.global_session.config_topic_model != {}:
-                self.tm_driver._run_topic_model(from_file=True)
+                self.tm_driver.run_topic_model(from_file=True)
             else:
-                self.tm_driver._run_topic_model()
+                self.tm_driver.run_topic_model()
 
         elif isinstance(response, FineTuner):
             if self.global_session.config_fine_tune != {}:
-                self.tu_driver._run_tuner(from_file=True)
+                self.tu_driver.run_tuner(from_file=True)
             else:
-                self.tu_driver._run_tuner()
+                self.tu_driver.run_tuner()
 
         else:
             self._process_responses(menu.parent, driver)
@@ -193,12 +193,12 @@ class LNLPCLI:
 
         if isinstance(choice, BERTopic):
             if self.global_session.config_topic_model != {}:
-                self.tm_driver._run_topic_model(from_file=True)
+                self.tm_driver.run_topic_model(from_file=True)
             else:
-                self.tm_driver._run_topic_model()
+                self.tm_driver.run_topic_model()
 
         elif isinstance(choice, FineTuner):
             if self.global_session.config_fine_tune != {}:
-                self.tu_driver._run_tuner(from_file=True)
+                self.tu_driver.run_tuner(from_file=True)
             else:
-                self.tu_driver._run_tuner()
+                self.tu_driver.run_tuner()

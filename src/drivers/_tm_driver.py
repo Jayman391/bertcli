@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from umap import UMAP
+from bertopic import BERTopic
 import json
 import os
 import sys
@@ -40,7 +41,7 @@ class TopicDriver(Driver):
             self.file = "file://"
         super().__init__(session)
 
-    def _run_topic_model(self, from_file: bool = False):
+    def run_topic_model(self, from_file: bool = False):
         """
         Runs the topic modeling process.
 
@@ -117,6 +118,8 @@ class TopicDriver(Driver):
 
         session_data = self._label_text_with_sentiment(session_data)
 
+        session_data = self._append_topic_labels(session_data, topics, model)
+
         # Save the session data to CSV
         self._save_session_data(session_data, directory)
 
@@ -142,6 +145,24 @@ class TopicDriver(Driver):
         if not os.path.isdir(directory):
             os.makedirs(directory)
         return directory
+
+    def _append_topic_labels(self, session_data, topics, model: BERTopic):
+        unique_topics = list(set(topics))
+        topic_labels = [0] * len(unique_topics)  # Initialize topic_labels with zeros
+
+        for topic in unique_topics:
+            words = []
+            data = model.get_topic(topic)
+            if isinstance(data, bool):
+                continue
+            for tup in data:
+                words.append(tup[0])
+            topic_labels[topic] = " ".join(words)
+
+        session_data["topic_labels"] = session_data["label"].map(
+            lambda x: topic_labels[x] if x < len(topic_labels) else topic_labels[0]
+        )
+        return session_data
 
     def _save_model(self, model, directory):
         """
