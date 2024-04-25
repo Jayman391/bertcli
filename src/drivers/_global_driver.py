@@ -2,6 +2,7 @@ from src.drivers._driver import Driver
 from util._session import Session
 import sys
 
+
 class GlobalDriver(Driver):
     """
     The GlobalDriver class is a subclass of the Driver class and represents a global driver for topic modeling.
@@ -29,5 +30,3 @@ class GlobalDriver(Driver):
         else:
             self.file = "file://"
         super().__init__(session)
-
-   

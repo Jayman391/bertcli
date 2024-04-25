@@ -24,7 +24,12 @@ class Session:
     """
 
     def __init__(
-        self, data=[], config_topic_model={}, config_fine_fune = {}, save_dir: str = "", data_path: str = None
+        self,
+        data=[],
+        config_topic_model={},
+        config_fine_fune={},
+        save_dir: str = "",
+        data_path: str = None,
     ) -> None:
         self.data = data
         self.config_topic_model = config_topic_model
@@ -63,7 +68,7 @@ class Session:
         """
         self.config_topic_model = config
         return self.config_topic_model
-    
+
     def set_config_fine_tune(self, config):
         """
         Set the configuration for fine tuning.
@@ -88,10 +93,10 @@ class Session:
         """
         self.topic_model_factory.upload_data(self.data)
         return self.topic_model_factory
-    
+
     def log(self, name, log):
         self.logs[name].append(log)
-    
+
     def get_logs(self, name):
         return self.logs[name]
 
@@ -238,9 +243,9 @@ class Session:
                     r = list(log.values())[0].split(" ")[1]
                 if "alpha" in log.values():
                     alpha = list(log.values())[0].split(" ")[1]
-                
+
         lora_params = {"r": r, "alpha": alpha}
-        
+
         training_params = {}
         if learning_rate:
             training_params["learning_rate"] = learning_rate
@@ -250,5 +255,11 @@ class Session:
             training_params["train_test_split_ratio"] = train_test_split_ratio
 
         return self.tuner_factory.create_tuner(
-            model_weights_path, training_data_path, system_prompt,prompt_format, output_path, lora_params, training_params
+            model_weights_path,
+            training_data_path,
+            system_prompt,
+            prompt_format,
+            output_path,
+            lora_params,
+            training_params,
         )

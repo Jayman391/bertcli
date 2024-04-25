@@ -34,7 +34,8 @@ class LNLPCLI:
         global_ft_config_path: str = None,
         num_samples: int = 0,
         debug: bool = False,
-        sequence: str = '',
+        sequence: str = "",
+        sentiment="",
     ):
         self.debug = debug
         self.global_data_path = global_data_path
@@ -43,6 +44,7 @@ class LNLPCLI:
         self.num_samples = num_samples
         self.save_dir = save_dir
         self.sequence = sequence
+        self.sentiment = sentiment
 
         print("\nWelcome to the LNLP CLI!")
 
@@ -56,6 +58,8 @@ class LNLPCLI:
             save_dir=self.save_dir,
         )
 
+        self.global_session.sentiment = self.sentiment
+
         self.tm_driver = TopicDriver(session=self.global_session)
         self.tu_driver = TunerDriver(session=self.global_session)
 
@@ -64,7 +68,7 @@ class LNLPCLI:
         Run the LNLPCLI command-line interface.
         """
         try:
-            if self.sequence != '':
+            if self.sequence != "":
                 self._process_sequence(self.sequence)
             else:
                 self.landing = Landing(session=self.global_driver.session)
@@ -80,10 +84,14 @@ class LNLPCLI:
                 self._process_responses(self.landing, self.global_driver)
         except Exception as e:
             print(e)
-            self.global_session.log("errors", {str(datetime.datetime.now()) : traceback.format_exc()})
-            print('Apologies, an error occurred.\nPlease check the logs for more information after the session is over.')
-            if input('Continue Session? [y/n]') == 'y':
-                 self.run()
+            self.global_session.log(
+                "errors", {str(datetime.datetime.now()): traceback.format_exc()}
+            )
+            print(
+                "Apologies, an error occurred.\nPlease check the logs for more information after the session is over."
+            )
+            if input("Continue Session? [y/n]") == "y":
+                self.run()
             else:
                 self.global_driver._write_logs(self.save_dir)
 
@@ -110,15 +118,15 @@ class LNLPCLI:
 
         elif isinstance(response, BERTopic):
             if self.global_session.config_topic_model != {}:
-                self.tm_driver._run_topic_model(from_file=True)
+                self.tm_driver.run_topic_model(from_file=True)
             else:
-                self.tm_driver._run_topic_model()
-        
+                self.tm_driver.run_topic_model()
+
         elif isinstance(response, FineTuner):
             if self.global_session.config_fine_tune != {}:
-                self.tu_driver._run_tuner(from_file=True)
+                self.tu_driver.run_tuner(from_file=True)
             else:
-                self.tu_driver._run_tuner()
+                self.tu_driver.run_tuner()
 
         else:
             self._process_responses(menu.parent, driver)
@@ -148,7 +156,7 @@ class LNLPCLI:
         """
         if self.save_dir is None:
             self.save_dir = "output"
-        
+
         self.global_driver.log("data", {"Topic": self.save_dir})
 
         sequence = sequence.split(",")
@@ -160,27 +168,37 @@ class LNLPCLI:
         choice = self.landing.handle_choice(sequence[0])
 
         for s in sequence[1:]:
-            if s > 9:
+            if s > 99:
+                first_choice = floor(s / 100)
+                menu = choice.handle_choice(first_choice)
+                second_choice = s % 100
+                response = menu.handle_choice(second_choice)
+
+                if isinstance(response, list):
+                    self.global_driver.log("data", {str(menu): response})
+                else:
+                    self.global_driver.log("data", {str(menu): str(response)})
+            elif s > 9:
                 first_choice = floor(s / 10)
                 menu = choice.handle_choice(first_choice)
                 second_choice = s % 10
                 response = menu.handle_choice(second_choice)
-                
+
                 if isinstance(response, list):
                     self.global_driver.log("data", {str(menu): response})
                 else:
                     self.global_driver.log("data", {str(menu): str(response)})
             else:
-                choice = choice.handle_choice(s) 
-        
+                choice = choice.handle_choice(s)
+
         if isinstance(choice, BERTopic):
             if self.global_session.config_topic_model != {}:
-                self.tm_driver._run_topic_model(from_file=True)
+                self.tm_driver.run_topic_model(from_file=True)
             else:
-                self.tm_driver._run_topic_model()
-        
+                self.tm_driver.run_topic_model()
+
         elif isinstance(choice, FineTuner):
             if self.global_session.config_fine_tune != {}:
-                self.tu_driver._run_tuner(from_file=True)
+                self.tu_driver.run_tuner(from_file=True)
             else:
-                self.tu_driver._run_tuner()
+                self.tu_driver.run_tuner()

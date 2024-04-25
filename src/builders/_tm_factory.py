@@ -15,6 +15,7 @@ from sklearn.cluster import (
 )
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import CountVectorizer
+from transformers import pipeline
 
 # set TOKENIZERS_PARALLELISM to False to avoid issues with transformers
 import os
@@ -29,7 +30,12 @@ from bertopic.representation import (
     MaximalMarginalRelevance,
     ZeroShotClassification,
     PartOfSpeech,
+    TextGeneration,
+    LangChain,
 )
+
+from langchain.chains.question_answering import load_qa_chain
+from langchain.llms import OpenAI
 
 
 class TopicModelFactory:
@@ -223,6 +229,11 @@ class TopicModelFactory:
                 self.fine_tune.append(MaximalMarginalRelevance(1))
             if log == "Enable Part of Speech filtering":
                 self.fine_tune.append(PartOfSpeech())
+            if log == "Enable Huggingface Text Generation":
+                generator = pipeline(
+                    "text2text-generation", model="google/flan-t5-base"
+                )
+                self.fine_tune.append(TextGeneration(generator))
 
         return self.fine_tune
 
