@@ -123,6 +123,12 @@ def _visualize_topics_over_time(model: BERTopic, session: Session, directory: st
 
     try:
         df = pd.read_csv(f"{directory}/labeled_corpus.csv")
+        if len(df.shape[0]) != len(timestamps):
+            diff = abs(len(df.shape[0]) - len(timestamps))
+            if len(df.shape[0]) > len(timestamps):
+                df = df.iloc[: len(df.shape[0]) - diff]
+            else:
+                timestamps = timestamps[: len(df.shape[0])]
         df["timestamp"] = timestamps
         df.to_csv(f"{directory}/labeled_corpus.csv", index=False)
     except Exception as e:
